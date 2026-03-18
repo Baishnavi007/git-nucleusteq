@@ -123,8 +123,51 @@
 </section>
 
 <section id="contact">
-    <!-- added id for navigation linking -->
-    <h2>Contact</h2>
+    <!-- id is used for navigation linking -->
+    <h2>Contact Me</h2>
+
+    <form>
+
+        <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br><br>
+
+        <!-- Gender -->
+         <!--Used radio button here because we can select only 1 option-->
+        <label>Gender:</label><br>
+        <input type="radio" name="gender" id="male">
+        <label for="male">Male</label>
+
+        <input type="radio" name="gender" id="female">
+        <label for="female">Female</label><br><br>
+
+        <!-- Skills -->
+        <label>Skills:</label><br>
+        <input type="checkbox" id="html">
+        <label for="html">HTML</label>
+
+        <input type="checkbox" id="java">
+        <label for="java">Java</label><br><br>
+
+        <!-- City dropdown -->
+        <label for="city">City:</label>
+        <select id="city">
+            <option>Delhi</option>
+            <option>Mumbai</option>
+        </select><br><br>
+
+        <!-- Message -->
+        <label for="message">Message:</label><br>
+        <textarea id="message"></textarea><br><br>
+
+        <!-- Submit -->
+        <input type="submit">
+
+    </form>
 </section>
 
 </body>
