@@ -5,57 +5,64 @@
     <title>Baishnavi Portfolio</title>
 </head>
 <body>
+
 <header>
     <h1>Baishnavi Singh</h1>
     <p>Aspiring Software Developer</p>
-    <img src = "Baishnavi_Image.jpeg" alt = "Candidate's picture" width ="150">
-    </header>
-    <nav>
-        <ul>
-            <!--added id so that clicking on navigation links takes user to this section -->
-            <li> <a href="#about">About</a></li>
-            <li> <a href="#skills">Skills</a>
-             <ul>
+    <img src="Baishnavi_Image.jpeg" alt="Profile image of Baishnavi Singh" width="150">
+</header>
+
+<nav>
+    <ul>
+        <!-- added id so that clicking on navigation links takes user to this section -->
+        <li><a href="#about">About</a></li>
+
+        <li>
+            <a href="#skills">Skills</a>
+            <ul>
                 <li><a href="#technical">Technical Skills</a></li>
                 <li><a href="#soft">Soft Skills</a></li>
-             </ul>
-            </li>
-            <li> <a href="#education">Education</a></li>
-            <li> <a href="#projects">Projects</a></li>
-            <li> <a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-    <section id="about">
+            </ul>
+        </li>
+
+        <li><a href="#education">Education</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<section id="about">
     <!-- added id so that clicking on navigation links takes user to this section -->
     <h2>About Me</h2>
+
     <p>
         I am a <strong>motivated and passionate developer</strong> with an interest in 
-        <em>web development</em> and <em>Backend Development</em>. I enjoy learning new technologies and building projects 
-        that solve real-world problems.
-        <!--Used sematic tags like strong and em, to highlight important content and impprove readabililty-->
+        <em>web development</em> and <em>backend development</em>. I enjoy learning new technologies 
+        and building projects that solve real-world problems.
     </p>
 
+    <!-- Used semantic tags like strong and em to highlight important content and improve readability -->
     <hr>
 </section>
 
 <section id="skills">
     <!-- added id for navigation linking -->
     <h2>Skills</h2>
-    <ul>
-        <li id ="technical">Technical Skills
-            <ul>
-                <li>HTML</li>
-                <li>CSS</li>
-                <li>Java</li>
-                <li>Spring Boot</li>
-            </ul>
-        </li>
-        <li id="soft">Soft Skills
-            <ul>
-                <li>Communication</li>
-                <li>Team Work</li>
-            </ul>
-        </li>
+
+    <!-- Technical Skills -->
+    <h3 id="technical">Technical Skills</h3>
+    <ul type="square">
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>Java</li>
+        <li>Spring Boot</li>
+    </ul>
+
+    <!-- Soft Skills -->
+    <h3 id="soft">Soft Skills</h3>
+    <ul type="circle">
+        <li>Communication</li>
+        <li>Team Work</li>
     </ul>
 </section>
 
