@@ -63,3 +63,19 @@ section {
     border-radius: 8px;
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
+
+/* ===== Skills Styling ===== */
+
+#skills ul {
+    margin-top: 10px;
+    line-height: 1.8;
+}
+
+#skills h3 {
+    margin-top: 15px;
+    color: #4a90e2;
+}
+
+#skills li {
+    margin-left: 20px;
+}
