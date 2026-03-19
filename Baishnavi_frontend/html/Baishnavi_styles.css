@@ -79,3 +79,32 @@ section {
 #skills li {
     margin-left: 20px;
 }
+
+/* ===== Table Styling ===== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #4a90e2;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Alternate row styling */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
