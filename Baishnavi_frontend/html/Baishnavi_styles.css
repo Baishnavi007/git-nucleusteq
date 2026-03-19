@@ -158,3 +158,17 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #357abd;
 }
+
+/* ===== Fix Radio & Checkbox Layout ===== */
+
+form input[type="radio"],
+form input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+form input[type="radio"] + label,
+form input[type="checkbox"] + label {
+    display: inline-block;
+    margin-right: 15px;
+}
