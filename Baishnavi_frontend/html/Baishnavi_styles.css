@@ -196,3 +196,43 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
+
+/* ===== Responsive Design ===== */
+
+@media (max-width: 768px) {
+
+    /* Navbar vertical */
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    /* Sections spacing adjust */
+    section {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    /* Header text adjust */
+    header h1 {
+        font-size: 22px;
+    }
+
+    /* Form spacing adjust */
+    form input,
+    form textarea,
+    form select {
+        font-size: 14px;
+    }
+
+    /* Table responsive (scroll if needed) */
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
