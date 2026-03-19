@@ -25,3 +25,31 @@ header img {
     border-radius: 50%;
     margin-top: 10px;
 }
+
+/* ===== Navigation Styling ===== */
+
+/* Navbar container */
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    background-color: #333;
+}
+
+/* Each item */
+nav ul li {
+    margin: 10px;
+}
+
+/* Links */
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+/* Hover effect */
+nav ul li a:hover {
+    background-color: #4a90e2;
+    border-radius: 5px;
+}
