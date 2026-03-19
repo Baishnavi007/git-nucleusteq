@@ -64,3 +64,24 @@ function calculateAverageMarks(student) {
   return total / numberOfSubjects;
 }
 
+function getSubjectWiseHighest(students) {
+  const highestScores = {};
+
+  for (let i = 0; i < students.length; i++) {
+    const student = students[i];
+
+    for (let j = 0; j < student.marks.length; j++) {
+      const subject = student.marks[j].subject;
+      const score = student.marks[j].score;
+
+      if (!highestScores[subject] || score > highestScores[subject].score) {
+        highestScores[subject] = {
+          name: student.name,
+          score: score
+        };
+      }
+    }
+  }
+
+  return highestScores;
+}
