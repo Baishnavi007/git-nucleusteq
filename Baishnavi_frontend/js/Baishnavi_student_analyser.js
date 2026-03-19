@@ -56,3 +56,11 @@ function calculateTotalMarks(student) {
 
   return total;
 }
+
+function calculateAverageMarks(student) {
+  const total = calculateTotalMarks(student);
+  const numberOfSubjects = student.marks.length;
+
+  return total / numberOfSubjects;
+}
+
