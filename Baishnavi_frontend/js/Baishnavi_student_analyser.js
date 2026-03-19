@@ -46,3 +46,13 @@ const students = [
     attendance: 74
   }
 ];
+
+function calculateTotalMarks(student) {
+  let total = 0;
+
+  for (let i = 0; i < student.marks.length; i++) {
+    total += student.marks[i].score;
+  }
+
+  return total;
+}
