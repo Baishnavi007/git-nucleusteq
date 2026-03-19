@@ -85,3 +85,19 @@ function getSubjectWiseHighest(students) {
 
   return highestScores;
 }
+function getClassTopper(students) {
+  let topper = null;
+  let highestMarks = 0;
+
+  for (let i = 0; i < students.length; i++) {
+    const student = students[i];
+    const total = calculateTotalMarks(student);
+
+    if (total > highestMarks) {
+      highestMarks = total;
+      topper = student.name;
+    }
+  }
+
+  return { name: topper, marks: highestMarks };
+}
