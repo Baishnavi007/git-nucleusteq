@@ -12,3 +12,23 @@ body {
     background-color: #f5f7fa;
     color: #333;
 }
+
+/* ===== Header ===== */
+
+header {
+    text-align: center;
+    background-color: #0a2e58;
+    color: white;
+    padding: 30px;
+}
+
+/* ===== Sections ===== */
+
+section {
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
