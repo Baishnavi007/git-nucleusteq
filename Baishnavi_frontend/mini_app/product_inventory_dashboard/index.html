@@ -61,12 +61,57 @@
 
 <!-- Product Section -->
 <section id="productGrid">
+    <!-- This section displays all products -->
+
     <h2>Products</h2>
+
+    <!-- Message when no products are available -->
+    <p id="noProducts" style="display: none;">
+        No products found
+    </p>
+
+    <!-- Container where products will be added dynamically -->
+    <div id="productsContainer">
+        <!-- Product cards will appear here using JavaScript -->
+    </div>
 </section>
 
 <!-- Add Product Section -->
 <section id="addProduct">
+    <!-- Form to add new product -->
+
     <h2>Add Product</h2>
+
+    <form id="productForm">
+
+        <!-- Product Name -->
+        <label for="name">Product Name:</label>
+        <input type="text" id="name" required>
+
+        <!-- Price -->
+        <label for="price">Price:</label>
+        <input type="number" id="price" required>
+
+        <!-- Stock -->
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" required>
+
+        <!-- Category -->
+        <label for="category">Category:</label>
+        <select id="category" required>
+            <option value="">Select Category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="books">Books</option>
+            <option value="accessories">Accessories</option>
+        </select>
+
+        <br><br>
+
+        <!-- Submit button -->
+        <input type="submit" value="Add Product">
+
+    </form>
 </section>
 
 <!-- Linking JavaScript -->
