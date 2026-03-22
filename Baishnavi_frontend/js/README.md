@@ -42,3 +42,12 @@ Grades are assigned based on average marks.
 Before that, I checked fail conditions like low marks in any subject or low attendance.
 ![Function to find grades](image-9.png)
 ![Output](image-10.png)
+
+
+How to Run
+
+• Open the file in browser console or Node
+
+• Run the script
+
+• Output will be visible in console/terminal
