@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {//runs js after html loads
 
 // Default products
 const defaultProducts = [
@@ -40,7 +40,15 @@ function renderProducts() {
             <p>Category: ${product.category}</p>
             <p>Price: ₹${product.price}</p>
             <p>Stock: ${product.stock}</p>
+            <button>Delete</button>
         `;
+
+        // Delete button logic
+        const deleteBtn = card.querySelector("button");
+
+        deleteBtn.addEventListener("click", function () {
+            deleteProduct(product.id);
+        });
 
         container.appendChild(card);
     }
@@ -149,7 +157,7 @@ function applyFilters() {
     updateAnalytics();
 }
 
-// Add product function
+// Add product
 function addProduct(event) {
 
     event.preventDefault();
@@ -159,38 +167,14 @@ function addProduct(event) {
     const stock = parseInt(document.getElementById("stock").value);
     const category = document.getElementById("category").value;
 
-    if (name === "") {
-        alert("Product name cannot be empty");
-        return;
-    }
+    if (name === "") return alert("Product name cannot be empty");
+    if (price <= 0) return alert("Price must be greater than 0");
+    if (stock < 0) return alert("Stock cannot be negative");
+    if (category === "") return alert("Please select a category");
 
-    if (price <= 0) {
-        alert("Price must be greater than 0");
-        return;
-    }
+    let newId = products.length > 0 ? products[products.length - 1].id + 1 : 1;
 
-    if (stock < 0) {
-        alert("Stock cannot be negative");
-        return;
-    }
-
-    if (category === "") {
-        alert("Please select a category");
-        return;
-    }
-
-    let newId = 1;
-    if (products.length > 0) {
-        newId = products[products.length - 1].id + 1;
-    }
-
-    const newProduct = {
-        id: newId,
-        name: name,
-        price: price,
-        stock: stock,
-        category: category
-    };
+    const newProduct = { id: newId, name, price, stock, category };
 
     products.push(newProduct);
 
@@ -200,6 +184,22 @@ function addProduct(event) {
     updateAnalytics();
 
     document.getElementById("productForm").reset();
+}
+
+// Delete function
+function deleteProduct(id) {
+
+    for (let i = 0; i < products.length; i++) {
+        if (products[i].id === id) {
+            products.splice(i, 1);
+            break;
+        }
+    }
+
+    filteredProducts = [...products];
+
+    renderProducts();
+    updateAnalytics();
 }
 
 // Event listeners
