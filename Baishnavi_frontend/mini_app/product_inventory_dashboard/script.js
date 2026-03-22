@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {////runs js after html loads
 
 // Default products
 const defaultProducts = [
@@ -18,7 +18,7 @@ let products = [];
 // Filtered products
 let filteredProducts = [];
 
-// Temporary load (for now)
+// Temporary load
 products = defaultProducts;
 filteredProducts = [...products];
 
@@ -27,10 +27,8 @@ function renderProducts() {
 
     const container = document.getElementById("productsContainer");
 
-    // Clear previous data
     container.innerHTML = "";
 
-    // Loop through products
     for (let i = 0; i < filteredProducts.length; i++) {
 
         const product = filteredProducts[i];
@@ -48,7 +46,34 @@ function renderProducts() {
     }
 }
 
+// Function to update analytics
+function updateAnalytics() {
+
+    const totalProducts = document.getElementById("totalProducts");
+    const totalValue = document.getElementById("totalValue");
+    const outOfStock = document.getElementById("outOfStock");
+
+    let total = 0;
+    let value = 0;
+    let outStock = 0;
+
+    for (let i = 0; i < products.length; i++) {
+
+        total++;
+        value += products[i].price * products[i].stock;
+
+        if (products[i].stock === 0) {
+            outStock++;
+        }
+    }
+
+    totalProducts.textContent = total;
+    totalValue.textContent = value;
+    outOfStock.textContent = outStock;
+}
+
 // Initial render
 renderProducts();
+updateAnalytics();
 
 });
