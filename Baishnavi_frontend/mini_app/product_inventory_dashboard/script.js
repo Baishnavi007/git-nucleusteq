@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {//runs js after html loads
+document.addEventListener("DOMContentLoaded", function () {//
 
 // Default products
 const defaultProducts = [
@@ -18,9 +18,36 @@ let products = [];
 // Filtered products
 let filteredProducts = [];
 
-// Temporary load
-products = defaultProducts;
-filteredProducts = [...products];
+// Load from localStorage
+function loadProducts() {
+
+    const stored = localStorage.getItem("products");
+
+    if (stored) {
+        products = JSON.parse(stored);
+    } else {
+        products = defaultProducts;
+        saveProducts();
+    }
+
+    filteredProducts = [...products];
+}
+
+// Save to localStorage
+function saveProducts() {
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+// Simulate API loading
+function fetchProducts() {
+
+    return new Promise(function(resolve) {
+
+        setTimeout(function () {
+            resolve();
+        }, 1500);
+    });
+}
 
 // Render products
 function renderProducts() {
@@ -43,7 +70,6 @@ function renderProducts() {
             <button>Delete</button>
         `;
 
-        // Delete button logic
         const deleteBtn = card.querySelector("button");
 
         deleteBtn.addEventListener("click", function () {
@@ -84,15 +110,14 @@ function updateAnalytics() {
 function loadCategories() {
 
     const categoryDropdown = document.getElementById("categoryFilter");
+    categoryDropdown.innerHTML = `<option value="all">All Categories</option>`;
 
     const categories = [];
 
     for (let i = 0; i < products.length; i++) {
 
-        const category = products[i].category;
-
-        if (!categories.includes(category)) {
-            categories.push(category);
+        if (!categories.includes(products[i].category)) {
+            categories.push(products[i].category);
         }
     }
 
@@ -120,9 +145,7 @@ function applyFilters() {
         const product = products[i];
 
         let matchesSearch = product.name.toLowerCase().includes(searchInput);
-
         let matchesCategory = (category === "all") || (product.category === category);
-
         let matchesStock = !lowStockChecked || (product.stock < 5);
 
         if (matchesSearch && matchesCategory && matchesStock) {
@@ -133,24 +156,16 @@ function applyFilters() {
     const sortOption = document.getElementById("sort").value;
 
     if (sortOption === "priceLow") {
-        filteredProducts.sort(function(a, b) {
-            return a.price - b.price;
-        });
+        filteredProducts.sort((a, b) => a.price - b.price);
     }
     else if (sortOption === "priceHigh") {
-        filteredProducts.sort(function(a, b) {
-            return b.price - a.price;
-        });
+        filteredProducts.sort((a, b) => b.price - a.price);
     }
     else if (sortOption === "az") {
-        filteredProducts.sort(function(a, b) {
-            return a.name.localeCompare(b.name);
-        });
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
     }
     else if (sortOption === "za") {
-        filteredProducts.sort(function(a, b) {
-            return b.name.localeCompare(a.name);
-        });
+        filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
     }
 
     renderProducts();
@@ -177,6 +192,9 @@ function addProduct(event) {
     const newProduct = { id: newId, name, price, stock, category };
 
     products.push(newProduct);
+    saveProducts();
+
+    loadCategories();
 
     filteredProducts = [...products];
 
@@ -186,7 +204,7 @@ function addProduct(event) {
     document.getElementById("productForm").reset();
 }
 
-// Delete function
+// Delete product
 function deleteProduct(id) {
 
     for (let i = 0; i < products.length; i++) {
@@ -196,10 +214,27 @@ function deleteProduct(id) {
         }
     }
 
+    saveProducts();
+
     filteredProducts = [...products];
 
     renderProducts();
     updateAnalytics();
+}
+
+// Init app
+function init() {
+
+    loadProducts();
+
+    document.getElementById("productsContainer").innerHTML = "<p>Loading products...</p>";
+
+    fetchProducts().then(function () {
+
+        loadCategories();
+        renderProducts();
+        updateAnalytics();
+    });
 }
 
 // Event listeners
@@ -209,9 +244,7 @@ document.getElementById("lowStock").addEventListener("change", applyFilters);
 document.getElementById("sort").addEventListener("change", applyFilters);
 document.getElementById("productForm").addEventListener("submit", addProduct);
 
-// Initial load
-loadCategories();
-renderProducts();
-updateAnalytics();
+// Start app
+init();
 
 });
