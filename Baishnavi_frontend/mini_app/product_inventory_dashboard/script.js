@@ -98,7 +98,7 @@ function loadCategories() {
     }
 }
 
-// Apply filters
+// Apply filters + sorting
 function applyFilters() {
 
     const searchInput = document.getElementById("search").value.toLowerCase();
@@ -122,6 +122,30 @@ function applyFilters() {
         }
     }
 
+    // Sorting logic
+    const sortOption = document.getElementById("sort").value;
+
+    if (sortOption === "priceLow") {
+        filteredProducts.sort(function(a, b) {
+            return a.price - b.price;
+        });
+    }
+    else if (sortOption === "priceHigh") {
+        filteredProducts.sort(function(a, b) {
+            return b.price - a.price;
+        });
+    }
+    else if (sortOption === "az") {
+        filteredProducts.sort(function(a, b) {
+            return a.name.localeCompare(b.name);
+        });
+    }
+    else if (sortOption === "za") {
+        filteredProducts.sort(function(a, b) {
+            return b.name.localeCompare(a.name);
+        });
+    }
+
     renderProducts();
     updateAnalytics();
 }
@@ -130,6 +154,7 @@ function applyFilters() {
 document.getElementById("search").addEventListener("input", applyFilters);
 document.getElementById("categoryFilter").addEventListener("change", applyFilters);
 document.getElementById("lowStock").addEventListener("change", applyFilters);
+document.getElementById("sort").addEventListener("change", applyFilters);
 
 // Initial load
 loadCategories();
