@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {//
+document.addEventListener("DOMContentLoaded", function () {//runs js after html loads
 
 // Default products
 const defaultProducts = [
