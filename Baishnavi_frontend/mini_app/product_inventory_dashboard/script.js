@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {//runs js after html loads
+document.addEventListener("DOMContentLoaded", function () {
 
 // Default products
 const defaultProducts = [
@@ -17,5 +17,38 @@ let products = [];
 
 // Filtered products
 let filteredProducts = [];
+
+// Temporary load (for now)
+products = defaultProducts;
+filteredProducts = [...products];
+
+// Function to render products
+function renderProducts() {
+
+    const container = document.getElementById("productsContainer");
+
+    // Clear previous data
+    container.innerHTML = "";
+
+    // Loop through products
+    for (let i = 0; i < filteredProducts.length; i++) {
+
+        const product = filteredProducts[i];
+
+        const card = document.createElement("div");
+
+        card.innerHTML = `
+            <h3>${product.name}</h3>
+            <p>Category: ${product.category}</p>
+            <p>Price: ₹${product.price}</p>
+            <p>Stock: ${product.stock}</p>
+        `;
+
+        container.appendChild(card);
+    }
+}
+
+// Initial render
+renderProducts();
 
 });
