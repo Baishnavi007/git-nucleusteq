@@ -16,7 +16,42 @@
 
 <!-- Controls Section -->
 <section id="controls">
+    <!-- This section contains search, filter and sorting options -->
+
     <h2>Controls</h2>
+
+    <!-- Search Input -->
+    <label for="search">Search Product:</label>
+    <input type="text" id="search" placeholder="Enter product name">
+
+    <br><br>
+
+    <!-- Category Filter -->
+    <label for="categoryFilter">Category:</label>
+    <select id="categoryFilter">
+        <option value="all">All Categories</option>
+    </select>
+
+    <br><br>
+
+    <!-- Low Stock Filter -->
+    <!-- Checkbox is used to filter products with stock less than 5 -->
+    <label>
+        <input type="checkbox" id="lowStock">
+        Show Low Stock (less than 5)
+    </label>
+
+    <br><br>
+
+    <!-- Sorting Dropdown -->
+    <label for="sort">Sort By:</label>
+    <select id="sort">
+        <option value="default">Default</option>
+        <option value="priceLow">Price Low to High</option>
+        <option value="priceHigh">Price High to Low</option>
+        <option value="az">A - Z</option>
+        <option value="za">Z - A</option>
+    </select>
 </section>
 
 <!-- Analytics Section -->
