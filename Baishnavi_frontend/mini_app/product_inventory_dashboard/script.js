@@ -22,7 +22,7 @@ let filteredProducts = [];
 products = defaultProducts;
 filteredProducts = [...products];
 
-// Function to render products
+// Render products
 function renderProducts() {
 
     const container = document.getElementById("productsContainer");
@@ -46,7 +46,7 @@ function renderProducts() {
     }
 }
 
-// Function to update analytics
+// Analytics
 function updateAnalytics() {
 
     const totalProducts = document.getElementById("totalProducts");
@@ -72,7 +72,7 @@ function updateAnalytics() {
     outOfStock.textContent = outStock;
 }
 
-// Function to load categories into dropdown
+// Load categories
 function loadCategories() {
 
     const categoryDropdown = document.getElementById("categoryFilter");
@@ -97,6 +97,39 @@ function loadCategories() {
         categoryDropdown.appendChild(option);
     }
 }
+
+// Apply filters
+function applyFilters() {
+
+    const searchInput = document.getElementById("search").value.toLowerCase();
+    const category = document.getElementById("categoryFilter").value;
+    const lowStockChecked = document.getElementById("lowStock").checked;
+
+    filteredProducts = [];
+
+    for (let i = 0; i < products.length; i++) {
+
+        const product = products[i];
+
+        let matchesSearch = product.name.toLowerCase().includes(searchInput);
+
+        let matchesCategory = (category === "all") || (product.category === category);
+
+        let matchesStock = !lowStockChecked || (product.stock < 5);
+
+        if (matchesSearch && matchesCategory && matchesStock) {
+            filteredProducts.push(product);
+        }
+    }
+
+    renderProducts();
+    updateAnalytics();
+}
+
+// Event listeners
+document.getElementById("search").addEventListener("input", applyFilters);
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+document.getElementById("lowStock").addEventListener("change", applyFilters);
 
 // Initial load
 loadCategories();
