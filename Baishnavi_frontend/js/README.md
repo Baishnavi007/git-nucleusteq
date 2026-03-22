@@ -10,8 +10,8 @@ Output Screenshots
 
 1. Total Marks
 This functions calculates the total marks for each student.I calculated it by using a for loop
-![Function of total marks](Screenshots/Screenshot 2026-03-22 080946.png)
-![Output of function total marks](image.png)
+![Function of total marks](Screenshot 2026-03-22 080946.png)
+![Output of function total marks](Screenshots/image.png)
 
 2. Student's Average Marks
 Average is calculated using total marks divided by number of subjects.
