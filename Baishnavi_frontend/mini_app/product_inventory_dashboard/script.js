@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {////runs js after html loads
+document.addEventListener("DOMContentLoaded", function () {
 
 // Default products
 const defaultProducts = [
@@ -72,7 +72,34 @@ function updateAnalytics() {
     outOfStock.textContent = outStock;
 }
 
-// Initial render
+// Function to load categories into dropdown
+function loadCategories() {
+
+    const categoryDropdown = document.getElementById("categoryFilter");
+
+    const categories = [];
+
+    for (let i = 0; i < products.length; i++) {
+
+        const category = products[i].category;
+
+        if (!categories.includes(category)) {
+            categories.push(category);
+        }
+    }
+
+    for (let i = 0; i < categories.length; i++) {
+
+        const option = document.createElement("option");
+        option.value = categories[i];
+        option.textContent = categories[i];
+
+        categoryDropdown.appendChild(option);
+    }
+}
+
+// Initial load
+loadCategories();
 renderProducts();
 updateAnalytics();
 
