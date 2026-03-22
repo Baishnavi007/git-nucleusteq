@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<!-- Header Section -->
+<!--Header Section -->
 <header>
     <h1>Product Inventory Dashboard</h1>
 </header>
@@ -20,7 +20,7 @@
 
     <h2>Controls</h2>
 
-    <!-- Search Input -->
+    <!-- Searching the product -->
     <label for="search">Search Product:</label>
     <input type="text" id="search" placeholder="Enter product name">
 
@@ -35,7 +35,7 @@
     <br><br>
 
     <!-- Low Stock Filter -->
-    <!-- Checkbox is used to filter products with stock less than 5 -->
+  
     <label>
         <input type="checkbox" id="lowStock">
         Show Low Stock (less than 5)
@@ -56,12 +56,18 @@
 
 <!-- Analytics Section -->
 <section id="analytics">
+    <!-- Inventory summary is shown here -->
+
     <h2>Inventory Analytics</h2>
+
+    <p>Total Products: <span id="totalProducts">0</span></p>
+    <p>Total Inventory Value: ₹<span id="totalValue">0</span></p>
+    <p>Out of Stock: <span id="outOfStock">0</span></p>
 </section>
 
 <!-- Product Section -->
 <section id="productGrid">
-    <!-- This section displays all products -->
+    <!--Displays all products -->
 
     <h2>Products</h2>
 
@@ -72,7 +78,7 @@
 
     <!-- Container where products will be added dynamically -->
     <div id="productsContainer">
-        <!-- Product cards will appear here using JavaScript -->
+        
     </div>
 </section>
 
@@ -114,7 +120,7 @@
     </form>
 </section>
 
-<!-- Linking JavaScript -->
+<!-- Linking JavaScript file here -->
 <script src="script.js"></script>
 
 </body>
