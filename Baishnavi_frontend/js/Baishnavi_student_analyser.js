@@ -106,7 +106,7 @@ students.forEach(student => {
  
 });
 
-//Functipn to get the highest marks subject-wise
+//Function to get the highest marks subject-wise
 function getSubjectWiseHighest(students) {
   const highestScores = {};
 
