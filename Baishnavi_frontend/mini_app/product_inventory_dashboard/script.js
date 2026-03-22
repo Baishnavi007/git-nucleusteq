@@ -122,7 +122,6 @@ function applyFilters() {
         }
     }
 
-    // Sorting logic
     const sortOption = document.getElementById("sort").value;
 
     if (sortOption === "priceLow") {
@@ -150,11 +149,65 @@ function applyFilters() {
     updateAnalytics();
 }
 
+// Add product function
+function addProduct(event) {
+
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const price = parseFloat(document.getElementById("price").value);
+    const stock = parseInt(document.getElementById("stock").value);
+    const category = document.getElementById("category").value;
+
+    if (name === "") {
+        alert("Product name cannot be empty");
+        return;
+    }
+
+    if (price <= 0) {
+        alert("Price must be greater than 0");
+        return;
+    }
+
+    if (stock < 0) {
+        alert("Stock cannot be negative");
+        return;
+    }
+
+    if (category === "") {
+        alert("Please select a category");
+        return;
+    }
+
+    let newId = 1;
+    if (products.length > 0) {
+        newId = products[products.length - 1].id + 1;
+    }
+
+    const newProduct = {
+        id: newId,
+        name: name,
+        price: price,
+        stock: stock,
+        category: category
+    };
+
+    products.push(newProduct);
+
+    filteredProducts = [...products];
+
+    renderProducts();
+    updateAnalytics();
+
+    document.getElementById("productForm").reset();
+}
+
 // Event listeners
 document.getElementById("search").addEventListener("input", applyFilters);
 document.getElementById("categoryFilter").addEventListener("change", applyFilters);
 document.getElementById("lowStock").addEventListener("change", applyFilters);
 document.getElementById("sort").addEventListener("change", applyFilters);
+document.getElementById("productForm").addEventListener("submit", addProduct);
 
 // Initial load
 loadCategories();
