@@ -118,6 +118,7 @@ On clicking it, the product is removed from both UI and data.
 
 All data is saved in localStorage.
 So even after refreshing the page, products remain the same.
+![Local Storage](Screenshots/image11.png)
 
 ---
 

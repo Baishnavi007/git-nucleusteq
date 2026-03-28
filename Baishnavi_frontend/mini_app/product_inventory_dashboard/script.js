@@ -207,6 +207,12 @@ function addProduct(event) {
 // Delete product
 function deleteProduct(id) {
 
+    const confirmDelete = confirm("Are you sure you want to delete this product?");
+
+    if (!confirmDelete) {
+        return; // stop if user clicks "Cancel"
+    }
+
     for (let i = 0; i < products.length; i++) {
         if (products[i].id === id) {
             products.splice(i, 1);
