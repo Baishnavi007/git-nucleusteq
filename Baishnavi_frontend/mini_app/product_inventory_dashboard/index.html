@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Inventory Dashboard</title>
+
+    <!-- Linking CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!--Header Section -->
+<header>
+    <h1>Product Inventory Dashboard</h1>
+</header>
+
+<!-- Controls Section -->
+<section id="controls">
+    <!-- This section contains search, filter and sorting options -->
+
+    <h2>Controls</h2>
+
+    <!-- Searching the product -->
+    <label for="search">Search Product:</label>
+    <input type="text" id="search" placeholder="Enter product name">
+
+    <br><br>
+
+    <!-- Category Filter -->
+    <label for="categoryFilter">Category:</label>
+    <select id="categoryFilter">
+        <option value="all">All Categories</option>
+    </select>
+
+    <br><br>
+
+    <!-- Low Stock Filter -->
+  
+    <label>
+        <input type="checkbox" id="lowStock">
+        Show Low Stock (less than 5)
+    </label>
+
+    <br><br>
+
+    <!-- Sorting Dropdown -->
+    <label for="sort">Sort By:</label>
+    <select id="sort">
+        <option value="default">Default</option>
+        <option value="priceLow">Price Low to High</option>
+        <option value="priceHigh">Price High to Low</option>
+        <option value="az">A - Z</option>
+        <option value="za">Z - A</option>
+    </select>
+</section>
+
+<!-- Analytics Section -->
+<section id="analytics">
+    <!-- Inventory summary is shown here -->
+
+    <h2>Inventory Analytics</h2>
+
+    <p>Total Products: <span id="totalProducts">0</span></p>
+    <p>Total Inventory Value: ₹<span id="totalValue">0</span></p>
+    <p>Out of Stock: <span id="outOfStock">0</span></p>
+</section>
+
+<!-- Product Section -->
+<section id="productGrid">
+    <!--Displays all products -->
+
+    <h2>Products</h2>
+
+    <!-- Message when no products are available -->
+    <p id="noProducts" style="display: none;">
+        No products found
+    </p>
+
+    <!-- Container where products will be added dynamically -->
+    <div id="productsContainer">
+        
+    </div>
+</section>
+
+<!-- Add Product Section -->
+<section id="addProduct">
+    <!-- Form to add new product -->
+
+    <h2>Add Product</h2>
+
+    <form id="productForm">
+
+        <!-- Product Name -->
+        <label for="name">Product Name:</label>
+        <input type="text" id="name" required>
+
+        <!-- Price -->
+        <label for="price">Price:</label>
+        <input type="number" id="price" required>
+
+        <!-- Stock -->
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" required>
+
+        <!-- Category -->
+        <label for="category">Category:</label>
+        <select id="category" required>
+            <option value="">Select Category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="books">Books</option>
+            <option value="accessories">Accessories</option>
+        </select>
+
+        <br><br>
+
+        <!-- Submit button -->
+        <input type="submit" value="Add Product">
+
+    </form>
+</section>
+
+<!-- Linking JavaScript file here -->
+<script src="script.js"></script>
+
+</body>
+</html>

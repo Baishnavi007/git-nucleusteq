@@ -1,0 +1,247 @@
+/* ===== Global Styling ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Setting a common font, background color and text readability for the entire page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ===== Header Styling ===== */
+
+/* Centering the header content and giving it a strong background color for identity */
+header {
+    text-align: center;
+    background-color: #4a90e2;
+    color: white;
+    padding: 20px;
+}
+
+/* Making profile image circular for a cleaner and modern look */
+header img {
+    border-radius: 50%;
+    margin-top: 10px;
+}
+
+/* ===== Navigation Styling ===== */
+
+/* Navbar container */
+
+/* Using flexbox to align navigation items horizontally */
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    background-color: #333;
+}
+
+/* Each item */
+nav ul li {
+    margin: 10px;
+}
+
+/* Links */
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+/* Hover effect */
+nav ul li a:hover {
+    background-color: #4a90e2;
+    border-radius: 5px;
+}
+
+/* ===== Section Styling ===== */
+
+/* Giving each section a card-like appearance using spacing, background and shadow */
+section {
+    padding: 20px;
+    margin: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* ===== Skills Styling ===== */
+
+#skills ul {
+    margin-top: 10px;
+    line-height: 1.8;
+}
+
+#skills h3 {
+    margin-top: 15px;
+    color: #4a90e2;
+}
+
+#skills li {
+    margin-left: 20px;
+}
+
+/* ===== Table Styling ===== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #4a90e2;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Alternate row styling */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* ===== Projects Styling ===== */
+
+#projects li {
+    margin-bottom: 15px;
+}
+
+#projects a {
+    color: #4a90e2;
+    text-decoration: none;
+    transition: 0.3s;/*for smooth hover transition */
+}
+
+#projects a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* ===== Form Styling ===== */
+
+form {
+    margin-top: 10px;
+}
+
+form label {
+    display: block;
+    margin-top: 10px;
+}
+
+form input,
+form textarea,
+form select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="submit"] {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #357abd;
+}
+
+/* ===== Fix Radio & Checkbox Layout ===== */
+
+/* Preventing radio buttons and checkboxes from stretching */
+form input[type="radio"],
+form input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+form input[type="radio"] + label,
+form input[type="checkbox"] + label {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+/* ===== Footer Styling ===== */
+
+footer {
+    text-align: center;
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: #4a90e2;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Responsive Design ===== */
+
+/* Adjusting layout for smaller screens like mobile devices */
+@media (max-width: 768px) {
+
+     /* Stacking navigation vertically */
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    /* Sections spacing adjust */
+    section {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    /* Adjusting header font size */
+    header h1 {
+        font-size: 22px;
+    }
+
+    /* Form spacing adjust */
+    form input,
+    form textarea,
+    form select {
+        font-size: 14px;
+    }
+
+     /* Allowing table to scroll horizontally if needed */
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
