@@ -1,4 +1,4 @@
-package StringManipulation.main;
+package Baishnavi_java_training.session1.StringManipulation.main;
 
 import StringManipulation.service.ReverseString;
 import StringManipulation.service.CountVowelString;

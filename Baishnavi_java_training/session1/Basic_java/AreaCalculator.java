@@ -1,3 +1,4 @@
+package Baishnavi_java_training.session1.Basic_java;
 import java.util.Scanner;
 
 public class AreaCalculator {

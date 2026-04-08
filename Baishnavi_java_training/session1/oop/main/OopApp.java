@@ -1,4 +1,4 @@
-package main;
+package Baishnavi_java_training.session1.oop.main;
 
 import model.Student;
 import model.GraduateStudent;

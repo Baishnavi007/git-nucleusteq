@@ -1,4 +1,4 @@
-package StringManipulation.service;
+package Baishnavi_java_training.session1.StringManipulation.service;
 
 /*
  * Handles anagram checking
