@@ -1,4 +1,4 @@
-package model;
+package Baishnavi_java_training.session1.Arrays_java.model;
 
 public class ArrayData {
     private int[] numbers;

@@ -1,4 +1,4 @@
-package main;
+package Baishnavi_java_training.session1.Arrays_java.main;
 
 import model.ArrayData;
 import service.AverageCalculator;
