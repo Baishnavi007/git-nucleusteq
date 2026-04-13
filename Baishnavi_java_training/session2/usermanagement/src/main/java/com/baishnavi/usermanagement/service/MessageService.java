@@ -1,5 +1,6 @@
 package com.baishnavi.usermanagement.service;
 import com.baishnavi.usermanagement.component.MessageFormatter;
+import com.baishnavi.usermanagement.exception.InvalidMessageTypeException;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class MessageService {
 
         MessageFormatter formatter = formatterMap.get(type);
         if (formatter == null) {
-            throw new RuntimeException("Invalid message type: " + type);
+            throw new InvalidMessageTypeException(type);
         }
 
         return formatter.formatMessage();

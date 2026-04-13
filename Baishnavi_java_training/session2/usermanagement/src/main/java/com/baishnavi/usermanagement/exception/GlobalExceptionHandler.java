@@ -14,4 +14,8 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(InvalidMessageTypeException.class)
+    public ResponseEntity<String> handleInvalidMessageType(InvalidMessageTypeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
