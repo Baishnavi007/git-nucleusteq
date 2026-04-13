@@ -1,5 +1,6 @@
 package com.baishnavi.usermanagement.service;
 
+import com.baishnavi.usermanagement.exception.UserNotFoundException;
 import com.baishnavi.usermanagement.model.User;
 import com.baishnavi.usermanagement.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,6 @@ public class UserService {
 
         // Handling the case when user is not found
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 }
