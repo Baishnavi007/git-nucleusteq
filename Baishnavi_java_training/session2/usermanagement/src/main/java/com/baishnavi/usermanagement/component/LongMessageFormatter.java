@@ -7,6 +7,6 @@ public class LongMessageFormatter implements MessageFormatter {
 
     @Override
     public String formatMessage() {
-        return "This is a detailed long message for the user.";
+        return "Hi, your request has been processed successfully. Let us know if you need anything else.";
     }
 }

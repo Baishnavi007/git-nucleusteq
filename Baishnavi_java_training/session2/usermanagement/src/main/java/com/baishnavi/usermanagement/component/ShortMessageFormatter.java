@@ -8,6 +8,6 @@ public class ShortMessageFormatter implements MessageFormatter {
 
     @Override
     public String formatMessage() {
-        return "Short Message!";
+        return "Request Processed!";
     }
 }
