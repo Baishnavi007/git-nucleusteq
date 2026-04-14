@@ -19,7 +19,7 @@ public class MessageService {
     //Get message based on type
     public String getMessage(String type) {
 
-        MessageFormatter formatter = formatterMap.get(type);
+        MessageFormatter formatter = formatterMap.get(type.toUpperCase());
         if (formatter == null) {
             throw new InvalidMessageTypeException(type);
         }
