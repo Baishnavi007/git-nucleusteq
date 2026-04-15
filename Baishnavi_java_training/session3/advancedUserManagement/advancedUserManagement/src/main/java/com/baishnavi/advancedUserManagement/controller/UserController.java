@@ -18,6 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     // Search API with filters
     @GetMapping("/search")
     public List<User> searchUsers(
@@ -26,5 +27,17 @@ public class UserController {
             @RequestParam(required = false) String role
     ) {
         return userService.searchUsers(name, age, role);
+    }
+    @PostMapping("/submit")
+    @ResponseStatus(org.springframework.http.HttpStatus.CREATED)
+    public String submitUser(@RequestBody User user) {
+
+        // Basic validation
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
+            throw new RuntimeException("Name is required");
+        }
+
+        userService.addUser(user);
+        return "User created successfully";
     }
 }
