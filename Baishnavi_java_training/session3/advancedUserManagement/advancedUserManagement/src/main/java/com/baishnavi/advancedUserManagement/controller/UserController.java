@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// Controller layer: handles the API requests
-@RestController // returns JSON response
+// Controller layer: handles API requests
+@RestController
 @RequestMapping("/users")
 public class UserController {
 
@@ -18,10 +18,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Basic API (for now returns all users)
+    // Search API with filters
     @GetMapping("/search")
-    public List<User> getUsers() {
-
-        return userService.getAllUsers();
+    public List<User> searchUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) String role
+    ) {
+        return userService.searchUsers(name, age, role);
     }
 }
