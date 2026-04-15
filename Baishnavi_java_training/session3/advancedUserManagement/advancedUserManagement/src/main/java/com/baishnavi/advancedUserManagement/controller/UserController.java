@@ -8,21 +8,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// Controller layer: handles incoming HTTP requests and sends responses
+// Controller layer: Handles HTTP requests and returns responses
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
-    // Constructor Injection (Dependency Injection)
+    // Constructor-based Dependency Injection
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // GET API → Search users with optional filters
-    // If no parameters → returns all users
-    // If parameters provided → filters based on conditions
+    // GET API: Search users based on optional filters
+    // If no parameters are provided,returns all users
+    // If parameters are provided,filters users accordingly
     @GetMapping("/search")
     public List<User> searchUsers(
             @RequestParam(required = false) String name,
@@ -32,9 +32,9 @@ public class UserController {
         return userService.searchUsers(name, age, role);
     }
 
-    // POST API → Add a new user
+    // POST API: Add a new user
     // Accepts JSON input using @RequestBody
-    // Returns 201 status if user is created successfully
+    // Returns 201 (CREATED) on successful creation
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.CREATED)
     public String submitUser(@RequestBody User user) {
@@ -51,12 +51,39 @@ public class UserController {
 
         // Validate role (must not be null or empty)
         if (user.getRole() == null || user.getRole().trim().isEmpty()) {
+
             throw new BadRequestException("Role is required");
         }
-
-        // Call service layer to save user
+        // Delegate user creation to service layer
         userService.addUser(user);
 
         return "User created successfully";
+    }
+
+
+    // DELETE API: Delete user only if confirm=true. If confirm is missing or false, do not delete
+    @DeleteMapping("/{id}")
+    public String deleteUser(
+            @PathVariable int id,
+            @RequestParam(required = false) Boolean confirm
+    ) {
+
+
+        // Check confirmation before deleting
+        if (confirm == null || !confirm) {
+            return "Confirmation required";
+        }
+
+
+        // Call service layer to delete user
+        boolean deleted = userService.deleteUser(id);
+
+
+        // Return appropriate response
+        if (deleted) {
+            return "User deleted successfully";
+        } else {
+            return "User not found";
+        }
     }
 }
