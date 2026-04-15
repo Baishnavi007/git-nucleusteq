@@ -1,10 +1,10 @@
-package com.baishnavi.userqueryengine;
+package com.baishnavi.advancedUserManagement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserqueryengineApplicationTests {
+class AdvancedUserManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
