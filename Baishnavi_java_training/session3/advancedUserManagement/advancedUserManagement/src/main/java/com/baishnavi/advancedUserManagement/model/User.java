@@ -8,9 +8,18 @@ public class User {
     private int age;
     private String role;
 
-    // Constructor (important for object creation)
+    public User() {
+    }
+    // Constructor
     public User(int id, String name, int age, String role) {
         this.id = id;
+        this.name = name;
+        this.age = age;
+        this.role = role;
+    }
+
+    // Added constructor
+    public User(String name, int age, String role) {
         this.name = name;
         this.age = age;
         this.role = role;
