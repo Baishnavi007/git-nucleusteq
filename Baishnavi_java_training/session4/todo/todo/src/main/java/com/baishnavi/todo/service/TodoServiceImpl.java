@@ -1,9 +1,12 @@
 package com.baishnavi.todo.service;
+
 import com.baishnavi.todo.dto.TodoDTO;
 import com.baishnavi.todo.entity.Todo;
+import com.baishnavi.todo.exception.InvalidStatusException;
 import com.baishnavi.todo.exception.ResourceNotFoundException;
 import com.baishnavi.todo.repository.TodoRepository;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,11 +31,11 @@ public class TodoServiceImpl implements TodoService {
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
 
-        // Set default status if not provided
+        // Set default status if not provided, else validate and set
         if (dto.getStatus() == null) {
             todo.setStatus(Todo.Status.PENDING);
         } else {
-            todo.setStatus(Todo.Status.valueOf(dto.getStatus()));
+            todo.setStatus(parseStatus(dto.getStatus()));
         }
 
         // Set system-generated timestamp
@@ -58,7 +61,8 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoDTO getTodoById(Long id) {
         Todo todo = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Todo not found with id: " + id));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Todo not found with id: " + id));
 
         return mapToDTO(todo);
     }
@@ -67,15 +71,16 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoDTO updateTodo(Long id, TodoDTO dto) {
         Todo todo = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Todo not found with id: " + id));
 
         // Update fields
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
 
-        // Update status only if provided
+        // Update status only if provided (with validation)
         if (dto.getStatus() != null) {
-            todo.setStatus(Todo.Status.valueOf(dto.getStatus()));
+            todo.setStatus(parseStatus(dto.getStatus()));
         }
 
         // Save updated entity
@@ -100,5 +105,14 @@ public class TodoServiceImpl implements TodoService {
         dto.setDescription(todo.getDescription());
         dto.setStatus(todo.getStatus().name());
         return dto;
+    }
+
+    // Parses and validates status string into Enum, throws custom exception if invalid
+    private Todo.Status parseStatus(String status) {
+        try {
+            return Todo.Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidStatusException("Invalid status value: " + status);
+        }
     }
 }
