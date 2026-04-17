@@ -1,10 +1,9 @@
 package com.baishnavi.todo.service;
-
 import com.baishnavi.todo.dto.TodoDTO;
 import com.baishnavi.todo.entity.Todo;
+import com.baishnavi.todo.exception.ResourceNotFoundException;
 import com.baishnavi.todo.repository.TodoRepository;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoDTO getTodoById(Long id) {
         Todo todo = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Todo not found with id: " + id));
 
         return mapToDTO(todo);
     }
@@ -89,7 +88,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public void deleteTodo(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Todo not found");
+            throw new ResourceNotFoundException("Todo not found with id: " + id);
         }
         repository.deleteById(id);
     }
