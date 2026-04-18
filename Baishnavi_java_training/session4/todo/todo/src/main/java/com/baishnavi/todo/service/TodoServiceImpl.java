@@ -17,12 +17,12 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
 
-    // Constructor Injection (Spring injects repository automatically)
+    // Constructor Injection
     public TodoServiceImpl(TodoRepository repository) {
         this.repository = repository;
     }
 
-    // Creates a new Todo by converting DTO to Entity, setting default values, and saving to DB
+    // Creates a new Todo
     @Override
     public TodoDTO createTodo(TodoDTO dto) {
 
@@ -31,7 +31,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
 
-        // Set default status if not provided, else validate and set
+        // Default status or validate provided status
         if (dto.getStatus() == null) {
             todo.setStatus(Todo.Status.PENDING);
         } else {
@@ -41,14 +41,14 @@ public class TodoServiceImpl implements TodoService {
         // Set system-generated timestamp
         todo.setCreatedAt(LocalDateTime.now());
 
-        // Save entity to database
+        // Save to DB
         Todo savedTodo = repository.save(todo);
 
-        // Convert saved entity back to DTO and return
+        // Convert back to DTO
         return mapToDTO(savedTodo);
     }
 
-    // Fetches all Todos from DB and converts them to DTO list
+    // Fetch all Todos
     @Override
     public List<TodoDTO> getAllTodos() {
         return repository.findAll()
@@ -57,7 +57,7 @@ public class TodoServiceImpl implements TodoService {
                 .collect(Collectors.toList());
     }
 
-    // Retrieves a Todo by ID, throws exception if not found
+    // Get Todo by ID
     @Override
     public TodoDTO getTodoById(Long id) {
         Todo todo = repository.findById(id)
@@ -67,18 +67,18 @@ public class TodoServiceImpl implements TodoService {
         return mapToDTO(todo);
     }
 
-    // Updates an existing Todo with new values from DTO
+    // Update Todo
     @Override
     public TodoDTO updateTodo(Long id, TodoDTO dto) {
         Todo todo = repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Todo not found with id: " + id));
 
-        // Update fields
+        // Update basic fields
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
 
-        // Update status only if provided (with validation)
+        // Update status if provided (validated)
         if (dto.getStatus() != null) {
             todo.setStatus(parseStatus(dto.getStatus()));
         }
@@ -89,7 +89,7 @@ public class TodoServiceImpl implements TodoService {
         return mapToDTO(updatedTodo);
     }
 
-    // Deletes a Todo by ID after checking existence
+    // Delete Todo
     @Override
     public void deleteTodo(Long id) {
         if (!repository.existsById(id)) {
@@ -98,7 +98,7 @@ public class TodoServiceImpl implements TodoService {
         repository.deleteById(id);
     }
 
-    // Converts Entity to DTO (manual mapping as required)
+    // Convert Entity → DTO
     private TodoDTO mapToDTO(Todo todo) {
         TodoDTO dto = new TodoDTO();
         dto.setTitle(todo.getTitle());
@@ -107,12 +107,22 @@ public class TodoServiceImpl implements TodoService {
         return dto;
     }
 
-    // Parses and validates status string into Enum, throws custom exception if invalid
+    // Parse and validate status with detailed error message
     private Todo.Status parseStatus(String status) {
         try {
             return Todo.Status.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidStatusException("Invalid status value: " + status);
+
+            // Dynamically fetch allowed enum values
+            String allowedValues = String.join(", ",
+                    java.util.Arrays.stream(Todo.Status.values())
+                            .map(Enum::name)
+                            .toList());
+
+            throw new InvalidStatusException(
+                    "Invalid status value: " + status +
+                            ". Allowed values are: " + allowedValues
+            );
         }
     }
 }
