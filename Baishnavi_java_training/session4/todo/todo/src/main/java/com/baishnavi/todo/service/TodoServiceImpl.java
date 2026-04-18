@@ -3,6 +3,7 @@ package com.baishnavi.todo.service;
 import com.baishnavi.todo.dto.TodoDTO;
 import com.baishnavi.todo.entity.Todo;
 import com.baishnavi.todo.exception.InvalidStatusException;
+import com.baishnavi.todo.exception.InvalidStatusTransitionException;
 import com.baishnavi.todo.exception.ResourceNotFoundException;
 import com.baishnavi.todo.repository.TodoRepository;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
 
-        // Default status or validate provided status
+        // Set default status or validate provided status
         if (dto.getStatus() == null) {
             todo.setStatus(Todo.Status.PENDING);
         } else {
@@ -44,7 +45,7 @@ public class TodoServiceImpl implements TodoService {
         // Save to DB
         Todo savedTodo = repository.save(todo);
 
-        // Convert back to DTO
+        // Return DTO
         return mapToDTO(savedTodo);
     }
 
@@ -80,7 +81,12 @@ public class TodoServiceImpl implements TodoService {
 
         // Update status if provided (validated)
         if (dto.getStatus() != null) {
-            todo.setStatus(parseStatus(dto.getStatus()));
+            Todo.Status newStatus = parseStatus(dto.getStatus());
+
+            // Validate status transition before updating (for future scalability)
+            validateStatusTransition(todo.getStatus(), newStatus);
+
+            todo.setStatus(newStatus);
         }
 
         // Save updated entity
@@ -113,7 +119,6 @@ public class TodoServiceImpl implements TodoService {
             return Todo.Status.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
 
-            // Dynamically fetch allowed enum values
             String allowedValues = String.join(", ",
                     java.util.Arrays.stream(Todo.Status.values())
                             .map(Enum::name)
@@ -124,5 +129,25 @@ public class TodoServiceImpl implements TodoService {
                             ". Allowed values are: " + allowedValues
             );
         }
+    }
+
+    // Validates allowed status transitions
+    // Currently allows toggling between PENDING and COMPLETED
+    // Added for future scalability (in case more statuses are introduced)
+    private void validateStatusTransition(Todo.Status current, Todo.Status newStatus) {
+
+        if (current == newStatus) {
+            return; // no change, allowed
+        }
+
+        // Allowed transitions: PENDING ↔ COMPLETED
+        if ((current == Todo.Status.PENDING && newStatus == Todo.Status.COMPLETED) ||
+                (current == Todo.Status.COMPLETED && newStatus == Todo.Status.PENDING)) {
+            return;
+        }
+
+        throw new InvalidStatusTransitionException(
+                "Invalid status transition from " + current + " to " + newStatus
+        );
     }
 }
