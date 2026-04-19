@@ -1,5 +1,7 @@
 package com.baishnavi.todo.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.baishnavi.todo.dto.TodoDTO;
 import com.baishnavi.todo.entity.Todo;
 import com.baishnavi.todo.exception.InvalidStatusException;
@@ -18,6 +20,9 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
 
+    // Logger for logging important events
+    private static final Logger logger = LoggerFactory.getLogger(TodoServiceImpl.class);
+
     // Constructor Injection
     public TodoServiceImpl(TodoRepository repository) {
         this.repository = repository;
@@ -26,6 +31,9 @@ public class TodoServiceImpl implements TodoService {
     // Creates a new Todo
     @Override
     public TodoDTO createTodo(TodoDTO dto) {
+
+        // Log creation request
+        logger.info("Creating new Todo with title: {}", dto.getTitle());
 
         // Convert DTO → Entity
         Todo todo = new Todo();
@@ -45,13 +53,17 @@ public class TodoServiceImpl implements TodoService {
         // Save to DB
         Todo savedTodo = repository.save(todo);
 
-        // Return DTO
+        // Log after successful creation
+        logger.info("Todo created successfully with ID: {}", savedTodo.getId());
+
         return mapToDTO(savedTodo);
     }
 
     // Fetch all Todos
     @Override
     public List<TodoDTO> getAllTodos() {
+        logger.info("Fetching all Todos");
+
         return repository.findAll()
                 .stream()
                 .map(this::mapToDTO)
@@ -61,6 +73,10 @@ public class TodoServiceImpl implements TodoService {
     // Get Todo by ID
     @Override
     public TodoDTO getTodoById(Long id) {
+
+        // Log before fetching
+        logger.info("Fetching Todo with ID: {}", id);
+
         Todo todo = repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Todo not found with id: " + id));
@@ -71,6 +87,9 @@ public class TodoServiceImpl implements TodoService {
     // Update Todo
     @Override
     public TodoDTO updateTodo(Long id, TodoDTO dto) {
+
+        logger.info("Updating Todo with ID: {}", id);
+
         Todo todo = repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Todo not found with id: " + id));
@@ -83,7 +102,7 @@ public class TodoServiceImpl implements TodoService {
         if (dto.getStatus() != null) {
             Todo.Status newStatus = parseStatus(dto.getStatus());
 
-            // Validate status transition before updating (for future scalability)
+            // Validate status transition before updating
             validateStatusTransition(todo.getStatus(), newStatus);
 
             todo.setStatus(newStatus);
@@ -92,16 +111,26 @@ public class TodoServiceImpl implements TodoService {
         // Save updated entity
         Todo updatedTodo = repository.save(todo);
 
+        logger.info("Todo updated successfully with ID: {}", id);
+
         return mapToDTO(updatedTodo);
     }
 
     // Delete Todo
     @Override
     public void deleteTodo(Long id) {
+
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Todo not found with id: " + id);
         }
+
+        // Log before deletion
+        logger.warn("Deleting Todo with ID: {}", id);
+
         repository.deleteById(id);
+
+        // Log after deletion
+        logger.info("Todo deleted successfully with ID: {}", id);
     }
 
     // Convert Entity → DTO
@@ -113,7 +142,7 @@ public class TodoServiceImpl implements TodoService {
         return dto;
     }
 
-    // Parse and validate status with detailed error message
+    // Parse and validate status
     private Todo.Status parseStatus(String status) {
         try {
             return Todo.Status.valueOf(status.toUpperCase());
@@ -131,16 +160,11 @@ public class TodoServiceImpl implements TodoService {
         }
     }
 
-    // Validates allowed status transitions
-    // Currently allows toggling between PENDING and COMPLETED
-    // Added for future scalability (in case more statuses are introduced)
+    // Validate allowed transitions (future scalability)
     private void validateStatusTransition(Todo.Status current, Todo.Status newStatus) {
 
-        if (current == newStatus) {
-            return; // no change, allowed
-        }
+        if (current == newStatus) return;
 
-        // Allowed transitions: PENDING ↔ COMPLETED
         if ((current == Todo.Status.PENDING && newStatus == Todo.Status.COMPLETED) ||
                 (current == Todo.Status.COMPLETED && newStatus == Todo.Status.PENDING)) {
             return;
