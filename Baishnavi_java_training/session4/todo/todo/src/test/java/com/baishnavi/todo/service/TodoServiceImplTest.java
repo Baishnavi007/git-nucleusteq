@@ -80,4 +80,20 @@ public class TodoServiceImplTest {
         // ASSERT
         assertEquals("Sample Task", result.getTitle());
     }
+    // Tests whether deleteTodo() deletes data when ID exists
+    @Test
+    void testDeleteTodo() {
+
+        // ------------------- ARRANGE -------------------
+        // Mocking: ID exists in database
+        when(repository.existsById(1L)).thenReturn(true);
+
+        // ------------------- ACT -------------------
+        // Calling delete method
+        service.deleteTodo(1L);
+
+        // ------------------- ASSERT -------------------
+        // Verifying deleteById() was called once
+        verify(repository, times(1)).deleteById(1L);
+    }
 }
