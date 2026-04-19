@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 // This class is used to test TodoServiceImpl methods
@@ -95,5 +96,19 @@ public class TodoServiceImplTest {
         // ------------------- ASSERT -------------------
         // Verifying deleteById() was called once
         verify(repository, times(1)).deleteById(1L);
+    }
+    // Tests whether getTodoById() throws exception when ID does not exist
+    @Test
+    void testGetTodoByIdNotFound() {
+
+        // ------------------- ARRANGE -------------------
+        // Mocking: ID not found in database
+        when(repository.findById(1L)).thenReturn(java.util.Optional.empty());
+
+        // ------------------- ACT + ASSERT -------------------
+        // Expecting exception to be thrown
+        assertThrows(RuntimeException.class, () -> {
+            service.getTodoById(1L);
+        });
     }
 }
