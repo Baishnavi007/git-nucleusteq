@@ -33,40 +33,51 @@ public class TodoServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // ------------------- TEST CASE -------------------
-
+    // ------------------- TEST CASE 1 -------------------
     // Tests whether createTodo() correctly saves data and triggers notification
     @Test
     void testCreateTodo() {
 
-        // ------------------- ARRANGE -------------------
-        // Creating input DTO (simulating user request)
+        // ARRANGE
         TodoDTO dto = new TodoDTO();
         dto.setTitle("Test Task");
 
-
-        // Creating fake saved entity (simulating DB response)
         Todo savedTodo = new Todo();
         savedTodo.setId(1L);
         savedTodo.setTitle("Test Task");
         savedTodo.setStatus(Todo.Status.PENDING);
 
-        // Mocking repository behavior: When save() is called just return savedTodo
         when(repository.save(any(Todo.class))).thenReturn(savedTodo);
 
-        // ------------------- ACT -------------------
-        // Calling actual service method
+        // ACT
         TodoDTO result = service.createTodo(dto);
 
-        // ------------------- ASSERT -------------------
-        // Checking if returned result is correct
+        // ASSERT
         assertEquals("Test Task", result.getTitle());
-
-        // Verifying repository.save() was called exactly once
         verify(repository, times(1)).save(any(Todo.class));
-
-        // Verifying notification service was called
         verify(notificationServiceClient, times(1))
                 .sendNotification(anyString());
+    }
+
+    // ------------------- TEST CASE 2 -------------------
+    // Tests whether getTodoById() returns correct data when todo exists
+    @Test
+    void testGetTodoById() {
+
+        // ARRANGE
+        Todo todo = new Todo();
+        todo.setId(1L);
+        todo.setTitle("Sample Task");
+
+        // 🔥 FIX: status must be set (warna NPE aayega)
+        todo.setStatus(Todo.Status.PENDING);
+
+        when(repository.findById(1L)).thenReturn(java.util.Optional.of(todo));
+
+        // ACT
+        TodoDTO result = service.getTodoById(1L);
+
+        // ASSERT
+        assertEquals("Sample Task", result.getTitle());
     }
 }
