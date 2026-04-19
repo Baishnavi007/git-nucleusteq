@@ -20,12 +20,17 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
 
+    // NEW: Injecting external notification service
+    private final NotificationServiceClient notificationServiceClient;
+
     // Logger for logging important events
     private static final Logger logger = LoggerFactory.getLogger(TodoServiceImpl.class);
 
-    // Constructor Injection
-    public TodoServiceImpl(TodoRepository repository) {
+    // Constructor Injection (updated to include NotificationServiceClient)
+    public TodoServiceImpl(TodoRepository repository,
+                           NotificationServiceClient notificationServiceClient) {
         this.repository = repository;
+        this.notificationServiceClient = notificationServiceClient;
     }
 
     // Creates a new Todo
@@ -35,7 +40,7 @@ public class TodoServiceImpl implements TodoService {
         // Log creation request
         logger.info("Creating new Todo with title: {}", dto.getTitle());
 
-        // Convert DTO → Entity
+        // Convert DTO to Entity
         Todo todo = new Todo();
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
@@ -56,8 +61,12 @@ public class TodoServiceImpl implements TodoService {
         // Log after successful creation
         logger.info("Todo created successfully with ID: {}", savedTodo.getId());
 
+        // NEW: Simulating external service call (Notification sent shown )
+        notificationServiceClient.sendNotification("Notification sent for new TODO");
+
         return mapToDTO(savedTodo);
     }
+
 
     // Fetch all Todos
     @Override
@@ -133,7 +142,7 @@ public class TodoServiceImpl implements TodoService {
         logger.info("Todo deleted successfully with ID: {}", id);
     }
 
-    // Convert Entity → DTO
+    // Convert Entity to DTO
     private TodoDTO mapToDTO(Todo todo) {
         TodoDTO dto = new TodoDTO();
         dto.setTitle(todo.getTitle());
