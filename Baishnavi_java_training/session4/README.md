@@ -161,7 +161,7 @@ Service layer tested using mocks.
 
 ## 🔹 API Testing (Postman)
 
-![Postman](screenshots/postman.png)
+![Postman](Screenshots/postman.png)
 
 ---
 
@@ -196,6 +196,7 @@ Service layer tested using mocks.
 }
 
 🧠 Concepts Demonstrated
+
 Inversion of Control (IoC)
 Dependency Injection
 Layered Architecture
