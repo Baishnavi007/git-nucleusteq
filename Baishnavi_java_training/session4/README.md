@@ -1,202 +1,199 @@
-# 📝 TODO Application (Spring Boot)
+📝 TODO Application (Spring Boot)
 
-A RESTful TODO management application built using **Spring Boot** following a clean layered architecture.  
-This project demonstrates backend development concepts such as **DTO pattern, validation, logging, exception handling, external service simulation, and unit testing using Mockito**.
-
----
-
-## 🚀 Tech Stack
-
-- Java 17  
-- Spring Boot  
-- Spring Data JPA (Hibernate)  
-- H2 In-Memory Database  
-- Maven  
-- JUnit 5  
-- Mockito  
-- SLF4J (Logging)  
+A RESTful TODO management application built using Spring Boot, following a clean layered architecture.
+This project demonstrates backend development concepts such as DTO pattern, validation, logging, exception handling, external service simulation, and unit testing using Mockito.
 
 ---
 
-## 📌 Key Features
-
-### ✅ CRUD APIs
-- Create TODO  
-- Get All TODOs  
-- Get TODO by ID  
-- Update TODO  
-- Delete TODO  
+🚀 Tech Stack
+Java 17
+Spring Boot
+Spring Data JPA (Hibernate)
+H2 In-Memory Database
+Maven
+JUnit 5
+Mockito
+SLF4J (Logging)
 
 ---
 
-### ✅ Layered Architecture
+📌 Key Features
+✅ CRUD APIs
+Create TODO
+Get All TODOs
+Get TODO by ID
+Update TODO
+Delete TODO
 
-The application follows a strict:
+--- 
+
+✅ Layered Architecture
 Controller → Service → Repository
-
-- Controller handles HTTP requests  
-- Service contains business logic  
-- Repository interacts with database  
-
+Controller handles HTTP requests
+Service contains business logic
+Repository interacts with database
 
 ---
 
-## 📌 Project Structure
+📁 Project Structure
 java/session4/todo/
 
 ├── src/
 │   ├── main/java/com/baishnavi/todo/
-│   │   ├── TodoApplication.java              ← Entry point
+│   │   ├── TodoApplication.java
 │   │
 │   │   ├── controller/
-│   │   │   └── TodoController.java           ← REST API layer (CRUD endpoints + logging)
+│   │   │   └── TodoController.java
 │   │
 │   │   ├── service/
-│   │   │   ├── TodoService.java              ← Interface (abstraction)
-│   │   │   ├── TodoServiceImpl.java          ← Business logic + logging
-│   │   │   └── NotificationServiceClient.java ← Simulated external service
+│   │   │   ├── TodoService.java
+│   │   │   ├── TodoServiceImpl.java
+│   │   │   └── NotificationServiceClient.java
 │   │
 │   │   ├── repository/
-│   │   │   └── TodoRepository.java           ← JPA Repository (DB operations)
+│   │   │   └── TodoRepository.java
 │   │
 │   │   ├── entity/
-│   │   │   └── Todo.java                     ← JPA Entity (maps to DB table)
+│   │   │   └── Todo.java
 │   │
 │   │   ├── dto/
-│   │   │   └── TodoDTO.java                  ← Request/Response model + validation
+│   │   │   └── TodoDTO.java
 │   │
 │   │   ├── exception/
-│   │   │   ├── GlobalExceptionHandler.java   ← Handles all exceptions globally
+│   │   │   ├── GlobalExceptionHandler.java
 │   │   │   ├── ResourceNotFoundException.java
 │   │   │   ├── InvalidStatusException.java
 │   │   │   └── InvalidStatusTransitionException.java
 │   │
 │   │   └── resources/
-│   │       └── application.properties        ← App configuration (H2, etc.)
+│   │       └── application.properties
 │
-│   └── test/java/com/baishnavi/todo/service/
-│       └── TodoServiceImplTest.java          ← Unit tests for service layer (4 tests)
+│   └── test/java/com/baishnavi/todo/
+│       ├── service/
+│       │   └── TodoServiceImplTest.java
+│       └── controller/
+│           └── TodoControllerTest.java
 │
-└── pom.xml                                  ← Maven dependencies
----
-
-
-### ✅ DTO Pattern
-
-- Entity is **not exposed directly**  
-- DTO used for request/response  
-- Manual mapping implemented  
+└── pom.xml
 
 ---
 
-### ✅ Validation
+📌 Core Concepts
 
-- `@NotNull` → Title cannot be null  
-- `@Size(min = 3)` → Minimum length validation  
-- Applied using `@Valid`  
+🔹 DTO Pattern
+Entity is not exposed directly
+DTO used for request/response
+Manual mapping implemented
 
----
+🔹 Validation
+@NotNull → Title cannot be null
+@Size(min = 3) → Minimum length validation
+Applied using @Valid
 
-### ✅ Logging (SLF4J)
-
+🔹 Logging (SLF4J)
 Logging implemented in:
+Controller layer (API logs)
+Service layer (business logic logs)
 
-- Controller layer (API logs)  
-- Service layer (business logic logs)  
-
-Example:
-
+Example Logs:
+![Alt text](logs.png)
 API call: Create Todo
 Creating new Todo with title: Test Task
 Todo created successfully with ID: 1
 Notification sent: Notification sent for new TODO
 
 
----
-
-### ✅ Exception Handling
+🔹 Exception Handling
 
 Custom exceptions:
 
-- ResourceNotFoundException  
-- InvalidStatusException  
-- InvalidStatusTransitionException  
+ResourceNotFoundException
+InvalidStatusException
+InvalidStatusTransitionException
 
 Handled using:
 
-- `@RestControllerAdvice (GlobalExceptionHandler)`
+@RestControllerAdvice (GlobalExceptionHandler)
+🔹 Status Handling
 
----
+Allowed values:
 
-### ✅ External Service Simulation
+PENDING
+COMPLETED
 
-- `NotificationServiceClient`  
-- Simulates external API call  
-- Triggered on TODO creation  
+Valid transitions:
 
----
+PENDING → COMPLETED
+COMPLETED → PENDING
 
-### ✅ Unit Testing (JUnit + Mockito)
+Invalid transitions throw:
 
-Service layer tested using mocks.
+InvalidStatusTransitionException
+🔹 External Service Simulation
+NotificationServiceClient
+Simulates external API call
+Triggered on TODO creation
+🧪 Unit Testing
 
-#### ✔ Test Cases:
-- createTodo()  
-- getTodoById()  
-- deleteTodo()  
-- exception case (ID not found)  
+Testing is implemented using JUnit 5 + Mockito, covering both Controller and Service layers.
 
----
+🔹 Test Summary
+Layer	Test Class	No. of Tests
+Controller	TodoControllerTest	5 Tests
+Service	TodoServiceImplTest	6 Tests
+Total	—	11 Tests
+🔹 Controller Tests (TodoControllerTest)
 
-## 🗄️ Database
+Uses:
 
-- H2 In-Memory Database  
-- No external DB required  
+@WebMvcTest
+MockMvc
+Mocked TodoService
+✔ Test Cases:
+testCreateTodo()
+testGetAllTodos()
+testGetTodoById()
+testUpdateTodo()
+testDeleteTodo()
+🔹 Service Tests (TodoServiceImplTest)
 
-### Access Console:
+Uses:
 
----
+Mockito (@Mock, @InjectMocks)
+Repository mocked (no real DB)
+✔ Test Cases:
+testCreateTodo()
+testGetTodoById()
+testDeleteTodo()
+testGetTodoByIdNotFound()
+testUpdateTodo()
+testDeleteTodoNotFound()
+🔹 Testing Highlights
+Mocking dependencies using Mockito
+Isolated unit testing (no DB calls)
+Covers success and failure scenarios
+Verifies interactions using verify()
+🗄️ Database
+H2 In-Memory Database
+No external DB setup required
+📸 Screenshots
 
-# 📸 Screenshots
+Store images inside /screenshots folder
 
-## 🔹 API Testing (Postman)
-
-![Postman](Screenshots/postman.png)
-
----
-
-## 🔹 H2 Database
-
-![H2](screenshots/h2.png)
-
----
-
-## 🔹 Logs
-
-![Logs](screenshots/logs.png)
-
----
-
-## 🔹 Unit Tests
-
-![Tests](screenshots/tests.png)
-
----
-
-# 🧪 Sample API
-
-### Create TODO
-
-
-```json
+🔹 API Testing (Postman)
+5
+🔹 H2 Database
+🔹 Logs
+🔹 Unit Tests
+5
+🧪 Sample API
+Create TODO
 {
   "title": "Learn Spring Boot",
   "description": "Practice project",
   "status": "PENDING"
 }
-
 🧠 Concepts Demonstrated
-
 Inversion of Control (IoC)
 Dependency Injection
 Layered Architecture
@@ -209,7 +206,6 @@ Lombok not used (manual implementation)
 Clean architecture followed
 No business logic in controller
 In-memory DB used
-
 👩‍💻 Author
 
 Baishnavi Singh
