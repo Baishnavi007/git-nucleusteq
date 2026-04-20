@@ -37,7 +37,7 @@ Repository interacts with database
 
 📁 Project Structure
 
-![Alt text](projectstructure.png)
+![Alt text](Screenshots/projectstructure.png)
 ---
 
 📌 Core Concepts
@@ -58,7 +58,7 @@ Controller layer (API logs)
 Service layer (business logic logs)
 
 Example Logs:
-![Alt text](logs.png)
+![Alt text](Screenshots/logs.png)
 API call: Create Todo
 Creating new Todo with title: Test Task
 Todo created successfully with ID: 1
@@ -111,8 +111,8 @@ Testing is implemented using JUnit 5 + Mockito, covering both Controller and Ser
 Controller	TodoControllerTest	5 Tests
 Service	TodoServiceImplTest	6 Tests
 Total	—	11 Tests
-🔹 Controller Tests (TodoControllerTest)
 
+🔹 Controller Tests (TodoControllerTest)
 
 Uses:
 
@@ -130,7 +130,6 @@ testDeleteTodo()
 🔹 Service Tests (TodoServiceImplTest)
 
 Uses:
-
 Mockito (@Mock, @InjectMocks)
 Repository mocked (no real DB)
 ✔ Test Cases:
@@ -149,37 +148,12 @@ Isolated unit testing (no DB calls)
 Covers success and failure scenarios
 Verifies interactions using verify()
 
+![Alt text](Screenshots/tests.png)
 
 🗄️ Database
 H2 In-Memory Database
 No external DB setup required
-
-
-📸 Screenshots
-
-
-
-🔹 API Testing (Postman)
-![Alt text](postman.png)
-
-🔹 H2 Database
-![Alt text](h2.png)
-
-🔹 Logs
-![Alt text](logs.png)
-
-🔹 Unit Tests
-![Alt text](tests.png)
-
-
-
-🧪 Sample API
-Create TODO
-{
-  "title": "Learn Spring Boot",
-  "description": "Practice project",
-  "status": "PENDING"
-}
+![Alt text](Screenshots/h2.png)
 
 
 🧠 Concepts Demonstrated
