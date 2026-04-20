@@ -9,8 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 // This class is used to test TodoServiceImpl methods
@@ -35,11 +34,10 @@ public class TodoServiceImplTest {
     }
 
     // ------------------- TEST CASE 1 -------------------
-    // Tests whether createTodo() correctly saves data and triggers notification
+    // Tests createTodo() success
     @Test
     void testCreateTodo() {
 
-        // ARRANGE
         TodoDTO dto = new TodoDTO();
         dto.setTitle("Test Task");
 
@@ -50,65 +48,92 @@ public class TodoServiceImplTest {
 
         when(repository.save(any(Todo.class))).thenReturn(savedTodo);
 
-        // ACT
         TodoDTO result = service.createTodo(dto);
 
-        // ASSERT
         assertEquals("Test Task", result.getTitle());
+
         verify(repository, times(1)).save(any(Todo.class));
         verify(notificationServiceClient, times(1))
                 .sendNotification(anyString());
     }
 
     // ------------------- TEST CASE 2 -------------------
-    // Tests whether getTodoById() returns correct data when todo exists
+    // Tests getTodoById() success
     @Test
     void testGetTodoById() {
 
-        // ARRANGE
         Todo todo = new Todo();
         todo.setId(1L);
         todo.setTitle("Sample Task");
-
-        // 🔥 FIX: status must be set (warna NPE aayega)
-        todo.setStatus(Todo.Status.PENDING);
+        todo.setStatus(Todo.Status.PENDING); // IMPORTANT
 
         when(repository.findById(1L)).thenReturn(java.util.Optional.of(todo));
 
-        // ACT
         TodoDTO result = service.getTodoById(1L);
 
-        // ASSERT
         assertEquals("Sample Task", result.getTitle());
     }
-    // Tests whether deleteTodo() deletes data when ID exists
+
+    // ------------------- TEST CASE 3 -------------------
+    // Tests deleteTodo() success
     @Test
     void testDeleteTodo() {
 
-        // ------------------- ARRANGE -------------------
-        // Mocking: ID exists in database
         when(repository.existsById(1L)).thenReturn(true);
 
-        // ------------------- ACT -------------------
-        // Calling delete method
         service.deleteTodo(1L);
 
-        // ------------------- ASSERT -------------------
-        // Verifying deleteById() was called once
         verify(repository, times(1)).deleteById(1L);
     }
-    // Tests whether getTodoById() throws exception when ID does not exist
+
+    // ------------------- TEST CASE 4 -------------------
+    // Tests getTodoById() when not found
     @Test
     void testGetTodoByIdNotFound() {
 
-        // ------------------- ARRANGE -------------------
-        // Mocking: ID not found in database
         when(repository.findById(1L)).thenReturn(java.util.Optional.empty());
 
-        // ------------------- ACT + ASSERT -------------------
-        // Expecting exception to be thrown
         assertThrows(RuntimeException.class, () -> {
             service.getTodoById(1L);
+        });
+    }
+
+    // ------------------- TEST CASE 5 -------------------
+    // Tests updateTodo() success
+    @Test
+    void testUpdateTodo() {
+
+        Todo existing = new Todo();
+        existing.setId(1L);
+        existing.setTitle("Old");
+        existing.setStatus(Todo.Status.PENDING);
+
+        Todo updated = new Todo();
+        updated.setId(1L);
+        updated.setTitle("New");
+        updated.setStatus(Todo.Status.COMPLETED);
+
+        when(repository.findById(1L)).thenReturn(java.util.Optional.of(existing));
+        when(repository.save(any(Todo.class))).thenReturn(updated);
+
+        TodoDTO dto = new TodoDTO();
+        dto.setTitle("New");
+        dto.setStatus("COMPLETED");
+
+        TodoDTO result = service.updateTodo(1L, dto);
+
+        assertEquals("New", result.getTitle());
+    }
+
+    // ------------------- TEST CASE 6 -------------------
+    // Tests deleteTodo() when ID not found
+    @Test
+    void testDeleteTodoNotFound() {
+
+        when(repository.existsById(1L)).thenReturn(false);
+
+        assertThrows(RuntimeException.class, () -> {
+            service.deleteTodo(1L);
         });
     }
 }
