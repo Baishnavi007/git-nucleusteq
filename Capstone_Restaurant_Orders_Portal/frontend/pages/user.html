@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="../css/user.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar flex justify-between items-center px-6 py-4 bg-white shadow">
+    
+    <h2 class="text-xl font-bold text-red-500">🍽️ Foodie</h2>
+
+    <div class="flex items-center gap-4">
+        
+        <!-- WALLET -->
+        <button onclick="goToWallet()" 
+            class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg font-medium hover:bg-yellow-200 transition">
+         💵 ₹<span id="walletBalance">...</span>
+        </button>
+
+        <!-- LOGOUT -->
+        <button onclick="logout()" 
+            class="bg-red-400 text-white px-4 py-2 rounded-lg hover:bg-red-500">
+            Logout
+        </button>
+
+    </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>What are you craving today? 😋</h1>
+</div>
+
+<!-- RESTAURANTS -->
+<div class="section">
+    <h2>Top Picks for You 🍽️</h2>
+    <div id="restaurantList" class="grid"></div>
+</div>
+
+<script src="../js/user.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- NAVBAR -->
+<div class="flex justify-between items-center px-6 py-4 bg-white shadow">
+    <h2 class="text-xl font-bold text-yellow-600">💰 Wallet</h2>
+    <button onclick="window.history.back()" 
+        class="bg-red-400 text-white px-4 py-2 rounded-lg">
+        ← Back
+    </button>
+</div>
+
+<!-- CONTENT -->
+<div class="flex justify-center mt-10">
+
+    <div class="bg-white p-8 rounded-xl shadow-md w-96 text-center">
+
+        <h2 class="text-lg text-gray-500">Available Balance</h2>
+        <h1 id="balance" class="text-3xl font-bold text-green-600 mt-2">
+            ₹0
+        </h1>
+
+        <!-- ADD MONEY -->
+        <div class="mt-6">
+            <input id="amount" type="number" placeholder="Enter amount"
+                class="w-full border p-2 rounded mb-3"/>
+
+            <button onclick="addMoney()"
+                class="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600">
+                Add Money
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../js/wallet.js"></script>
+
+</body>
+</html>

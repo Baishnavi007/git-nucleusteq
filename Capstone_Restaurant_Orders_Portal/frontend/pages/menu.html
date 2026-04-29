@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- NAVBAR -->
+<div class="flex justify-between items-center p-4 bg-white shadow">
+
+    <h2 class="text-xl font-bold text-red-500">🍽️ Menu</h2>
+
+    <div class="flex gap-3">
+
+        <!-- CART BUTTON -->
+        <button onclick="toggleCart()"
+            class="bg-green-500 text-white px-4 py-2 rounded-lg">
+            🛒 Cart
+        </button>
+
+        <button onclick="window.history.back()" 
+            class="bg-red-500 text-white px-4 py-2 rounded-lg">
+            ← Back
+        </button>
+
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">
+        Cravings Loaded 🔥
+    </h1>
+
+    <div id="menuContainer"></div>
+</div>
+
+<!-- CART DRAWER -->
+<div id="cartDrawer"
+    class="fixed top-0 right-0 w-80 h-full bg-white shadow-xl transform translate-x-full transition duration-300 p-5">
+
+    <h2 class="text-xl font-bold mb-4">Your Cart 🛒</h2>
+
+    <div id="cartItems" class="mb-4"></div>
+
+    <p class="font-bold mb-4">
+        Total: ₹<span id="cartTotal">0</span>
+    </p>
+
+    <button onclick="clearCart()"
+        class="w-full bg-red-500 text-white py-2 rounded-lg mb-2">
+        Clear Cart
+    </button>
+
+    <button onclick="toggleCart()"
+        class="w-full bg-gray-300 py-2 rounded-lg">
+        Close
+    </button>
+</div>
+
+<div id="toast"
+    class="fixed bottom-5 right-5 bg-red-500 text-white px-5 py-3 rounded-lg shadow-lg hidden">
+</div>
+
+<script>
+function toggleCart() {
+    const drawer = document.getElementById("cartDrawer");
+    drawer.classList.toggle("translate-x-full");
+}
+</script>
+
+<script src="../js/menu.js"></script>
+
+</body>
+</html>
