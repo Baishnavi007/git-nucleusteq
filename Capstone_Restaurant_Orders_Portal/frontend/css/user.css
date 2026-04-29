@@ -1,0 +1,156 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #fff7f5, #fefefe);
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.navbar h2 {
+    color: #ff4d4d;
+}
+
+/* HERO */
+.hero {
+    padding: 50px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.hero input {
+    width: 50%;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* CATEGORIES */
+.categories {
+    display: flex;
+    gap: 15px;
+    padding: 20px 40px;
+    overflow-x: auto;
+}
+
+.cat {
+    padding: 12px 18px;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* different colors */
+.cat:nth-child(1) { background: #ffe5e5; }
+.cat:nth-child(2) { background: #fff4e5; }
+.cat:nth-child(3) { background: #e5ffe9; }
+.cat:nth-child(4) { background: #e5f0ff; }
+.cat:nth-child(5) { background: #f3e5ff; }
+.cat:nth-child(6) { background: #fff0f5; }
+
+.cat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* SECTION */
+.section {
+    padding: 20px 40px;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+}
+
+/* IMAGE */
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+/* INFO */
+.info {
+    padding: 12px;
+}
+
+.info h3 {
+    margin: 5px 0;
+}
+
+/* rating badge */
+.rating {
+    background: #48c479;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+/* BUTTON (GLOBAL STYLE) */
+button {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #e63e3e;
+}
+#addressList li {
+    margin: 10px 0;
+}
+
+#addressList button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+.card button {
+    margin-top: 10px;
+    width: 100%;
+    background: #ff4d4d;
+    border-radius: 8px;
+}
+
+.card button:hover {
+    background: #e63e3e;
+}

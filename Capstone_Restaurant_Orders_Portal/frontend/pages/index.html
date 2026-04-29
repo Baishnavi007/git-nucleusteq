@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Portal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>🍽️ Restaurant Portal</h1>
+        <p>Discover amazing food & manage restaurants easily</p>
+        <div class="hero-buttons">
+            <button onclick="selectRole('USER')">Explore as User</button>
+            <button onclick="selectRole('RESTAURANT_OWNER')">Manage as Owner</button>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+    <div class="feature">
+        <h3>🍔 Variety</h3>
+        <p>Explore multiple restaurants & cuisines</p>
+    </div>
+    <div class="feature">
+        <h3>⚡ Fast</h3>
+        <p>Quick browsing & ordering experience</p>
+    </div>
+    <div class="feature">
+        <h3>💰 Offers</h3>
+        <p>Exciting deals & discounts</p>
+    </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories">
+    <h2>Popular Categories</h2>
+    <div class="category-grid">
+        <div class="cat">🍕 Pizza</div>
+        <div class="cat">🍔 Burger</div>
+        <div class="cat">🍜 Noodles</div>
+        <div class="cat">🍛 Biryani</div>
+        <div class="cat">🍦 Ice Cream</div>
+        <div class="cat">☕ Coffee</div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Choose your role</h2>
+
+    <div class="cta-cards">
+        <div class="card user">
+            <h3>👤 User</h3>
+            <p>Browse restaurants & order food</p>
+            <button onclick="selectRole('USER')">Continue →</button>
+        </div>
+
+        <div class="card owner">
+            <h3>🏪 Owner</h3>
+            <p>Manage your restaurant & menu</p>
+            <button onclick="selectRole('RESTAURANT_OWNER')">Continue →</button>
+        </div>
+    </div>
+</section>
+
+<script src="../js/navigation.js"></script>
+
+</body>
+</html>

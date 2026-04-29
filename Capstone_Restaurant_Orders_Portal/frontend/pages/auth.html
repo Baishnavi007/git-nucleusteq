@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+<div class="container auth-card">
+
+    <h2 id="formTitle">Login</h2>
+
+    <!-- ERROR MESSAGE -->
+    <p id="errorMsg" class="error hidden"></p>
+
+    <!-- REGISTER FIELDS -->
+    <input type="text" id="firstName" placeholder="First Name" class="hidden">
+    <input type="text" id="lastName" placeholder="Last Name" class="hidden">
+    <input type="text" id="phone" placeholder="Phone Number" class="hidden">
+
+    <!-- COMMON -->
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button id="submitBtn">Login</button>
+
+    <p id="toggleText">New user? Register here</p>
+
+</div>
+
+<script src="../js/auth.js"></script>
+</body>
+</html>
