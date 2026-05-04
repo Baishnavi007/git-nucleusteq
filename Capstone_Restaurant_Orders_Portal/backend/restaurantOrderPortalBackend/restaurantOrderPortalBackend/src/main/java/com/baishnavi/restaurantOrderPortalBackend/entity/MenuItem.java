@@ -53,6 +53,13 @@ public class MenuItem {
      */
     private Boolean isAvailable;
 
+    private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+
     /**
      * Default constructor
      */
@@ -66,16 +73,27 @@ public class MenuItem {
                     String description,
                     Double price,
                     Category category,
-                    Boolean isAvailable) {
+                    Boolean isAvailable,
+                    Restaurant restaurant) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.category = category;
         this.isAvailable = isAvailable;
+        this.restaurant= restaurant;
     }
 
-    // ================= GETTERS & SETTERS =================
+    /**
+     * GETTERS & SETTERS
+     */
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 
     public Long getId() {
         return id;
@@ -117,22 +135,26 @@ public class MenuItem {
         this.category = category;
     }
 
-    /**
-     * Getter for availability
-     */
+
     public Boolean getIsAvailable() {
         return isAvailable;
     }
 
-    /**
-     * Setter for availability
-     */
+
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 
-    // ================= OVERRIDDEN METHODS =================
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
 
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+    /**
+     * Overridden Methods
+     */
     @Override
     public String toString() {
         return "MenuItem{" +

@@ -65,8 +65,9 @@ public class OrderItem {
         this.menuItem = menuItem;
     }
 
-    // ================= GETTERS & SETTERS =================
-
+    /**
+     * GETTERS & SETTERS
+     */
     public Long getId() {
         return id;
     }
@@ -107,7 +108,9 @@ public class OrderItem {
         this.menuItem = menuItem;
     }
 
-    // ================= OVERRIDDEN METHODS =================
+    /**
+     * OVERRIDDEN METHODS
+     */
 
     @Override
     public String toString() {

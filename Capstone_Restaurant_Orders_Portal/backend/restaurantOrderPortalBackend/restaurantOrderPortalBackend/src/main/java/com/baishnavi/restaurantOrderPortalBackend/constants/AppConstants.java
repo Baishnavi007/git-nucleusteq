@@ -11,7 +11,7 @@ public class AppConstants {
     public static final int DEFAULT_WALLET_BALANCE = 1000;
 
     /**
-     * JWT expiration time (24 hours)
+     * JWT expiration time
      */
     public static final long JWT_EXPIRATION_MS = 86400000;
     /**

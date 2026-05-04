@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class CartMapper {
 
     /**
-     * Convert Cart → CartDTO
+     * Convert Cart to CartDTO
      */
     public static CartDTO toDTO(Cart cart) {
 
@@ -30,7 +30,7 @@ public class CartMapper {
     }
 
     /**
-     * Convert CartItem → CartItemDTO
+     * Convert CartItem to CartItemDTO
      */
     public static CartItemDTO toItemDTO(CartItem item) {
         return new CartItemDTO(

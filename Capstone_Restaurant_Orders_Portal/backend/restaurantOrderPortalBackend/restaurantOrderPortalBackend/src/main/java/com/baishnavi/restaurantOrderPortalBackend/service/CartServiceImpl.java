@@ -23,15 +23,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of CartService.
- *
- * Handles:
- * - Add item to cart
- * - Fetch cart
- * - Clear cart
- *
- * Business Rules:
- * - One user = one cart
- * - Cart can contain items from only ONE restaurant
  */
 @Service
 public class CartServiceImpl implements CartService {

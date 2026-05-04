@@ -18,11 +18,6 @@ import java.util.Objects;
 
 /**
  * Entity representing a restaurant in the system.
- *
- * <p>
- * A restaurant is owned by a user (RESTAURANT_OWNER)
- * and contains multiple categories and menu items.
- * </p>
  */
 @Entity
 @Table(name = "restaurants")
@@ -51,7 +46,12 @@ public class Restaurant {
     private String description;
 
     /**
-     * Current status of restaurant (OPEN, CLOSED, TEMP_CLOSED)
+     * Optional image
+     */
+    private String imageUrl;
+
+    /**
+     * Current status of restaurant
      */
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status;
@@ -71,34 +71,40 @@ public class Restaurant {
     private List<Category> categories;
 
     /**
-     * No-args constructor (required by JPA)
+     * No-args constructor
      */
     public Restaurant() {}
 
     /**
      * All-args constructor
      *
-     * @param id restaurant ID
-     * @param name restaurant name
-     * @param city restaurant city
-     * @param description description
-     * @param status restaurant status
-     * @param owner owner of restaurant
-     * @param categories categories under restaurant
      */
     public Restaurant(Long id, String name, String city,
-                      String description, RestaurantStatus status,
+                      String description, String imageUrl,
+                      RestaurantStatus status,
                       User owner, List<Category> categories) {
         this.id = id;
         this.name = name;
         this.city = city;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.status = status;
         this.owner = owner;
         this.categories = categories;
     }
 
-    //GETTERS & SETTERS
+    /**
+     * GETTERS & SETTERS
+     */
+
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     /**
      * Get restaurant ID
@@ -197,8 +203,6 @@ public class Restaurant {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
-
-    // ================= OVERRIDDEN METHODS =================
 
     /**
      * String representation

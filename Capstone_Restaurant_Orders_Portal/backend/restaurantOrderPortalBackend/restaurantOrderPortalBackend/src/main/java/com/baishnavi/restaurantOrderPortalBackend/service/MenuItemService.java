@@ -10,7 +10,7 @@ import java.util.List;
 public interface MenuItemService {
 
     /**
-     * Add new menu item (OWNER)
+     * Add new menu item
      */
     MenuItem addMenuItem(Long categoryId,
                          String name,
@@ -27,7 +27,7 @@ public interface MenuItemService {
      */
     List<MenuItem> getAllMenuItems(Long categoryId);
     /**
-     * OWNER: Update availability (ON/OFF)
+     * OWNER: Update availability
      */
     MenuItem updateAvailability(Long itemId, Boolean isAvailable);
 

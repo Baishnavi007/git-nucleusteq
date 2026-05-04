@@ -11,24 +11,19 @@ public enum OrderStatus {
     PLACED,
 
     /**
-     * Restaurant accepted order
+     * Order accepted by restaurant
      */
-    CONFIRMED,
-
-    /**
-     * Food is being prepared
-     */
-    PREPARING,
-
-    /**
-     * Out for delivery
-     */
-    OUT_FOR_DELIVERY,
+    PENDING,
 
     /**
      * Delivered to user
      */
     DELIVERED,
+
+    /**
+     * Order completed
+     */
+    COMPLETED,
 
     /**
      * Cancelled order

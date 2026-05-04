@@ -40,11 +40,23 @@ public class CategoryController {
     public List<Category> getOwnerCategories(@RequestParam Long restaurantId) {
         return categoryService.getCategoriesByRestaurant(restaurantId);
     }
+
     /**
-     * Get categories used by USER
+     * USER: Get categories of restaurant
      */
     @GetMapping("/users/categories")
     public List<Category> getCategories(@RequestParam Long restaurantId) {
         return categoryService.getCategoriesByRestaurant(restaurantId);
+    }
+
+    /**
+     * OWNER: Soft delete category
+     */
+    @DeleteMapping("/owner/category/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+
+        categoryService.deleteCategory(id);
+
+        return "Category deleted successfully";
     }
 }

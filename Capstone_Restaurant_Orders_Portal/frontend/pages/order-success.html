@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Success</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+<div class="bg-white p-8 rounded-xl shadow-md w-96 text-center">
+
+    <!-- SUCCESS -->
+    <div class="bg-green-100 p-4 rounded mb-4">
+        <h2 class="text-green-700 font-bold">Order Placed Successfully! ✅</h2>
+        <p class="text-sm text-gray-600">
+            Your order is being processed
+        </p>
+    </div>
+
+    <!-- TIMER -->
+    <div class="bg-red-100 p-4 rounded mb-4">
+        <p>You can cancel this order within</p>
+        <h1 id="timer" class="text-2xl font-bold text-red-600">30</h1>
+        <p>seconds</p>
+
+        <button onclick="cancelOrder()"
+            class="mt-3 bg-red-500 text-white px-4 py-2 rounded">
+            Cancel Order
+        </button>
+    </div>
+
+    <p class="text-xs text-gray-500">
+        After 30 seconds, cancellation won't be possible
+    </p>
+
+</div>
+
+<script src="../js/order-success.js"></script>
+
+</body>
+</html>

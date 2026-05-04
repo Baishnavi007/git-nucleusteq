@@ -2,18 +2,23 @@ const BASE_URL = "http://localhost:8080";
 const token = localStorage.getItem("token");
 const role = localStorage.getItem("role");
 
-// Session check
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop";
+
+// ---------- SESSION CHECK ----------
 if (!token) {
     alert("Session expired. Please login again.");
     window.location.href = "auth.html";
 }
+
 if (role !== "USER") {
     alert("Unauthorized access");
     window.location.href = "auth.html";
 }
+
 // ---------- LOAD ON START ----------
 document.addEventListener("DOMContentLoaded", () => {
     loadRestaurants();
+    loadWallet(); // 👈 important
 });
 
 // ---------- FETCH ALL RESTAURANTS ----------
@@ -38,8 +43,11 @@ function loadRestaurants() {
             const div = document.createElement("div");
             div.className = "card";
 
+            const imageUrl = r.imageUrl || DEFAULT_IMAGE;
+
             div.innerHTML = `
-                <img src="https://source.unsplash.com/300x200/?food,restaurant" />
+                <img src="${imageUrl}"
+                onerror="this.src='${DEFAULT_IMAGE}'" />
                 <div class="info">
                     <h3>${r.name}</h3>
                     <p>${r.city || "Available Everywhere"}</p>
@@ -47,7 +55,6 @@ function loadRestaurants() {
                 </div>
             `;
 
-            
             div.onclick = () => {
                 localStorage.setItem("restaurantId", r.id);
                 window.location.href = "menu.html";
@@ -61,6 +68,7 @@ function loadRestaurants() {
         alert("Failed to load restaurants");
     });
 }
+
 // ---------- LOAD WALLET ----------
 function loadWallet() {
     fetch(`${BASE_URL}/users/profile`, {
@@ -75,11 +83,10 @@ function loadWallet() {
     .catch(err => console.error(err));
 }
 
-// CALL THIS ALSO
-document.addEventListener("DOMContentLoaded", () => {
-    loadRestaurants();
-    loadWallet(); // 👈 ADD THIS
-});
+// ---------- 🆕 GO TO ORDERS ----------
+function goToOrders() {
+    window.location.href = "order-history.html";
+}
 
 // ---------- NAVIGATION ----------
 function goToWallet() {

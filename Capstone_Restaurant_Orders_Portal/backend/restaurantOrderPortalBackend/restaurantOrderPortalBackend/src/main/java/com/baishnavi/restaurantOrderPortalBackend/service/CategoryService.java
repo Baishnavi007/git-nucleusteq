@@ -25,4 +25,11 @@ public interface CategoryService {
      * @return list of categories
      */
     List<Category> getCategoriesByRestaurant(Long restaurantId);
+
+    /**
+     * Delete Category of a restauarnt
+     * @param categoryId
+     */
+
+    void deleteCategory(Long categoryId);
 }

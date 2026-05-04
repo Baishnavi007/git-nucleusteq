@@ -11,7 +11,13 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     /**
-     * Get categories by restaurant
+     * Get ONLY active (not deleted) categories by restaurant
+     */
+    List<Category> findByRestaurantIdAndIsDeletedFalse(Long restaurantId);
+
+    /**
+     * (Optional - for debug/admin)
+     * Get all categories including deleted
      */
     List<Category> findByRestaurantId(Long restaurantId);
 }

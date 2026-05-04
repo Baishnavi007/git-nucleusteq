@@ -10,8 +10,6 @@ import java.util.List;
 
 /**
  * Controller for Order APIs
- *
-
  */
 @RestController
 public class OrderController {
@@ -30,7 +28,7 @@ public class OrderController {
     /**
      * Place a new order
      *
-     * @return OrderDTO (clean response)
+     * @return OrderDTO
      */
     @PostMapping("/orders/place")
     public OrderDTO placeOrder() {
@@ -45,6 +43,19 @@ public class OrderController {
     @GetMapping("/orders/my")
     public List<OrderDTO> getMyOrders() {
         return orderService.getMyOrders()
+                .stream()
+                .map(OrderMapper::toDTO)
+                .toList();
+    }
+
+    /**
+     * Get all incoming orders for logged-in owner
+     *
+     * @return list of OrderDTO
+     */
+    @GetMapping("/owner/orders")
+    public List<OrderDTO> getOwnerOrders() {
+        return orderService.getOrdersForOwner()
                 .stream()
                 .map(OrderMapper::toDTO)
                 .toList();

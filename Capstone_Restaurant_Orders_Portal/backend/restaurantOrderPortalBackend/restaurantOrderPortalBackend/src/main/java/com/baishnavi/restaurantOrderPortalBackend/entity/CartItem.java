@@ -12,9 +12,6 @@ import java.util.Objects;
 
 /**
  * Entity representing an item inside a user's cart.
- * <p>
- * Each CartItem links a Cart with a MenuItem and stores
- * quantity and price at the time of adding to cart.
  */
 @Entity
 @Table(name = "cart_items")
@@ -52,7 +49,7 @@ public class CartItem {
     private MenuItem menuItem;
 
     /**
-     * No-args constructor (required by JPA)
+     * No-args constructor
      */
     public CartItem() {}
 
@@ -67,7 +64,9 @@ public class CartItem {
         this.menuItem = menuItem;
     }
 
-    // ================= GETTERS & SETTERS =================
+    /**
+     * GETTERS & SETTERS
+     */
 
     public Long getId() {
         return id;
@@ -109,10 +108,8 @@ public class CartItem {
         this.menuItem = menuItem;
     }
 
-    // ================= OVERRIDDEN METHODS =================
-
     /**
-     * String representation (excluding relations to avoid recursion)
+     * String representation
      */
     @Override
     public String toString() {

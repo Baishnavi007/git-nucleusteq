@@ -19,13 +19,23 @@ public class OrderMapper {
                 .stream()
                 .map(OrderMapper::toItemDTO)
                 .collect(Collectors.toList());
+        String customerName = order.getUser().getFirstName() + " " + order.getUser().getLastName();
+        String address = order.getAddress().getStreet() + ", "
+                + order.getAddress().getCity() + "," + order.getAddress().getPincode();
+
+        String restaurantName = order.getRestaurant().getName();
 
         return new OrderDTO(
                 order.getId(),
                 order.getTotalAmount(),
                 order.getStatus().name(),
                 order.getCreatedAt(),
-                items
+                items,
+                customerName,
+                address,
+                restaurantName
+
+
         );
     }
 

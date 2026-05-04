@@ -26,7 +26,9 @@ public class RegisterRequestDTO {
     @NotBlank(message = "Role is mandatory")
     private String role;
 
-    //Constructors
+    /**
+     * Constructors
+     */
 
     public RegisterRequestDTO() {}
 
@@ -40,8 +42,9 @@ public class RegisterRequestDTO {
         this.role = role;
     }
 
-    //Getters & Setters
-
+    /**
+     * Getters and Setters
+     */
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 

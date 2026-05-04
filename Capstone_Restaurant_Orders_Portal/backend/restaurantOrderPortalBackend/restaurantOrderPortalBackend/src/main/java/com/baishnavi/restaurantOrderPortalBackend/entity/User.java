@@ -10,16 +10,11 @@ import java.util.Objects;
 
 /**
  * Entity representing application users.
- *
- * <p>
- * This class maps to the "users" table in the database and stores
- * user-related information such as name, email, phone number,
- * role, wallet balance, and associated addresses.
- * </p>
  */
 @Entity
 @Table(name = "users")
-public class User {
+public class
+User {
 
     /**
      * Primary key of the user
@@ -114,7 +109,9 @@ public class User {
         this.selectedAddressId = selectedAddressId;
     }
 
-    // ================= GETTERS & SETTERS =================
+    /**
+     * GETTERS & SETTERS
+     */
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -148,8 +145,6 @@ public class User {
 
     public Long getSelectedAddressId() { return selectedAddressId; }
     public void setSelectedAddressId(Long selectedAddressId) { this.selectedAddressId = selectedAddressId; }
-
-    // ================= OVERRIDDEN METHODS =================
 
     /**
      * String representation (excluding sensitive fields like password)

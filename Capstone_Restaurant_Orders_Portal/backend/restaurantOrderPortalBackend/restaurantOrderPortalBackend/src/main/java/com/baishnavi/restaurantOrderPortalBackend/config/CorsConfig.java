@@ -11,11 +11,6 @@ import java.util.List;
 
 /**
  * Global CORS configuration
- *
- * <p>
- * Allows frontend (HTML/JS running on different origin)
- * to communicate with backend APIs.
- * </p>
  */
 @Configuration
 public class CorsConfig {

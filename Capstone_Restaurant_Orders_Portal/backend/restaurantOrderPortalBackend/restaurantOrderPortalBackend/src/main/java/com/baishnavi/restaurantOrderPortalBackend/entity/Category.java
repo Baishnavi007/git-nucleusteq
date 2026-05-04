@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Entity representing food category (e.g., Veg, Non-Veg, Desserts)
+ * Entity representing food category
  */
 @Entity
 @Table(name = "categories")
@@ -43,6 +43,8 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<MenuItem> menuItems;
 
+    private Boolean isDeleted = false;
+
     public Category() {}
 
     public Category(Long id, String name, Restaurant restaurant, List<MenuItem> menuItems) {
@@ -52,7 +54,18 @@ public class Category {
         this.menuItems = menuItems;
     }
 
-    // getters setters
+    /**
+     * getters setters
+     */
+
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 
     public Long getId() {
         return id;
@@ -86,6 +99,9 @@ public class Category {
         this.menuItems = menuItems;
     }
 
+    /**
+     * Overridden Methods
+     */
     @Override
     public String toString() {
         return "Category{" +

@@ -36,7 +36,7 @@ public class Order {
     private Double totalAmount;
 
     /**
-     * Order status (PLACED, DELIVERED, etc.)
+     * Order status
      */
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -66,6 +66,12 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+
+
     /**
      * No-args constructor
      */
@@ -76,17 +82,21 @@ public class Order {
      */
     public Order(Long id, Double totalAmount, OrderStatus status,
                  LocalDateTime createdAt, User user,
-                 Address address, List<OrderItem> orderItems) {
+                 Address address, Restaurant restaurant,
+                 List<OrderItem> orderItems) {
         this.id = id;
         this.totalAmount = totalAmount;
         this.status = status;
         this.createdAt = createdAt;
         this.user = user;
         this.address = address;
+        this.restaurant = restaurant;
         this.orderItems = orderItems;
     }
 
-    // ================= GETTERS & SETTERS =================
+    /**
+     * GETTERS & SETTERS
+     */
 
     public Long getId() {
         return id;
@@ -144,8 +154,17 @@ public class Order {
         this.orderItems = orderItems;
     }
 
-    // ================= OVERRIDDEN METHODS =================
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
 
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    /**
+     * OVERRIDDEN METHODS
+     */
     @Override
     public String toString() {
         return "Order{" +

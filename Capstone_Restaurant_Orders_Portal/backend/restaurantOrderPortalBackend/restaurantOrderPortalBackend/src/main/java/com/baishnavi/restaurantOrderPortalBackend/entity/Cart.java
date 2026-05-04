@@ -14,8 +14,6 @@ import java.util.Objects;
 
 /**
  * Entity representing user's cart.
- * <p>
- * Each user has one cart that contains multiple cart items.
  */
 @Entity
 @Table(name = "carts")
@@ -44,7 +42,7 @@ public class Cart {
      * List of items inside the cart
      */
     @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartItems;
+    private static List<CartItem> cartItems;
 
     /**
      * No-args constructor (required by JPA)
@@ -61,7 +59,9 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
-    // ================= GETTERS & SETTERS =================
+    /**
+     * GETTERS & SETTERS
+     */
 
     public Long getId() {
         return id;
@@ -95,10 +95,8 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
-    // ================= OVERRIDDEN METHODS =================
-
     /**
-     * toString method (excluding cartItems to avoid recursion)
+     * toString method
      */
     @Override
     public String toString() {

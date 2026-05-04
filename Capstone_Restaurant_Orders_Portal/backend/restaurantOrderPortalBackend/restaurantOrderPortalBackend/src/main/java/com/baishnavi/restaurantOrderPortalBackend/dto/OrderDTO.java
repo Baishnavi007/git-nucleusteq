@@ -13,16 +13,45 @@ public class OrderDTO {
     private String status;
     private LocalDateTime createdAt;
     private List<OrderItemDTO> items;
-
+    private String customerName;
+    private String address;
+    private String restaurantName;
     public OrderDTO() {}
 
     public OrderDTO(Long id, Double totalAmount, String status,
-                    LocalDateTime createdAt, List<OrderItemDTO> items) {
+                    LocalDateTime createdAt, List<OrderItemDTO> items, String customerName, String address, String restaurantName) {
         this.id = id;
         this.totalAmount = totalAmount;
         this.status = status;
         this.createdAt = createdAt;
         this.items = items;
+        this.customerName=customerName;
+        this.address=address;
+        this.restaurantName=restaurantName;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Long getId() { return id; }

@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Implementation of AddressService
  */
@@ -25,25 +27,66 @@ public class AddressServiceImpl implements AddressService {
     }
 
     /**
-     * Add address for logged-in user
+     * Add new address for logged-in user
      */
     @Override
     public Address addAddress(Address address) {
 
-
-        Authentication authentication =
+        Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName();
-
+        String email = auth.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-
         address.setUser(user);
 
-
         return addressRepository.save(address);
+    }
+
+    /**
+     * Get all addresses of logged-in user
+     */
+    @Override
+    public List<Address> getUserAddresses() {
+
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return addressRepository.findByUser(user);
+    }
+
+    /**
+     * Select address for placing order
+     */
+    @Override
+    public void selectAddress(Long addressId) {
+
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+
+        if (!address.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized address selection");
+        }
+
+
+        user.setSelectedAddressId(addressId);
+
+        userRepository.save(user);
     }
 }

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
@@ -37,7 +37,12 @@ public class RestaurantController {
      * Create restaurant for logged-in owner
      */
     @PostMapping("/owner/restaurants")
-    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
+    public Restaurant createRestaurant(
+            @RequestParam String name,
+            @RequestParam String city,
+            @RequestParam String description,
+            @RequestParam(required = false) MultipartFile image
+    ) {
 
         Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
@@ -50,9 +55,13 @@ public class RestaurantController {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(name);
+        restaurant.setCity(city);
+        restaurant.setDescription(description);
         restaurant.setOwner(owner);
 
-        Restaurant saved = restaurantService.createRestaurant(restaurant);
+        Restaurant saved = restaurantService.createRestaurant(restaurant, image);
 
         logger.info("Restaurant created with id: {}", saved.getId());
 
@@ -68,6 +77,14 @@ public class RestaurantController {
         logger.info("Fetching restaurants for owner");
 
         return restaurantService.getMyRestaurants();
+    }
+
+    @DeleteMapping("/owner/restaurants/{id}")
+    public String deleteRestaurant(@PathVariable Long id) {
+
+        restaurantService.deleteRestaurant(id);
+
+        return "Restaurant deleted successfully";
     }
 
     /**

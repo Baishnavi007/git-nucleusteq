@@ -2,15 +2,12 @@ package com.baishnavi.restaurantOrderPortalBackend.service;
 
 import com.baishnavi.restaurantOrderPortalBackend.dto.CategoryResponse;
 import com.baishnavi.restaurantOrderPortalBackend.entity.Restaurant;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 /**
  * Service interface for handling restaurant-related operations.
- * <p>
- * Defines methods for creating restaurants, retrieving restaurant data,
- * updating status, searching restaurants, and fetching menus.
- * </p>
  */
 public interface RestaurantService {
 
@@ -20,7 +17,7 @@ public interface RestaurantService {
      * @param restaurant the restaurant entity to be created
      * @return the saved restaurant entity
      */
-    Restaurant createRestaurant(Restaurant restaurant);
+    Restaurant createRestaurant(Restaurant restaurant, MultipartFile image);
 
     /**
      * Retrieves all restaurants available in the system.
@@ -60,4 +57,6 @@ public interface RestaurantService {
      * @return list of CategoryResponse containing categories and their menu items
      */
     List<CategoryResponse> getMenuByRestaurant(Long restaurantId);
+
+    void deleteRestaurant(Long restaurantId);
 }

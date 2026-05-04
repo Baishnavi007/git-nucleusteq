@@ -1,5 +1,6 @@
 package com.baishnavi.restaurantOrderPortalBackend.repository;
 
+import com.baishnavi.restaurantOrderPortalBackend.entity.Category;
 import com.baishnavi.restaurantOrderPortalBackend.entity.MenuItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,10 +14,13 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
     /**
      * OWNER: Get all items (including unavailable)
      */
-    List<MenuItem> findByCategoryId(Long categoryId);
+    List<MenuItem> findByCategoryIdAndIsDeletedFalse(Long categoryId);
+
 
     /**
      * USER: Get only available items
      */
-    List<MenuItem> findByCategoryIdAndIsAvailableTrue(Long categoryId);
+
+    List<MenuItem> findByCategoryIdAndIsAvailableTrueAndIsDeletedFalse(Long categoryId);
+    List<MenuItem> findByCategory(Category category);;
 }

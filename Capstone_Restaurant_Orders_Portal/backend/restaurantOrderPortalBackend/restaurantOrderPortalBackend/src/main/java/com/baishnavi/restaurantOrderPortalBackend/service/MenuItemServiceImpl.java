@@ -15,11 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Implementation of MenuItemService.
- *
- * Handles:
- * - Adding menu items (secure owner-based)
- * - Fetching menu items (filtered for user / full for owner)
+ * Menu Item Service Class
  */
 @Service
 public class MenuItemServiceImpl implements MenuItemService {
@@ -28,9 +24,6 @@ public class MenuItemServiceImpl implements MenuItemService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    /**
-     * Constructor injection
-     */
     public MenuItemServiceImpl(MenuItemRepository menuItemRepository,
                                CategoryRepository categoryRepository,
                                UserRepository userRepository) {
@@ -40,88 +33,81 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     /**
-     * Add menu item (OWNER ONLY)
+     * Add Menu Item
+     * @param categoryId
+     * @param name
+     * @param description
+     * @param price
+     * @return
      */
     @Override
-    public MenuItem addMenuItem(Long categoryId,
-                                String name,
-                                String description,
-                                Double price) {
+    public MenuItem addMenuItem(Long categoryId, String name, String description, Double price) {
 
-        // Logged-in user
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+        User user = getLoggedInUser();
 
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        //  Category
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
-        //  SECURITY CHECK
         if (!category.getRestaurant().getOwner().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to modify this restaurant");
+            throw new RuntimeException("Unauthorized");
         }
 
-        //  Create item
         MenuItem item = new MenuItem();
         item.setName(name);
         item.setDescription(description);
         item.setPrice(price);
         item.setCategory(category);
-
-        // Default availability
-        item.setIsAvailable(true);
+        item.setRestaurant(category.getRestaurant());
+        item.setIsAvailable(true);   // default ON
+        item.setDeleted(false);
 
         return menuItemRepository.save(item);
     }
 
     /**
-     * USER: Only available items
-     */
-    @Override
-    public List<MenuItem> getAvailableMenuItems(Long categoryId) {
-        return menuItemRepository.findByCategoryIdAndIsAvailableTrue(categoryId);
-    }
-
-    /**
-     * OWNER: All items (even unavailable)
+     * Get Menu Items
+     * @param categoryId
+     * @return menuItems
      */
     @Override
     public List<MenuItem> getAllMenuItems(Long categoryId) {
-        return menuItemRepository.findByCategoryId(categoryId);
+        return menuItemRepository.findByCategoryIdAndIsDeletedFalse(categoryId);
     }
+
+    @Override
+    public List<MenuItem> getAvailableMenuItems(Long categoryId) {
+        return menuItemRepository.findByCategoryIdAndIsAvailableTrueAndIsDeletedFalse(categoryId);
+    }
+
     /**
-     * OWNER: Toggle availability
+     * Update the Item Availability
+     * @param itemId
+     * @param isAvailable
+     * @return
      */
     @Override
     public MenuItem updateAvailability(Long itemId, Boolean isAvailable) {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         MenuItem item = menuItemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
+        User user = getLoggedInUser();
 
-        if (!item.getCategory().getRestaurant().getOwner().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to modify this item");
+        if (!item.getRestaurant().getOwner().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
         }
 
         item.setIsAvailable(isAvailable);
-
         return menuItemRepository.save(item);
     }
+
     /**
-     * Update menu item details
+     * Update Menu Item
+     * @param itemId
+     * @param name
+     * @param description
+     * @param price
+     * @return
      */
     @Override
     public MenuItem updateMenuItem(Long itemId, String name, String description, Double price) {
@@ -137,14 +123,36 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     /**
-     * Delete menu item
+     * Delete Menu Item
+     * @param itemId
      */
     @Override
     public void deleteMenuItem(Long itemId) {
 
         MenuItem item = menuItemRepository.findById(itemId)
-                .orElseThrow(() -> new ResourceNotFoundException("Menu item not found"));
+                .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        menuItemRepository.delete(item);
+        User user = getLoggedInUser();
+
+        if (!item.getRestaurant().getOwner().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        item.setDeleted(true);
+
+        item.setIsAvailable(false);
+
+        menuItemRepository.save(item);
+    }
+
+    /**
+     * Fetch logged-in user
+     * @return
+     */
+
+    private User getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

@@ -6,12 +6,7 @@ import com.baishnavi.restaurantOrderPortalBackend.entity.User;
 /**
  * Mapper class for converting User Entity <-> UserDTO.
  *
- * <p>
- * This class helps in:
- * - Preventing sensitive data exposure (like password)
- * - Sending only required fields to frontend
- * - Maintaining clean architecture
- * </p>
+
  */
 public class UserMapper {
 
@@ -38,12 +33,7 @@ public class UserMapper {
 
     /**
      * Converts UserDTO to User entity.
-     *
-     * <p>
-     * Used mainly during registration or updates.
-     * Note: Password should be handled separately.
-     * </p>
-     *
+
      * @param dto the UserDTO object
      * @return User entity object
      */

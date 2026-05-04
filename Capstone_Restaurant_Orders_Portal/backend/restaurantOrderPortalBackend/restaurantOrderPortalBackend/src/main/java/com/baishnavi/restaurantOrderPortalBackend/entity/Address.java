@@ -76,7 +76,9 @@ public class Address {
         this.user = user;
     }
 
-    // Getters & Setters
+    /**
+     * Getters & Setters
+     */
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -100,7 +102,7 @@ public class Address {
     public void setUser(User user) { this.user = user; }
 
     /**
-     * toString method (excluding user to avoid recursion)
+     * toString method
      */
     @Override
     public String toString() {

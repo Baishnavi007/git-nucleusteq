@@ -72,10 +72,9 @@ public class MenuItemController {
     /**
      * OWNER: Delete menu item
      */
-    @DeleteMapping("/owner/menu/delete")
-    public String deleteMenuItem(@RequestParam Long itemId) {
-
-        menuItemService.deleteMenuItem(itemId);
-        return "Menu item deleted successfully";
+    @DeleteMapping("/owner/menu/{id}")
+    public String deleteItem(@PathVariable Long id) {
+        menuItemService.deleteMenuItem(id);
+        return "Item deleted";
     }
 }

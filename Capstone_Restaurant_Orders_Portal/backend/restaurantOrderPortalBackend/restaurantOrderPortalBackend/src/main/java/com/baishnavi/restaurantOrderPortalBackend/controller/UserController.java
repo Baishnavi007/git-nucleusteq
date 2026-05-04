@@ -49,14 +49,14 @@ public class UserController {
      * @return profile message
      */
     @GetMapping("/profile")
-     public Map<String, Object> getProfile() {
-         logger.info("User profile accessed");
-            Double balance = userService.getWalletBalance();
+    public Map<String, Object> getProfile() {
+        logger.info("User profile accessed");
+        Double balance = userService.getWalletBalance();
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("walletBalance", balance);
+        Map<String, Object> response = new HashMap<>();
+        response.put("walletBalance", balance);
 
-            return response;
+        return response;
 
     }
 
