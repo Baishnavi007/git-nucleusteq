@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- HEADER -->
+<div class="flex justify-between items-center p-5 bg-white shadow">
+    <h1 class="text-2xl font-bold text-red-500">📦 My Orders</h1>
+
+    <button onclick="window.history.back()"
+        class="bg-gray-300 px-4 py-2 rounded-lg">
+        ← Back
+    </button>
+</div>
+
+<!-- FILTER -->
+<div class="p-5">
+    <select id="statusFilter"
+        onchange="loadOrders()"
+        class="border p-2 rounded-lg">
+
+        <option value="">All</option>
+        <option>PLACED</option>
+        <option>PENDING</option>
+        <option>DELIVERED</option>
+        <option>COMPLETED</option>
+        <option>CANCELLED</option>
+    </select>
+</div>
+
+<!-- ORDERS -->
+<div id="ordersContainer"
+    class="max-w-4xl mx-auto p-5 space-y-5">
+</div>
+
+<script src="../js/order-history.js"></script>
+
+</body>
+</html>
