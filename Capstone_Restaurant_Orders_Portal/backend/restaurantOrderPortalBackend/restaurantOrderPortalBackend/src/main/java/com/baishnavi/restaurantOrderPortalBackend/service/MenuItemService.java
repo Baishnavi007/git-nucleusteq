@@ -27,7 +27,7 @@ public interface MenuItemService {
      */
     List<MenuItem> getAllMenuItems(Long categoryId);
     /**
-     * OWNER: Update availability
+     * OWNER: Update availability (ON/OFF)
      */
     MenuItem updateAvailability(Long itemId, Boolean isAvailable);
 

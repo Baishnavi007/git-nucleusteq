@@ -63,6 +63,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * Update category
+     */
+    @Override
+    public Category updateCategory(Long categoryId, String name) {
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Category not found"));
+
+        category.setName(name);
+
+        return categoryRepository.save(category);
+    }
+    /**
      * Get All Categories
      * @param restaurantId restaurant ID
      * @return AllCategories

@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
         clearError();
     });
 
+    //After clicking on submit button
+
     submitBtn.addEventListener("click", handleAuth);
 });
 
@@ -59,6 +61,8 @@ function clearError() {
 // ================= VALIDATION =================
 
 function validateForm() {
+
+    //used to validate user input
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -123,7 +127,8 @@ async function handleAuth() {
 
             url = `${BASE_URL}/auth/register`;
 
-            body = {
+            body = { // this is JS object variable where multiple types of variables are stored
+
                 firstName: document.getElementById("firstName").value.trim(),
                 lastName: document.getElementById("lastName").value.trim(),
                 phoneNumber: document.getElementById("phone").value.trim(),
@@ -132,18 +137,20 @@ async function handleAuth() {
                 role: role
             };
         }
+       // Sending a POST request with user credentials and storing the response
 
         const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body) // converts Js object datatype to JSON format
         });
 
-        const data = await response.json();
+        const data = await response.json(); //extracts json data from response
 
-        console.log("Response:", data);
+
+        console.log("Response:", data); //for debugging
 
         if (!response.ok) {
             showError(data.message || "Something went wrong");
@@ -158,14 +165,16 @@ async function handleAuth() {
                 return;
             }
 
-            // 🔴 ROLE VALIDATION (MAIN FIX)
+            // ROLE VALIDATION 
             if (data.role !== role) {
-                showError("Invalid user type selected");
-                return;  // 🚨 STOP HERE (VERY IMPORTANT)
+                showError("User already exists with a difeerent role");
+                return;  
             }
 
-            // ✅ store only AFTER validation
+            // store only AFTER validation
             localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.role);
+            localStorage.setItem("email", data.email);
 
             if (role === "RESTAURANT_OWNER") {
                 window.location.href = "owner.html";
@@ -183,6 +192,6 @@ async function handleAuth() {
 
     } catch (err) {
         console.error(err);
-        showError("Server error. Try again.");
+        showError("Try again after sometime.");
     }
 }

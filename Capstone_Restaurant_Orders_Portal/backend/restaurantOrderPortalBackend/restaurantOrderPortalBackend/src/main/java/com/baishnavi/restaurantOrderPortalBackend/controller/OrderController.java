@@ -28,7 +28,7 @@ public class OrderController {
     /**
      * Place a new order
      *
-     * @return OrderDTO
+     * @return OrderDTO (clean response)
      */
     @PostMapping("/orders/place")
     public OrderDTO placeOrder() {

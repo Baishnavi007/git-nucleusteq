@@ -5,16 +5,26 @@ package com.baishnavi.restaurantOrderPortalBackend.dto;
  */
 public class CartItemDTO {
 
+    private Long menuItemId;
     private String itemName;
     private Integer quantity;
     private Double price;
 
     public CartItemDTO() {}
 
-    public CartItemDTO(String itemName, Integer quantity, Double price) {
+    public CartItemDTO(Long menuItemId,String itemName, Integer quantity, Double price) {
         this.itemName = itemName;
         this.quantity = quantity;
         this.price = price;
+        this.menuItemId = menuItemId;
+    }
+
+    public Long getMenuItemId() {
+        return menuItemId;
+    }
+
+    public void setMenuItemId(Long menuItemId) {
+        this.menuItemId = menuItemId;
     }
 
     public String getItemName() { return itemName; }

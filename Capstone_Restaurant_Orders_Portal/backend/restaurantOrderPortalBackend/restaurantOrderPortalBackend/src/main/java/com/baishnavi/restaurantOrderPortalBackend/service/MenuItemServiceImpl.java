@@ -145,11 +145,6 @@ public class MenuItemServiceImpl implements MenuItemService {
         menuItemRepository.save(item);
     }
 
-    /**
-     * Fetch logged-in user
-     * @return
-     */
-
     private User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByEmail(auth.getName())

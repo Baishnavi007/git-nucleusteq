@@ -19,7 +19,7 @@ function isRecent(orderTime) {
     const now = new Date();
     const orderDate = new Date(orderTime);
 
-    return (now - orderDate) < 60000; // 1 min
+    return (now - orderDate) < 60000; 
 }
 
 // ================= LOAD ORDERS =================
@@ -35,7 +35,7 @@ async function loadOrders() {
 
         let orders = await res.json();
 
-        // 🔥 SORT LATEST FIRST
+        
         orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         const container = document.getElementById("ordersContainer");
@@ -55,53 +55,69 @@ async function loadOrders() {
                 p-5 rounded-xl shadow
                 ${isRecent(order.createdAt) ? "bg-green-50 border border-green-300" : "bg-white"}
             `;
+div.innerHTML = `
+    <div class="flex justify-between items-start">
+        
+        <!-- LEFT SECTION -->
+        <div class="space-y-1">
+            <p class="font-semibold text-lg text-gray-800">
+                Order #${order.id}
+            </p>
 
-            div.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-lg">Order #${order.id}</p>
-                        <p class="text-gray-600">₹${order.totalAmount}</p>
+            <!-- Restaurant Highlight -->
+            <p class="text-sm font-medium text-indigo-600">
+                🍽️ ${order.restaurantName || "Unknown Restaurant"}
+            </p>
 
-                        <p class="mt-1 text-sm">
-                            👤 ${order.customerName || "N/A"}
-                        </p>
+            <p class="text-gray-700 font-medium">
+                ₹${order.totalAmount}
+            </p>
 
-                        <p class="text-sm text-gray-500">
-                            📍 ${order.address || "N/A"}
-                        </p>
+            <p class="text-sm text-gray-600">
+                👤 ${order.customerName || "N/A"}
+            </p>
 
-                        <p class="text-xs text-gray-400">
-                            🕒 ${formatTime(order.createdAt)}
-                        </p>
+            <p class="text-sm text-gray-500">
+                📍 ${order.address || "N/A"}
+            </p>
 
-                        <p class="mt-1">
-                            Status:
-                            <span class="px-2 py-1 rounded text-white text-sm ${getStatusColor(order.status)}">
-                                ${order.status}
-                            </span>
-                        </p>
-                    </div>
+            <p class="text-xs text-gray-400">
+                🕒 ${formatTime(order.createdAt)}
+            </p>
 
-                    <select 
-                        ${order.status === "COMPLETED" || order.status === "CANCELLED" ? "disabled" : ""}
-                        onchange="updateStatus(${order.id}, this.value)"
-                        class="border p-2 rounded-lg">
-                        <option disabled selected>Update</option>
-                        <option>PENDING</option>
-                        <option>DELIVERED</option>
-                        <option>COMPLETED</option>
-                        <option>CANCELLED</option>
-                    </select>
-                </div>
+            <!-- STATUS BADGE -->
+            <p class="mt-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)} text-white">
+                    ${order.status}
+                </span>
+            </p>
+        </div>
 
-                <div class="mt-3 border-t pt-2">
-                    ${order.items.map(item => `
-                        <p class="text-sm text-gray-700">
-                            • ${item.itemName} × ${item.quantity}
-                        </p>
-                    `).join("")}
-                </div>
-            `;
+        <!-- RIGHT SECTION -->
+        <div>
+            <select 
+                ${order.status === "COMPLETED" || order.status === "CANCELLED" ? "disabled" : ""}
+                onchange="updateStatus(${order.id}, this.value)"
+                class="border border-gray-300 bg-white px-3 py-2 rounded-lg text-sm shadow-sm hover:border-gray-400">
+                
+                <option disabled selected>Update</option>
+                <option>PENDING</option>
+                <option>DELIVERED</option>
+                <option>COMPLETED</option>
+                <option>CANCELLED</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ITEMS -->
+    <div class="mt-4 border-t pt-3 space-y-1">
+        ${order.items.map(item => `
+            <p class="text-sm text-gray-700">
+                • ${item.itemName} × ${item.quantity}
+            </p>
+        `).join("")}
+    </div>
+`;
 
             container.appendChild(div);
         });

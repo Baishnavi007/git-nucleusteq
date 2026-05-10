@@ -34,6 +34,17 @@ public class CategoryController {
     }
 
     /**
+     * OWNER: Update category
+     */
+    @PutMapping("/owner/category/{id}")
+    public Category updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryRequestDTO request) {
+
+        return categoryService.updateCategory(id, request.getName());
+    }
+
+    /**
      * OWNER: Get categories of selected restaurant
      */
     @GetMapping("/owner/categories")

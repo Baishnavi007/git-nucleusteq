@@ -3,6 +3,7 @@ package com.baishnavi.restaurantOrderPortalBackend.service;
 import com.baishnavi.restaurantOrderPortalBackend.constants.AppConstants;
 import com.baishnavi.restaurantOrderPortalBackend.entity.*;
 import com.baishnavi.restaurantOrderPortalBackend.enums.OrderStatus;
+import com.baishnavi.restaurantOrderPortalBackend.enums.RestaurantStatus;
 import com.baishnavi.restaurantOrderPortalBackend.exception.BadRequestException;
 import com.baishnavi.restaurantOrderPortalBackend.exception.ResourceNotFoundException;
 import com.baishnavi.restaurantOrderPortalBackend.repository.*;
@@ -57,21 +58,21 @@ public class OrderServiceImpl implements OrderService {
         String email = auth.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         if (cart.getCartItems().isEmpty()) {
-            throw new RuntimeException("Cart is empty");
+            throw new BadRequestException("Cart is empty");
         }
 
         Address address = addressRepository
                 .findById(user.getSelectedAddressId())
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
         if (user.getWalletBalance() < cart.getTotalAmount()) {
-            throw new RuntimeException("Insufficient balance");
+            throw new BadRequestException("Insufficient balance");
         }
 
 
@@ -79,6 +80,11 @@ public class OrderServiceImpl implements OrderService {
                 .get(0)
                 .getMenuItem()
                 .getRestaurant();
+        if (restaurant.getStatus() == RestaurantStatus.CLOSED) {
+            throw new BadRequestException(
+                    "Restaurant is currently closed"
+            );
+        }
 
         Order order = new Order();
         order.setUser(user);

@@ -41,7 +41,7 @@ public class SecurityConfig {
 
         http
                 /**
-                 * Disable CSRF
+                 * Disable CSRF (JWT based apps don't need it)
                  */
                 .csrf(csrf -> csrf.disable())
 

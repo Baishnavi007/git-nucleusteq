@@ -8,39 +8,43 @@ let timeLeft = 30;
 const timer = setInterval(() => {
     timeLeft--;
 
-    document.getElementById("timer").innerText = timeLeft;
+    const timerEl = document.getElementById("timer");
+    if (timerEl) timerEl.innerText = timeLeft;
 
     if (timeLeft <= 0) {
         clearInterval(timer);
 
-        alert("Time up! Redirecting to orders...");
-        window.location.href = "order-history.html";
+        alert("Time up! Redirecting to Home...");
+        window.location.href = "user.html";
     }
-
 }, 1000);
 
 
 // ---------- CANCEL ORDER ----------
-function cancelOrder() {
+async function cancelOrder() {
 
-    fetch(`${BASE_URL}/users/orders/cancel?orderId=${orderId}`, {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + token
+    if (!orderId) {
+        alert("No order to cancel");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${BASE_URL}/users/orders/cancel?orderId=${orderId}`, {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(data.message || "Cancel failed");
         }
-    })
-    .then(res => res.json())
-    .then(() => {
 
-        alert("Order Cancelled ❌");
-
+        alert("Order Cancelled");
         clearInterval(timer);
-
-        // redirect
         window.location.href = "order-history.html";
-    })
-    .catch(err => {
+    } catch (err) {
         console.error(err);
-        alert("Cancel failed");
-    });
+        alert(err.message || "Cancel failed");
+    }
 }

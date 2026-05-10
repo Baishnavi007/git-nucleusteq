@@ -133,6 +133,7 @@ function loadCart() {
         }
 
         data.items.forEach(item => {
+            
             cartContainer.innerHTML += `
                 <div class="flex justify-between items-center mb-3">
 
@@ -142,12 +143,12 @@ function loadCart() {
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button onclick="decreaseItem('${item.itemName}')"
+                        <button onclick="decreaseItem(${item.menuItemId})"
                             class="bg-gray-200 px-2 rounded">-</button>
 
                         <span>${item.quantity}</span>
 
-                        <button onclick="addToCartByName('${item.itemName}')"
+                        <button onclick="addToCart(${item.menuItemId})"
                             class="bg-gray-200 px-2 rounded">+</button>
                     </div>
                 </div>
@@ -159,11 +160,19 @@ function loadCart() {
 }
 
 // ---------- DECREASE ----------
-function decreaseItem(itemName) {
-    fetch(`${BASE_URL}/cart/decrease?menuItemId=${getId(itemName)}`, {
+function decreaseItem(menuItemId) {
+    fetch(`${BASE_URL}/cart/decrease?menuItemId=${menuItemId}`, {
         method: "POST",
         headers: { "Authorization": "Bearer " + token }
-    }).then(() => loadCart());
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.message || "Failed to update cart");
+        }
+        loadCart();
+    })
+    .catch(err => showToast(err.message));
 }
 
 // ---------- CLEAR ----------
@@ -172,9 +181,4 @@ function clearCart() {
         method: "DELETE",
         headers: { "Authorization": "Bearer " + token }
     }).then(() => loadCart());
-}
-
-// helper (simple)
-function getId(name) {
-    return 1;
 }

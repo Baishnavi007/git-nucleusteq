@@ -11,12 +11,14 @@ public interface OrderService {
 
     /**
      * Place order from cart
+     *
      * @return created order
      */
     Order placeOrder();
 
     /**
      * Get all orders of logged-in user
+     *
      * @return list of orders
      */
     List<Order> getMyOrders();

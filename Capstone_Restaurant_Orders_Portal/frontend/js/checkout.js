@@ -61,10 +61,10 @@ async function placeOrder() {
             return;
         }
 
-        // 🔥 IMPORTANT: SAVE ORDER ID
+        // SAVE ORDER ID
         localStorage.setItem("latestOrderId", data.id);
 
-        // 🔄 redirect to success page
+        // redirect to success page
         window.location.href = "order-success.html";
 
     } catch (err) {

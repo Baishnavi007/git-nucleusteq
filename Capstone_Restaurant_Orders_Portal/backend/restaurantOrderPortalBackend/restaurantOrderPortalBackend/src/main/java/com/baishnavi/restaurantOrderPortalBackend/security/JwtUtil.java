@@ -2,6 +2,7 @@ package com.baishnavi.restaurantOrderPortalBackend.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -9,7 +10,7 @@ import java.util.Date;
 
 /**
 
-  * Utility class for handling JWT (JSON Web Token) operations.
+ * Utility class for handling JWT operations.
  */
 @Component
 public class JwtUtil {
@@ -22,8 +23,8 @@ public class JwtUtil {
     /**
      * Generates a JWT token for the given email and role.
      *
-     * @param email the user's email (used as subject)
-     * @param role  the role of the user (e.g., USER, OWNER)
+     * @param email the user's email
+     * @param role  the role of the user
      * @return generated JWT token as a String
      */
     public String generateToken(String email, String role) {
@@ -46,7 +47,7 @@ public class JwtUtil {
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build()
+                .build() //creates parser object
                 .parseClaimsJws(token)
                 .getBody();
     }

@@ -13,7 +13,7 @@ class CartDTOTest {
     void testGettersAndSetters() {
         CartDTO cartDTO = new CartDTO();
         List<CartItemDTO> items = new ArrayList<>();
-        items.add(new CartItemDTO("Pizza", 2, 400.0));
+        items.add(new CartItemDTO((long)1,"Pizza", 2, 400.0));
 
         cartDTO.setTotalAmount(400.0);
         cartDTO.setItems(items);
@@ -47,7 +47,7 @@ class CartItemDTOTest {
 
     @Test
     void testAllArgsConstructor() {
-        CartItemDTO itemDTO = new CartItemDTO("Fries", 1, 100.0);
+        CartItemDTO itemDTO = new CartItemDTO((long)2,"Fries", 1, 100.0);
         assertEquals("Fries", itemDTO.getItemName());
         assertEquals(1, itemDTO.getQuantity());
         assertEquals(100.0, itemDTO.getPrice());

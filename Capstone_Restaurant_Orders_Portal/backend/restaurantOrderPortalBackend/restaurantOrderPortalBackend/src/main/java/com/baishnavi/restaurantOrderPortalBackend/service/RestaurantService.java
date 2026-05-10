@@ -8,6 +8,10 @@ import java.util.List;
 
 /**
  * Service interface for handling restaurant-related operations.
+ * <p>
+ * Defines methods for creating restaurants, retrieving restaurant data,
+ * updating status, searching restaurants, and fetching menus.
+ * </p>
  */
 public interface RestaurantService {
 

@@ -4,55 +4,48 @@ const token = localStorage.getItem("token");
 document.addEventListener("DOMContentLoaded", loadBalance);
 
 // ---------- LOAD BALANCE ----------
-function loadBalance() {
-    fetch(`${BASE_URL}/users/profile`, {
-        headers: {
-            "Authorization": "Bearer " + token
+async function loadBalance() {
+    try {
+        const res = await fetch(`${BASE_URL}/users/profile`, {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to load wallet");
         }
-    })
-    .then(res => res.json())
-    .then(data => {
         document.getElementById("balance").innerText = "₹" + (data.walletBalance || 0);
-    })
-    .catch(err => console.error(err));
+    } catch (err) {
+        console.error(err);
+        alert(err.message || "Failed to load wallet");
+    }
 }
 
 // ---------- ADD MONEY ----------
-function addMoney() {
-
-    console.log("BUTTON CLICKED");
-
+async function addMoney() {
     const amount = document.getElementById("amount").value;
-    console.log("Amount:", amount);
 
-    if (!amount) {
-        alert("Enter amount first!");
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+        alert("Enter a valid positive amount");
         return;
     }
 
-    fetch(`${BASE_URL}/users/wallet/add?amount=${amount}`, {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    })
-    .then(res => {
-        console.log("Response status:", res.status);
+    try {
+        const res = await fetch(`${BASE_URL}/users/wallet/add?amount=${amount}`, {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + token }
+        });
 
+        const data = await res.json().catch(() => null);
         if (!res.ok) {
-            throw new Error("Failed to add money");
+            const message = (data && data.message) ? data.message : "Failed to add money";
+            throw new Error(message);
         }
-        return res.json();
-    })
-    .then(data => {
-        console.log("Updated Balance:", data);
 
         document.getElementById("balance").innerText = "₹" + data;
-
-        alert("Money added successfully 💰");
-    })
-    .catch(err => {
+        document.getElementById("amount").value = "";
+        alert("Money added successfully");
+    } catch (err) {
         console.error(err);
-        alert("Failed to add money");
-    });
+        alert(err.message || "Failed to add money");
+    }
 }

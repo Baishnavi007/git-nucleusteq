@@ -14,6 +14,8 @@ import java.util.Objects;
 
 /**
  * Entity representing user's cart.
+ * <p>
+ * Each user has one cart that contains multiple cart items.
  */
 @Entity
 @Table(name = "carts")
@@ -96,7 +98,7 @@ public class Cart {
     }
 
     /**
-     * toString method
+     * toString method (excluding cartItems to avoid recursion)
      */
     @Override
     public String toString() {

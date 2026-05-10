@@ -102,7 +102,7 @@ public class Address {
     public void setUser(User user) { this.user = user; }
 
     /**
-     * toString method
+     * toString method (excluding user to avoid recursion)
      */
     @Override
     public String toString() {

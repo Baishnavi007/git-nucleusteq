@@ -18,7 +18,7 @@ if (role !== "USER") {
 // ---------- LOAD ON START ----------
 document.addEventListener("DOMContentLoaded", () => {
     loadRestaurants();
-    loadWallet(); // 👈 important
+    loadWallet(); 
 });
 
 // ---------- FETCH ALL RESTAURANTS ----------
@@ -49,16 +49,41 @@ function loadRestaurants() {
                 <img src="${imageUrl}"
                 onerror="this.src='${DEFAULT_IMAGE}'" />
                 <div class="info">
-                    <h3>${r.name}</h3>
-                    <p>${r.city || "Available Everywhere"}</p>
-                    <span class="rating">⭐ 4.${Math.floor(Math.random()*5)}</span>
-                </div>
+    <h3>${r.name}</h3>
+
+    <p>${r.city || "Available Everywhere"}</p>
+
+    <span class="rating">
+        ⭐ 4.${Math.floor(Math.random()*5)}
+    </span>
+
+    <br>
+
+    ${
+        r.status === "CLOSED"
+        ? `<span style="color:red;font-weight:bold;">
+                Currently Closed
+           </span>`
+        : `<span style="color:green;font-weight:bold;">
+                Open
+           </span>`
+    }
+</div>
             `;
 
             div.onclick = () => {
-                localStorage.setItem("restaurantId", r.id);
-                window.location.href = "menu.html";
-            };
+
+    if (r.status === "CLOSED") {
+
+        alert("Restaurant is currently closed");
+
+        return;
+    }
+
+    localStorage.setItem("restaurantId", r.id);
+
+    window.location.href = "menu.html";
+};
 
             container.appendChild(div);
         });
@@ -83,7 +108,7 @@ function loadWallet() {
     .catch(err => console.error(err));
 }
 
-// ---------- 🆕 GO TO ORDERS ----------
+// ----------  GO TO ORDERS ----------
 function goToOrders() {
     window.location.href = "order-history.html";
 }

@@ -6,6 +6,7 @@ import com.baishnavi.restaurantOrderPortalBackend.entity.MenuItem;
 import com.baishnavi.restaurantOrderPortalBackend.entity.Restaurant;
 import com.baishnavi.restaurantOrderPortalBackend.entity.User;
 import com.baishnavi.restaurantOrderPortalBackend.enums.RestaurantStatus;
+import com.baishnavi.restaurantOrderPortalBackend.exception.ResourceNotFoundException;
 import com.baishnavi.restaurantOrderPortalBackend.repository.CategoryRepository;
 import com.baishnavi.restaurantOrderPortalBackend.repository.MenuItemRepository;
 import com.baishnavi.restaurantOrderPortalBackend.repository.RestaurantRepository;
@@ -112,9 +113,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant updateStatus(Long restaurantId, String status) {
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Restaurant not found"));
 
-        restaurant.setStatus(RestaurantStatus.valueOf(status));
+        restaurant.setStatus(RestaurantStatus.valueOf(status.toUpperCase()));
 
         return restaurantRepository.save(restaurant);
     }

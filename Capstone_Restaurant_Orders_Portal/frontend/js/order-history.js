@@ -12,10 +12,10 @@ async function loadOrders() {
 
         let orders = await res.json();
 
-        // 🔥 SORT: latest first
+        // SORT: latest first
         orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        // 🔍 FILTER (optional)
+        // FILTER 
         const filter = document.getElementById("statusFilter")?.value;
         if (filter) {
             orders = orders.filter(o => o.status === filter);
@@ -86,7 +86,7 @@ async function loadOrders() {
     }
 }
 
-// 🎨 STATUS COLORS
+// STATUS COLORS
 function getStatusColor(status) {
     switch(status) {
         case "PLACED": return "bg-gray-500";
@@ -98,7 +98,7 @@ function getStatusColor(status) {
     }
 }
 
-// 📅 FORMAT DATE (nice readable)
+// FORMAT DATE (nice readable)
 function formatDate(dateStr) {
     const d = new Date(dateStr);
 
