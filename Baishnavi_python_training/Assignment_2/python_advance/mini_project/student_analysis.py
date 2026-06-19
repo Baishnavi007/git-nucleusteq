@@ -18,3 +18,14 @@ def create_student_dataframe() -> pd.DataFrame:
     }
 
     return pd.DataFrame(student_data)
+
+def add_performance_column(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add Pass/Fail column based on marks.
+    """
+
+    dataframe["Performance"] = dataframe["Marks"].apply(
+        lambda marks: "Pass" if marks > 65 else "Fail"
+    )
+
+    return dataframe
