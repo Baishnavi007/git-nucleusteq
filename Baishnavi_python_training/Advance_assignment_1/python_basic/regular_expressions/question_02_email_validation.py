@@ -1,5 +1,5 @@
 """
-Question 2 - Regular Expressions
+Question 2 
 
 Write a regex pattern to
 validate an email address.
