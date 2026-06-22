@@ -1,0 +1,38 @@
+"""
+Question 3 
+Demonstrate the use of
+join() method in threading.
+
+"""
+
+import threading
+import time
+
+
+def perform_task() -> None:
+    """
+    Simulate a task using
+    a delay.
+    """
+
+    print("Task has been started.")
+
+    
+    time.sleep(2)
+
+    print("Task completed.")
+
+
+if __name__ == "__main__":
+
+    task_thread = threading.Thread(
+        target=perform_task
+    )
+
+    # Start thread execution.
+    task_thread.start()
+
+    # Wait for the thread to finish execution.
+    task_thread.join()
+
+    print("The main program has completed.")
