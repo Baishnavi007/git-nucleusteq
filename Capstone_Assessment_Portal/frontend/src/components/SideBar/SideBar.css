@@ -1,0 +1,180 @@
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar{
+
+    width:270px;
+
+    background:#0f172a;
+
+    color:white;
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    padding:30px 20px;
+
+    box-sizing:border-box;
+
+}
+
+
+/* ===========================
+   Logo
+=========================== */
+
+.sidebar-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:45px;
+
+}
+
+.logo-circle{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:24px;
+
+}
+
+.sidebar-logo h2{
+
+    color:white;
+
+    font-size:22px;
+
+    margin:0;
+
+}
+
+.sidebar-logo span{
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+}
+
+
+/* ===========================
+   Menu
+=========================== */
+
+.sidebar-menu{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.menu-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    text-decoration:none;
+
+    color:#cbd5e1;
+
+    padding:14px 18px;
+
+    border-radius:10px;
+
+    transition:.3s;
+
+    font-size:16px;
+
+    font-weight:500;
+
+}
+
+.menu-item:hover{
+
+    background:#1e293b;
+
+    color:white;
+
+}
+
+.menu-item.active{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.menu-icon{
+
+    font-size:18px;
+
+}
+
+
+/* ===========================
+   Logout
+=========================== */
+
+.logout-button{
+
+    border:none;
+
+    background:#ef4444;
+
+    color:white;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.logout-button:hover{
+
+    background:#dc2626;
+
+}

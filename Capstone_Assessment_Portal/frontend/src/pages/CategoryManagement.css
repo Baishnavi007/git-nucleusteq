@@ -1,0 +1,185 @@
+/* ===========================
+   Category Page
+=========================== */
+
+.category-page{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:#f8fafc;
+
+}
+
+
+/* ===========================
+   Right Section
+=========================== */
+
+.category-content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+/* ===========================
+   Main Container
+=========================== */
+
+.category-container{
+
+    padding:35px;
+
+}
+
+
+/* ===========================
+   Header
+=========================== */
+
+.category-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+
+.page-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+.page-title svg{
+
+    color:#2563eb;
+
+    font-size:28px;
+
+}
+
+
+.page-title h1{
+
+    margin:0;
+
+    color:#1e293b;
+
+    font-size:34px;
+
+}
+
+
+.category-header p{
+
+    margin-top:8px;
+
+    color:#64748b;
+
+}
+
+
+/* ===========================
+   Add Button
+=========================== */
+
+.add-category-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:none;
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:14px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+
+.add-category-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+/* ===========================
+   Search Box
+=========================== */
+
+.search-box{
+
+    width:380px;
+
+    background:white;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 18px;
+
+    border-radius:10px;
+
+    border:1px solid #dbe2ea;
+
+    margin-bottom:30px;
+
+}
+
+
+.search-box svg{
+
+    color:#64748b;
+
+}
+
+
+.search-box input{
+
+    flex:1;
+
+    border:none;
+
+    outline:none;
+
+    font-size:15px;
+
+    background:transparent;
+
+}
