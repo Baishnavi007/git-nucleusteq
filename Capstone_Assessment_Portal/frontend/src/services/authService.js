@@ -41,3 +41,18 @@ export const registerUser = async (registerData) => {
     return response.data;
 
 };
+/**
+ * Fetch RSA public key
+ */
+
+export const getPublicKey = async () => {
+
+    const response = await api.get(
+
+        "/auth/public-key"
+
+    );
+
+    return response.data;
+
+};

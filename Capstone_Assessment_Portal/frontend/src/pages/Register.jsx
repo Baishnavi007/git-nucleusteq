@@ -2,7 +2,7 @@
  * Register Page
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -16,8 +16,8 @@ import {
 import Input from "../components/Input";
 import Button from "../components/Button";
 
-import { registerUser } from "../services/authService";
-
+import { registerUser, getPublicKey } from "../services/authService";
+import { encryptPassword } from "../utils/encryption";
 import "./Register.css";
 
 function Register() {
@@ -36,6 +36,42 @@ function Register() {
     });
 
     const [loading, setLoading] = useState(false);
+     /**
+      * Stores RSA public key received from the backend for encrypting the password before sending it to the server.
+      */
+    const [publicKey, setPublicKey] = useState("");
+    /**
+ * Fetch RSA public key
+ * when the page loads.
+ */
+useEffect(() => {
+
+    const fetchPublicKey = async () => {
+
+        try {
+
+            const response = await getPublicKey();
+
+            setPublicKey(
+                response.publicKey
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Failed to load public key.",
+                error
+            );
+
+        }
+
+    };
+
+    fetchPublicKey();
+
+}, []);
 
     const handleInputChange = (event) => {
 
@@ -70,13 +106,25 @@ function Register() {
 
             setLoading(true);
 
+            if(!publicKey) {
+                alert("Secure connection could not be established. Please try again later.");
+                return;
+            }
+            /**
+             * Encrypt the password before sending it to the backend.
+             */
+            const encryptedPassword = encryptPassword(
+                registerData.password,
+                publicKey
+            );
+             
             const payload = {
 
                 first_name: registerData.first_name,
                 last_name: registerData.last_name,
                 username: registerData.username,
                 email: registerData.email,
-                password: registerData.password
+                password: encryptedPassword
 
             };
 

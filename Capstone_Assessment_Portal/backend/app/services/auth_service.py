@@ -7,7 +7,8 @@ from app.repository import Repository
 from app.schemas.user_schema import (
     UserRegister,
     UserLogin,
-    LoginResponse
+    LoginResponse,
+    RefreshTokenResponse
 )
 
 from app.security.password_manager import (
@@ -16,17 +17,36 @@ from app.security.password_manager import (
 )
 
 from app.security.jwt_manager import (
-    create_access_token
+    create_access_token,
+    create_refresh_token,
+    decode_refresh_token
 )
 
 from app.utils.constants import (
     STUDENT
 )
 
+from app.security.decryption import (
+    decrypt_password
+)
+
+from app.exceptions.bad_request_exception import (
+    BadRequestException 
+)
+
+from app.exceptions.unauthorized_exception import (
+    UnauthorizedException
+)
+
+from app.exceptions.conflict_exception import (
+    ConflictException
+)
+
 from app.utils.loggers import (
     logger
 )
 
+PUBLIC_KEY_PATH = "app/keys/public_key.pem"
 
 class AuthService:
     """
@@ -57,7 +77,7 @@ class AuthService:
                 user.email
             )
 
-            raise ValueError(
+            raise ConflictException(
                 "Email already exists.Please login"
             )
 
@@ -72,16 +92,34 @@ class AuthService:
                 user.username
             )
 
-            raise ValueError(
+            raise ConflictException(
                 "Username already exists. Please login"
             )
+        try:
+            decrypted_password = decrypt_password(
+                user.password,
+            )
+        except Exception:
+            logger.warning(
+                "Unable to decrypt password during registration."
+            )
+            raise BadRequestException(
+                "Invalid encrypted password."
+            )
+        if (len(decrypted_password) < 5 or
+            len(decrypted_password) > 20):
+            raise BadRequestException(
+                "Password must be between 5 and 20 characters."
+            )
+
+            
 
         user_data = user.model_dump()
 
         user_data["role"] = STUDENT
 
         user_data["password"] = hash_password(
-            user.password
+            decrypted_password
         )
 
         # Save user into database
@@ -127,12 +165,28 @@ class AuthService:
                 user.email_or_username
             )
 
-            raise ValueError(
+            raise UnauthorizedException(
                 "Invalid credentials"
+            )
+        try:
+            decrypted_password = decrypt_password(
+                user.password,
+            )
+        except Exception:
+            logger.warning(
+                "Unable to decrypt password during login."
+            )
+            raise BadRequestException(
+                "Invalid encrypted password."
+            )
+        if (len(decrypted_password) < 5 or
+            len(decrypted_password) > 20):
+            raise BadRequestException(
+                "Password must be between 5 and 20 characters."
             )
 
         if not verify_password(
-                user.password,
+                decrypted_password,
                 existing_user["password"]
         ):
 
@@ -141,11 +195,15 @@ class AuthService:
                 user.email_or_username
             )
 
-            raise ValueError(
+            raise UnauthorizedException(
                 "Invalid credentials"
             )
 
-        token = create_access_token(
+        access_token = create_access_token(
+            existing_user
+        )
+
+        refresh_token = create_refresh_token(
             existing_user
         )
 
@@ -155,7 +213,87 @@ class AuthService:
         )
 
         return LoginResponse(
-            access_token=token,
+            access_token=access_token,
+            refresh_token=refresh_token,
             role=existing_user["role"],
             token_type="bearer"
         )
+    
+    @staticmethod
+    async def regenerate_refresh_token(
+        refresh_token: str
+    ) -> RefreshTokenResponse:
+        """
+        Regenerate a new refresh token using the provided refresh token.
+        """                                         
+        
+        logger.info(
+            "Regenerating refresh token."
+        )
+
+        payload = decode_refresh_token(
+            refresh_token
+        )
+
+        if payload.get("type") != "refresh":
+            logger.warning(
+                "Invalid token type for refresh token regeneration."
+            )
+            raise UnauthorizedException(
+                "Invalid token type"
+            )
+        access_token = create_access_token(
+            {
+                "_id": payload["user_id"],
+
+                "username": payload["username"],
+
+                "email": payload["email"],
+
+                "role": payload["role"]
+            }
+        
+        )
+
+        logger.info(
+            "Refresh token regenerated successfully for user: %s",
+            payload["username"]
+        )
+
+        return RefreshTokenResponse(
+            access_token=access_token,
+            token_type="bearer"
+        )
+    
+    @staticmethod
+    async def get_public_key():
+        """
+        Retrieve RSA public key
+        for frontend password encryption.
+        """
+
+        logger.info(
+            "Public key requested."
+        )
+
+        with open(
+
+                PUBLIC_KEY_PATH,
+
+                "r",
+
+                encoding="utf-8"
+
+        ) as key_file:
+
+            public_key = key_file.read()
+
+        logger.info(
+            "Public key returned successfully."
+        )
+
+        return {
+
+            "publicKey": public_key
+
+        }    

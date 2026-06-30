@@ -2,7 +2,7 @@
  * Login Page
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -16,8 +16,9 @@ import {
 import Input from "../components/Input";
 import Button from "../components/Button";
 
-import { loginUser } from "../services/authService";
+import { loginUser,getPublicKey } from "../services/authService";
 
+import { encryptPassword } from "../utils/encryption";
 import "./Login.css";
 
 function Login() {
@@ -30,6 +31,46 @@ function Login() {
     });
 
     const [loading, setLoading] = useState(false);
+
+    /**
+      * Stores RSA public key received from backend.
+    */
+    const [publicKey, setPublicKey] = useState("");
+    /**
+ * Fetch public key
+ * when login page loads.
+ */
+useEffect(() => {
+
+    const fetchPublicKey = async () => {
+
+        try {
+
+            const response = await getPublicKey();
+
+            console.log("Response:", response);
+        console.log("Public Key:", response.publicKey);
+        console.log("Length:", response.publicKey.length);
+            setPublicKey(
+                response.publicKey
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to fetch public key.",
+                error
+            );
+
+        }
+
+    };
+
+    fetchPublicKey();
+
+}, []);
 
     const handleInputChange = (event) => {
 
@@ -50,7 +91,37 @@ function Login() {
 
         try {
 
-            const response = await loginUser(loginData);
+    if (!publicKey) {
+
+        alert(
+            "Secure connection could not be established."
+        );
+
+        return;
+
+    }
+
+    const encryptedPassword = encryptPassword(
+
+        loginData.password,
+
+        publicKey
+
+    );
+
+    console.log("Encrypted Password:", encryptedPassword);
+console.log("Encrypted Length:", encryptedPassword.length);
+    const payload = {
+
+        ...loginData,
+
+        password: encryptedPassword
+
+    };
+
+    const response = await loginUser(
+        payload
+    );
 
             // Save JWT Token
             localStorage.setItem(
@@ -58,6 +129,14 @@ function Login() {
                 response.access_token
             );
 
+            // Save Refresh Token
+             localStorage.setItem(
+
+              "refresh_token",
+
+               response.refresh_token
+
+                );
             // Save Role
             localStorage.setItem(
                 "role",
