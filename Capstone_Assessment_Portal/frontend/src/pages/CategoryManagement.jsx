@@ -23,7 +23,6 @@ import TopBar from "../components/Topbar/TopBar";
 import CategoryForm from "../components/Category/CategoryForm";
 import CategoryList from "../components/Category/CategoryList";
 
-
 import {
     getAllCategories
 } from "../services/categoryService";
@@ -31,6 +30,13 @@ import {
 import "./CategoryManagement.css";
 
 function CategoryManagement() {
+
+    /**
+     * Logged in user role.
+     */
+    const role = localStorage.getItem("role");
+
+    const isAdmin = role === "admin";
 
     /**
      * Stores all categories.
@@ -50,8 +56,7 @@ function CategoryManagement() {
     /**
      * Stores selected category while editing.
      */
-    const [selectedCategory, setSelectedCategory] =
-        useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
     /**
      * Fetch all categories from backend.
@@ -60,8 +65,7 @@ function CategoryManagement() {
 
         try {
 
-            const response =
-                await getAllCategories();
+            const response = await getAllCategories();
 
             setCategories(response);
 
@@ -101,9 +105,7 @@ function CategoryManagement() {
     /**
      * Open drawer for editing category.
      */
-    const handleEditCategory = (
-        category
-    ) => {
+    const handleEditCategory = (category) => {
 
         setSelectedCategory(category);
 
@@ -146,7 +148,11 @@ function CategoryManagement() {
 
                                 <h1>
 
-                                    Category Management
+                                    {
+                                        isAdmin
+                                            ? "Category Management"
+                                            : "Categories"
+                                    }
 
                                 </h1>
 
@@ -154,25 +160,34 @@ function CategoryManagement() {
 
                             <p>
 
-                                Create, update and manage
-                                assessment categories.
+                                {
+                                    isAdmin
+                                        ? "Create, update and manage assessment categories."
+                                        : "Browse all available assessment categories."
+                                }
 
                             </p>
 
                         </div>
 
-                        <button
-                            className="add-category-btn"
-                            onClick={
-                                handleAddCategory
-                            }
-                        >
+                        {
 
-                            <FaPlus />
+                            isAdmin && (
 
-                            Add Category
+                                <button
+                                    className="add-category-btn"
+                                    onClick={handleAddCategory}
+                                >
 
-                        </button>
+                                    <FaPlus />
+
+                                    Add Category
+
+                                </button>
+
+                            )
+
+                        }
 
                     </div>
 
@@ -187,9 +202,7 @@ function CategoryManagement() {
                             placeholder="Search category..."
                             value={searchText}
                             onChange={(event) =>
-                                setSearchText(
-                                    event.target.value
-                                )
+                                setSearchText(event.target.value)
                             }
                         />
 
@@ -198,19 +211,10 @@ function CategoryManagement() {
                     {/* Category Table */}
 
                     <CategoryList
-
                         categories={categories}
-
                         searchText={searchText}
-
-                        onEdit={
-                            handleEditCategory
-                        }
-
-                        fetchCategories={
-                            fetchCategories
-                        }
-
+                        onEdit={handleEditCategory}
+                        fetchCategories={fetchCategories}
                     />
 
                 </div>
@@ -219,22 +223,14 @@ function CategoryManagement() {
 
             {
 
+                isAdmin &&
+
                 isDrawerOpen && (
 
                     <CategoryForm
-
-                        selectedCategory={
-                            selectedCategory
-                        }
-
-                        fetchCategories={
-                            fetchCategories
-                        }
-
-                        onClose={
-                            handleCloseDrawer
-                        }
-
+                        selectedCategory={selectedCategory}
+                        fetchCategories={fetchCategories}
+                        onClose={handleCloseDrawer}
                     />
 
                 )

@@ -11,8 +11,11 @@
 import {
     FaEdit,
     FaTrash,
-    FaInbox
+    FaInbox,
+    FaEye
 } from "react-icons/fa";
+
+import { useNavigate } from "react-router-dom";
 
 import {
     deleteCategory
@@ -31,6 +34,15 @@ function CategoryList({
     fetchCategories
 
 }) {
+
+    const navigate = useNavigate();
+
+    /**
+     * Logged in user role.
+     */
+    const role = localStorage.getItem("role");
+
+    const isAdmin = role === "admin";
 
     /**
      * Delete category.
@@ -76,8 +88,9 @@ function CategoryList({
     /**
      * Filter categories according to search.
      */
-    const filteredCategories =
-        categories.filter((category) =>
+    const filteredCategories = categories.filter(
+
+        (category) =>
 
             category.name
                 .toLowerCase()
@@ -85,7 +98,7 @@ function CategoryList({
                     searchText.toLowerCase()
                 )
 
-        );
+    );
 
     return (
 
@@ -133,17 +146,13 @@ function CategoryList({
 
                                         <td>
 
-                                            {
-                                                category.description
-                                            }
+                                            {category.description}
 
                                         </td>
 
                                         <td>
 
-                                            {
-                                                category.created_by
-                                            }
+                                            {category.created_by}
 
                                         </td>
 
@@ -163,41 +172,56 @@ function CategoryList({
 
                                         <td>
 
-                                            <button
+                                            {
 
-                                                className="edit-btn"
+                                                isAdmin ? (
 
-                                                onClick={() =>
+                                                    <>
 
-                                                    onEdit(category)
+                                                        <button
+                                                            className="edit-btn"
+                                                            onClick={() =>
+                                                                onEdit(category)
+                                                            }
+                                                        >
 
-                                                }
+                                                            <FaEdit />
 
-                                            >
+                                                        </button>
 
-                                                <FaEdit />
+                                                        <button
+                                                            className="delete-btn"
+                                                            onClick={() =>
+                                                                handleDeleteCategory(
+                                                                    category.id
+                                                                )
+                                                            }
+                                                        >
 
-                                            </button>
+                                                            <FaTrash />
 
-                                            <button
+                                                        </button>
 
-                                                className="delete-btn"
+                                                    </>
 
-                                                onClick={() =>
+                                                ) : (
 
-                                                    handleDeleteCategory(
+                                                    <button
+                                                        className="view-btn"
+                                                        onClick={() =>
+                                                            navigate(
+                                                                `/student/categories/${category.id}`
+                                                            )
+                                                        }
+                                                    >
 
-                                                        category.id
+                                                        <FaEye />
 
-                                                    )
+                                                    </button>
 
-                                                }
+                                                )
 
-                                            >
-
-                                                <FaTrash />
-
-                                            </button>
+                                            }
 
                                         </td>
 

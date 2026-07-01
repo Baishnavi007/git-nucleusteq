@@ -2,7 +2,13 @@
 Utility functions for decrypting passwords
 received from the frontend using the RSA private key.
 """
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+
+ALLOW_PLAIN_PASSWORD = (os.getenv("ALLOW_PLAIN_PASSWORD", "false").lower() == "true")
 import base64
 
 from cryptography.hazmat.primitives import (
@@ -16,7 +22,9 @@ from cryptography.hazmat.primitives.asymmetric import (
 from app.exceptions.unauthorized_exception import (
     UnauthorizedException
 )
-
+from app.exceptions.bad_request_exception import (
+    BadRequestException         
+)
 from app.utils.loggers import (
     logger
 )
@@ -69,13 +77,12 @@ def decrypt_password(
 
         return decrypted_password.decode()
 
-    except Exception as error:
-
-        logger.exception(
-            "Password decryption failed: %s",
-            str(error)
-        )
-
-        raise UnauthorizedException(
+    except Exception:
+        if ALLOW_PLAIN_PASSWORD:
+            logger.warning(
+                "Using plain password in development mode."
+            )
+            return encrypted_password
+        raise BadRequestException(
             "Invalid encrypted password."
         )

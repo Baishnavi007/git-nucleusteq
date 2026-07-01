@@ -40,6 +40,10 @@ function App() {
                 path="/admin/categories"
                 element={<CategoryManagement />}
             />
+            <Route
+                path="/student/categories"
+                element={<CategoryManagement />}
+            />
 
         </Routes>
 

@@ -125,3 +125,25 @@
     color:white;
 
 }
+.view-btn {
+
+    background-color: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 10px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.view-btn:hover {
+
+    background-color: #1d4ed8;
+
+}

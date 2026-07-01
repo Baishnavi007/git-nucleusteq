@@ -16,7 +16,7 @@ import api from "./api";
 export const getAllCategories = async () => {
 
     const response = await api.get(
-        "/admin/categories"
+        "/categories"
     );
 
     return response.data;
@@ -32,7 +32,7 @@ export const createCategory = async (
 ) => {
 
     const response = await api.post(
-        "/admin/categories",
+        "/categories",
         categoryData
     );
 
@@ -50,7 +50,7 @@ export const updateCategory = async (
 ) => {
 
     const response = await api.put(
-        `/admin/categories/${categoryId}`,
+        `/categories/${categoryId}`,
         categoryData
     );
 
@@ -67,7 +67,7 @@ export const deleteCategory = async (
 ) => {
 
     const response = await api.delete(
-        `/admin/categories/${categoryId}`
+        `/categories/${categoryId}`
     );
 
     return response.data;

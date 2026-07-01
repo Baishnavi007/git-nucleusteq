@@ -12,7 +12,15 @@ from app.schemas.category_schema import (
     CategoryUpdate
 )
 from app.utils.helpers import validate_object_id
-
+from app.exceptions.conflict_exception import (
+    ConflictException        
+)
+from app.exceptions.resource_not_found_exception import (
+    ResourceNotFoundException
+)
+from app.utils.loggers import (
+    logger
+)
 class CategoryService:
     """
     Handles category management operations
@@ -37,7 +45,10 @@ class CategoryService:
         )
 
         if existing_category:
-            raise ValueError(
+            logger.warning(
+                "Category already exists."
+            )
+            raise ConflictException(
                 "Category already exists."
             )
 
@@ -94,7 +105,10 @@ class CategoryService:
         )
 
         if not existing_category:
-            raise ValueError(
+            logger.warning(
+                "Category not found."
+            )
+            raise ResourceNotFoundException(
                 "Category not found."
             )
 
@@ -111,7 +125,10 @@ class CategoryService:
         )
 
         if duplicate_category:
-            raise ValueError(
+            logger.warning(
+                "Category already exists."
+            )
+            raise ConflictException(
                 "Category already exists."
             )
 
@@ -147,7 +164,10 @@ class CategoryService:
         )
 
         if not existing_category:
-            raise ValueError(
+            logger.warning(
+                "Category not found."
+            )
+            raise ResourceNotFoundException(
                 "Category not found."
             )
 
@@ -160,3 +180,38 @@ class CategoryService:
         return {
             "message": "Category deleted successfully."
         }
+    
+    @staticmethod
+    async def get_category_by_id(
+            category_id: str
+    ):
+        """
+        Retrieve a category by its ID
+        """
+
+        category_object_id = validate_object_id(
+            category_id
+        )
+
+        category = await db.categories.find_one(
+            {
+                "_id": category_object_id
+            }
+        )
+
+        if not category:
+            logger.warning(
+                "Category not found."
+            )
+            raise ResourceNotFoundException(
+                "Category not found."
+            )
+
+        category["id"] = str(
+            category.pop("_id")
+        )
+        logger.info(
+            "Category retrieved successfully."
+        )
+
+        return category

@@ -1,8 +1,8 @@
 /**
- * Admin Sidebar
+ * Sidebar
  */
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
     FaHome,
@@ -18,39 +18,74 @@ import "./SideBar.css";
 
 function SideBar() {
 
-    const menuItems = [
+    const navigate = useNavigate();
 
-        {
-            title: "Dashboard",
-            icon: <FaHome />,
-            path: "/admin/dashboard"
-        },
+    const role = localStorage.getItem("role");
 
-        {
-            title: "Categories",
-            icon: <FaFolderOpen />,
-            path: "/admin/categories"
-        },
+    const isAdmin = role === "admin";
 
-        {
-            title: "Assessments",
-            icon: <FaClipboardList />,
-            path: "/admin/assessments"
-        },
+    const menuItems = isAdmin
+        ? [
+            {
+                title: "Dashboard",
+                icon: <FaHome />,
+                path: "/admin/dashboard"
+            },
+            {
+                title: "Categories",
+                icon: <FaFolderOpen />,
+                path: "/admin/categories"
+            },
+            {
+                title: "Assessments",
+                icon: <FaClipboardList />,
+                path: "/admin/assessments"
+            },
+            {
+                title: "Questions",
+                icon: <FaQuestionCircle />,
+                path: "/admin/questions"
+            },
+            {
+                title: "Results",
+                icon: <FaChartBar />,
+                path: "/admin/results"
+            }
+        ]
+        : [
+            {
+                title: "Dashboard",
+                icon: <FaHome />,
+                path: "/student/dashboard"
+            },
+            {
+                title: "Categories",
+                icon: <FaFolderOpen />,
+                path: "/student/categories"
+            },
+            {
+                title: "Results",
+                icon: <FaChartBar />,
+                path: "/student/results"
+            }
+        ];
 
-        {
-            title: "Questions",
-            icon: <FaQuestionCircle />,
-            path: "/admin/questions"
-        },
+    /**
+     * Logout current user.
+     */
+    const handleLogout = () => {
 
-        {
-            title: "Results",
-            icon: <FaChartBar />,
-            path: "/admin/results"
-        }
+        localStorage.removeItem("access_token");
 
-    ];
+        localStorage.removeItem("refresh_token");
+
+        localStorage.removeItem("role");
+
+        navigate("/", {
+            replace: true
+        });
+
+    };
 
     return (
 
@@ -76,7 +111,11 @@ function SideBar() {
 
                         <span>
 
-                            Admin Portal
+                            {
+                                isAdmin
+                                    ? "Admin Portal"
+                                    : "Student Portal"
+                            }
 
                         </span>
 
@@ -122,9 +161,9 @@ function SideBar() {
 
             </div>
 
-
             <button
                 className="logout-button"
+                onClick={handleLogout}
             >
 
                 <FaSignOutAlt />

@@ -5,7 +5,6 @@ Category routes
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException,
     status
 )
 
@@ -19,96 +18,141 @@ from app.services.category_service import (
 )
 
 from app.security.auth_guard import (
+    get_current_user,
     admin_only
 )
 
+from app.utils.loggers import (
+    logger
+)
+
+
 router = APIRouter(
-    prefix="/admin/categories",
-    tags=["Category Management"]
+
+    prefix="/categories",
+
+    tags=["Category"]
+
 )
-
-
-@router.post(
-    "",
-    status_code=status.HTTP_201_CREATED
-)
-async def create_category(
-        category: CategoryCreate,
-        current_user=Depends(admin_only)
-):
-    """
-    Create a new category
-    """
-
-    try:
-
-        return await CategoryService.create_category(
-            category,
-            current_user
-        )
-
-    except ValueError as error:
-
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(error)
-        )
 
 
 @router.get("")
 async def get_all_categories(
-        current_user=Depends(admin_only)
+        current_user=Depends(
+            get_current_user
+        )
 ):
     """
-    Retrieve all categories
+    Retrieve all categories.
     """
 
+    logger.info(
+        "Fetch all categories requested by '%s'.",
+        current_user["email"]
+    )
+
     return await CategoryService.get_all_categories()
+
+
+@router.post(
+
+    "",
+
+    status_code=status.HTTP_201_CREATED
+
+)
+async def create_category(
+        category: CategoryCreate,
+        current_user=Depends(
+            admin_only
+        )
+):
+    """
+    Create a new category.
+    """
+
+    logger.info(
+        "Create category '%s' requested by '%s'.",
+        category.name,
+        current_user["email"]
+    )
+
+    return await CategoryService.create_category(
+
+        category,
+
+        current_user
+
+    )
 
 
 @router.put("/{category_id}")
 async def update_category(
         category_id: str,
         category: CategoryUpdate,
-        current_user=Depends(admin_only)
+        current_user=Depends(
+            admin_only
+        )
 ):
     """
-    Update an existing category
+    Update an existing category.
     """
 
-    try:
+    logger.info(
+        "Update category '%s' requested by '%s'.",
+        category_id,
+        current_user["email"]
+    )
 
-        return await CategoryService.update_category(
-            category_id,
-            category
-        )
+    return await CategoryService.update_category(
 
-    except ValueError as error:
+        category_id,
 
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(error)
-        )
+        category
+
+    )
 
 
 @router.delete("/{category_id}")
 async def delete_category(
         category_id: str,
-        current_user=Depends(admin_only)
+        current_user=Depends(
+            admin_only
+        )
 ):
     """
-    Delete an existing category
+    Delete an existing category.
     """
 
-    try:
+    logger.info(
+        "Delete category '%s' requested by '%s'.",
+        category_id,
+        current_user["email"]
+    )
 
-        return await CategoryService.delete_category(
-            category_id
+    return await CategoryService.delete_category(
+
+        category_id
+
+    )
+
+@router.get("/{category_id}")
+async def get_category_by_id(
+        category_id: str,
+        current_user=Depends(
+            get_current_user
         )
+):
+    """
+    Retrieve a category by its ID.
+    """
 
-    except ValueError as error:
+    logger.info(
+        "Fetch category '%s' requested by '%s'.",
+        category_id,
+        current_user["email"]
+    )
 
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(error)
-        )
+    return await CategoryService.get_category_by_id(
+        category_id
+    )
