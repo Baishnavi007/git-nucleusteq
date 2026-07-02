@@ -9,7 +9,7 @@ from app.exceptions.conflict_exception import ConflictException
 from app.exceptions.forbidden_exception import ForbiddenException
 from app.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.exceptions.unauthorized_exception import UnauthorizedException
-from app.utils.logger import logger
+from app.utils.loggers import logger
 
 
 def register_exception_handlers(app: FastAPI):

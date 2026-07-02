@@ -5,6 +5,10 @@ Common helper functions
 from bson import ObjectId
 from bson.errors import InvalidId
 
+from app.exceptions.bad_request_exception import (
+    BadRequestException
+)
+
 
 def validate_object_id(
         object_id: str
@@ -20,16 +24,18 @@ def validate_object_id(
         ObjectId
 
     Raises:
-        ValueError:
+        BadRequestException:
             If ObjectId format is invalid.
     """
 
     try:
 
-        return ObjectId(object_id)
+        return ObjectId(
+            object_id
+        )
 
     except InvalidId:
 
-        raise ValueError(
+        raise BadRequestException(
             "Invalid ID format."
         )

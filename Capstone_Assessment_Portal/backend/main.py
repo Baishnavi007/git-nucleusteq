@@ -4,6 +4,12 @@ from app.routers.auth_router import router as auth_router
 from app.routers.category_router import (
     router as category_router
 )
+from app.exceptions.global_exception_handler import (
+    register_exception_handlers 
+)
+from app.routers.quiz_router import (
+    router as quiz_router
+)
 app = FastAPI(
     title="Assessment Portal API",
     version="1.0.0"
@@ -22,12 +28,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+# Register exception handlers
+register_exception_handlers(
+    app
+)
 # Register routes
 app.include_router(auth_router)
-app.include_router(
-    category_router
-)
+app.include_router(category_router)
+app.include_router(quiz_router)
+
+
+
 
 @app.get("/")
 async def home():
