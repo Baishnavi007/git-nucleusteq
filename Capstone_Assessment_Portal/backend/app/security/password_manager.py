@@ -1,21 +1,41 @@
 """
-Password encryption and verification utilities
+Utility functions for password hashing and verification.
 """
 
 from passlib.context import CryptContext
 
-# Password hashing configuration using bcrypt
+from app.utils.loggers import logger
+
+# Configure bcrypt as the password hashing algorithm.
 password_context = CryptContext(
+
     schemes=["bcrypt"],
+
     deprecated="auto"
+
 )
 
 
-def hash_password(password: str) -> str:
+def hash_password(
+        password: str
+) -> str:
     """
-    Convert plain password into hashed password
+    Hash the user's plain text password before storing it.
     """
-    return password_context.hash(password)
+
+    logger.info(
+        "Generating password hash."
+    )
+
+    hashed_password = password_context.hash(
+        password
+    )
+
+    logger.info(
+        "Password hashed successfully."
+    )
+
+    return hashed_password
 
 
 def verify_password(
@@ -23,9 +43,23 @@ def verify_password(
         hashed_password: str
 ) -> bool:
     """
-    Match plain password against stored hash
+    Compare the entered password with the stored hash.
     """
-    return password_context.verify(
-        plain_password,
-        hashed_password
+
+    logger.info(
+        "Validating user password."
     )
+
+    is_valid = password_context.verify(
+
+        plain_password,
+
+        hashed_password
+
+    )
+
+    logger.info(
+        "Password validation completed."
+    )
+
+    return is_valid
