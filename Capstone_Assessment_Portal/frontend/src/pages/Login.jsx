@@ -2,7 +2,7 @@
  * Login Page
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -10,78 +10,94 @@ import {
     FaChartLine,
     FaClock,
     FaShieldAlt,
-    FaClipboardCheck
+    FaClipboardCheck,
 } from "react-icons/fa";
 
 import Input from "../components/Input";
 import Button from "../components/Button";
 
-import { loginUser,getPublicKey } from "../services/authService";
+import {
+    loginUser,
+    getPublicKey,
+} from "../services/authService";
 
 import { encryptPassword } from "../utils/encryption";
+
 import "./Login.css";
 
 function Login() {
 
+    // ---------------- Navigation ----------------
+
     const navigate = useNavigate();
 
+    // ---------------- State ----------------
+
     const [loginData, setLoginData] = useState({
+
         email_or_username: "",
-        password: ""
+        password: "",
+
     });
 
     const [loading, setLoading] = useState(false);
 
     /**
-      * Stores RSA public key received from backend.
-    */
+     * Stores RSA public key
+     * received from backend.
+     */
     const [publicKey, setPublicKey] = useState("");
-    /**
- * Fetch public key
- * when login page loads.
- */
-useEffect(() => {
 
-    const fetchPublicKey = async () => {
+    // ---------------- Effects ----------------
 
-        try {
+    useEffect(() => {
 
-            const response = await getPublicKey();
+        /**
+         * Fetch public key
+         * when login page loads.
+         */
+        const fetchPublicKey = async () => {
 
-            console.log("Response:", response);
-        console.log("Public Key:", response.publicKey);
-        console.log("Length:", response.publicKey.length);
-            setPublicKey(
-                response.publicKey
-            );
+            try {
 
-        }
+                const response = await getPublicKey();
 
-        catch (error) {
+                setPublicKey(
+                    response.publicKey
+                );
 
-            console.error(
-                "Unable to fetch public key.",
-                error
-            );
+            }
 
-        }
+            catch (error) {
 
-    };
+                console.error(
+                    "Unable to fetch public key.",
+                    error
+                );
 
-    fetchPublicKey();
+            }
 
-}, []);
+        };
+
+        fetchPublicKey();
+
+    }, []);
+
+    // ---------------- Event Handlers ----------------
 
     const handleInputChange = (event) => {
 
         const { name, value } = event.target;
 
         setLoginData((previousData) => ({
-            ...previousData,
-            [name]: value
-        }));
-    };
 
+            ...previousData,
+
+            [name]: value,
+
+        }));
+
+    };
 
     const handleLogin = async (event) => {
 
@@ -91,67 +107,71 @@ useEffect(() => {
 
         try {
 
-    if (!publicKey) {
+            if (!publicKey) {
 
-        alert(
-            "Secure connection could not be established."
-        );
+                alert(
+                    "Secure connection could not be established."
+                );
 
-        return;
+                return;
 
-    }
+            }
 
-    const encryptedPassword = encryptPassword(
+            const encryptedPassword = encryptPassword(
 
-        loginData.password,
+                loginData.password,
 
-        publicKey
+                publicKey
 
-    );
+            );
 
-    console.log("Encrypted Password:", encryptedPassword);
-console.log("Encrypted Length:", encryptedPassword.length);
-    const payload = {
+            const payload = {
 
-        ...loginData,
+                ...loginData,
 
-        password: encryptedPassword
+                password: encryptedPassword,
 
-    };
+            };
 
-    const response = await loginUser(
-        payload
-    );
+            const response = await loginUser(
+                payload
+            );
 
-            // Save JWT Token
+            /**
+             * Store authentication data.
+             */
             localStorage.setItem(
                 "access_token",
                 response.access_token
             );
 
-            // Save Refresh Token
-             localStorage.setItem(
+            localStorage.setItem(
+                "refresh_token",
+                response.refresh_token
+            );
 
-              "refresh_token",
-
-               response.refresh_token
-
-                );
-            // Save Role
             localStorage.setItem(
                 "role",
                 response.role
             );
 
-            // Redirect according to role
-
+            /**
+             * Redirect user
+             * based on role.
+             */
             if (response.role === "admin") {
 
-                navigate("/admin/dashboard");
+                navigate(
+                    "/admin/dashboard"
+                );
 
-            } else {
+            }
 
-                navigate("/student/dashboard");
+            else {
+
+                navigate(
+                    "/student/dashboard"
+                );
 
             }
 
@@ -177,6 +197,7 @@ console.log("Encrypted Length:", encryptedPassword.length);
 
     };
 
+    // ---------------- UI ----------------
 
     return (
 
@@ -216,7 +237,6 @@ console.log("Encrypted Length:", encryptedPassword.length);
 
                     </div>
 
-
                     <h2>
 
                         Practice Smarter.
@@ -233,7 +253,6 @@ console.log("Encrypted Length:", encryptedPassword.length);
                         timed assessments and instant analytics.
 
                     </p>
-
 
                     <div className="feature-list">
 
@@ -302,7 +321,6 @@ console.log("Encrypted Length:", encryptedPassword.length);
                 </div>
 
             </section>
-
 
             {/* RIGHT PANEL */}
 

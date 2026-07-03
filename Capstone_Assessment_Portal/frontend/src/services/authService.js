@@ -3,7 +3,7 @@
  */
 
 import api from "./api";
-
+import { API_ENDPOINTS } from "../utils/constants";
 
 /**
  * Login API
@@ -13,7 +13,7 @@ export const loginUser = async (loginData) => {
 
     const response = await api.post(
 
-        "/auth/login",
+        API_ENDPOINTS.AUTH.LOGIN,
 
         loginData
 
@@ -32,7 +32,7 @@ export const registerUser = async (registerData) => {
 
     const response = await api.post(
 
-        "/auth/register",
+        API_ENDPOINTS.AUTH.REGISTER,
 
         registerData
 
@@ -49,7 +49,7 @@ export const getPublicKey = async () => {
 
     const response = await api.get(
 
-        "/auth/public-key"
+        API_ENDPOINTS.AUTH.PUBLIC_KEY
 
     );
 
