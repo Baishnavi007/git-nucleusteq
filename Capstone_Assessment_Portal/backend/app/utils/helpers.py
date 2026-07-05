@@ -39,3 +39,11 @@ def validate_object_id(
         raise BadRequestException(
             "Invalid ID format."
         )
+    
+def normalize_text(text: str) -> str:
+        """
+        Remove leading, trailing and
+        extra spaces from text.
+        """
+        return " ".join(text.split())
+   

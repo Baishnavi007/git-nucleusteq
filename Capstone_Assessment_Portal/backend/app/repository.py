@@ -205,4 +205,130 @@ class Repository:
                 "_id": quiz_id
             }
         )
+    @staticmethod
+    async def create_question(
+            question_data: dict
+    ):
+        """
+        Save new question.
+        """
 
+        return await db.questions.insert_one(
+            question_data
+        )
+
+    @staticmethod
+    async def get_question_by_id(
+            question_id: ObjectId
+    ):
+        """
+        Retrieve question by id.
+        """
+
+        return await db.questions.find_one(
+            {
+                "_id": question_id
+            }
+        )
+
+    @staticmethod
+    async def get_questions_by_quiz(
+            quiz_id: str
+    ):
+        """
+        Retrieve all questions of a quiz.
+        """
+
+        return await db.questions.find(
+            {
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+
+    @staticmethod
+    async def get_duplicate_question(
+            question: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve duplicate question.
+        """
+
+        return await db.questions.find_one(
+            {
+                "question": question,
+                "quiz_id": quiz_id
+            }
+        )
+        
+
+    @staticmethod
+    async def get_duplicate_question_for_update(
+            question: str,
+            quiz_id: str,
+            question_id: ObjectId
+    ):
+        """
+        Retrieve duplicate question while updating.
+        """
+
+        return await db.questions.find_one(
+            {
+                "question": {
+                    "$regex": f"^{question}$",
+                    "$options": "i"
+                },
+                "quiz_id": quiz_id,
+                "_id": {
+                    "$ne": question_id
+                }
+            }
+        )
+
+    @staticmethod
+    async def update_question(
+            question_id: ObjectId,
+            question_data: dict
+    ):
+        """
+        Update an existing question.
+        """
+
+        return await db.questions.update_one(
+            {
+                "_id": question_id
+            },
+            {
+                "$set": question_data
+            }
+        )
+
+    @staticmethod
+    async def delete_question(
+            question_id: ObjectId
+    ):
+        """
+        Delete a question.
+        """
+
+        return await db.questions.delete_one(
+            {
+                "_id": question_id
+            }
+        )
+    
+    @staticmethod
+    async def delete_questions_by_quiz(
+            quiz_id: str
+    ):
+        """
+        Delete all questions of a quiz.
+        """
+
+        return await db.questions.delete_many(
+            {
+                "quiz_id": quiz_id
+            }
+        )

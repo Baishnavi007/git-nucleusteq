@@ -75,7 +75,7 @@ class QuizService:
         existing_quiz = (
             await Repository.get_quiz_by_title(
                 quiz.title,
-                category_object_id
+                category_id
             )
         )
 
@@ -97,7 +97,7 @@ class QuizService:
         quiz_data = quiz.model_dump()
 
         quiz_data["category_id"] = (
-            category_object_id
+            category_id
         )
 
         quiz_data["created_by"] = (
@@ -161,7 +161,7 @@ class QuizService:
 
         quizzes = (
             await Repository.get_quizzes_by_category(
-                category_object_id
+                category_id
             )
         )
 
@@ -171,9 +171,7 @@ class QuizService:
                 quiz.pop("_id")
             )
 
-            quiz["category_id"] = str(
-                quiz["category_id"]
-            )
+            
 
             quiz["category_name"] = (
                 existing_category["name"]
@@ -220,7 +218,9 @@ class QuizService:
 
         category = (
             await Repository.get_category_by_id(
+                validate_object_id(
                 quiz["category_id"]
+                )
             )
         )
 
@@ -228,10 +228,7 @@ class QuizService:
             quiz.pop("_id")
         )
 
-        quiz["category_id"] = str(
-            quiz["category_id"]
-        )
-
+        
         quiz["category_name"] = (
             category["name"]
         )
