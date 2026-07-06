@@ -12,7 +12,6 @@ from app.schemas.category_schema import (
     CategoryCreate,
     CategoryUpdate
 )
-
 from app.services.category_service import (
     CategoryService
 )

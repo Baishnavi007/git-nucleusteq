@@ -13,6 +13,13 @@ from app.schemas.quiz_schema import (
     QuizCreate,
     QuizUpdate
 )
+from app.schemas.common_schema import (
+    MessageResponse
+)
+from app.utils.constants import (
+    QuizMessage,
+    CategoryMessage
+)
 
 from app.utils.helpers import (
     validate_object_id
@@ -41,7 +48,7 @@ class QuizService:
             category_id: str,
             quiz: QuizCreate,
             current_user: dict
-    ):
+    ) -> MessageResponse:
         """
         Create a new quiz.
         """
@@ -69,7 +76,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Category not found."
+                CategoryMessage.NOT_FOUND
             )
 
         existing_quiz = (
@@ -87,7 +94,7 @@ class QuizService:
             )
 
             raise ConflictException(
-                "Quiz already exists."
+                QuizMessage.ALREADY_EXISTS
             )
 
         current_time = datetime.now(
@@ -124,9 +131,9 @@ class QuizService:
             quiz.title
         )
 
-        return {
-            "message": "Quiz created successfully."
-        }
+        return MessageResponse(
+            message=QuizMessage.CREATED
+        )
 
     @staticmethod
     async def get_quizzes_by_category(
@@ -159,7 +166,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Category not found."
+                CategoryMessage.NOT_FOUND
             )
 
         quizzes = (
@@ -216,7 +223,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
 
         category = (
@@ -247,7 +254,7 @@ class QuizService:
     async def update_quiz(
             quiz_id: str,
             quiz: QuizUpdate
-    ):
+    ) -> MessageResponse:
         """
         Update an existing quiz.
         """
@@ -275,7 +282,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
 
         duplicate_quiz = (
@@ -294,7 +301,7 @@ class QuizService:
             )
 
             raise ConflictException(
-                "Quiz already exists."
+                QuizMessage.ALREADY_EXISTS
             )
 
         quiz_data = quiz.model_dump()
@@ -315,14 +322,14 @@ class QuizService:
             quiz.title
         )
 
-        return {
-            "message": "Quiz updated successfully."
-        }
+        return MessageResponse(
+            message=QuizMessage.UPDATED
+        )
 
     @staticmethod
     async def publish_quiz(
             quiz_id: str
-    ):
+    ) -> MessageResponse:
         """
         Publish an existing quiz.
         """
@@ -350,7 +357,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
         if existing_quiz["is_published"]:
 
@@ -360,7 +367,7 @@ class QuizService:
             )
 
             raise ConflictException(
-                "Quiz is already published."
+                QuizMessage.ALREADY_PUBLISHED
             )
         await Repository.update_quiz(
             quiz_object_id,
@@ -375,14 +382,14 @@ class QuizService:
             "Quiz '%s' published successfully.",
             existing_quiz["title"]
         )
-        return {
-            "message": "Quiz published successfully."
-        }
-    
+        return MessageResponse(
+            message=QuizMessage.PUBLISHED
+        )
+
     @staticmethod
     async def unpublish_quiz(
             quiz_id: str
-    ):
+    ) -> MessageResponse:
         """
         Unpublish an existing quiz.
         """
@@ -410,7 +417,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
         if not existing_quiz["is_published"]:
 
@@ -420,7 +427,7 @@ class QuizService:
             )
 
             raise ConflictException(
-                "Quiz is already unpublished."
+                QuizMessage.ALREADY_UNPUBLISHED
             )
         await Repository.update_quiz(
             quiz_object_id,
@@ -435,16 +442,16 @@ class QuizService:
             "Quiz '%s' unpublished successfully.",
             existing_quiz["title"]
         )
-        return {
-            "message": "Quiz unpublished successfully."
-        }
+        return MessageResponse(
+            message=QuizMessage.UNPUBLISHED
+        )
 
         
 
     @staticmethod
     async def delete_quiz(
             quiz_id: str
-    ):
+    ) -> MessageResponse:
         """
         Delete an existing quiz.
         """
@@ -472,7 +479,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
 
         await Repository.delete_quiz(
@@ -484,10 +491,10 @@ class QuizService:
             existing_quiz["title"]
         )
 
-        return {
-            "message": "Quiz deleted successfully."
-        }
-    
+        return MessageResponse(
+            message=QuizMessage.DELETED
+        )
+
     @staticmethod
     async def get_published_quizzes_by_category(
             category_id: str
@@ -519,7 +526,7 @@ class QuizService:
             )
 
             raise ResourceNotFoundException(
-                "Category not found."
+                CategoryMessage.NOT_FOUND
             )
 
         quizzes = (

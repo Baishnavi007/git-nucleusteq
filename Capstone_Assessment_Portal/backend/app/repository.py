@@ -92,6 +92,98 @@ class Repository:
         )
 
     @staticmethod
+    async def get_category_by_name(
+            name: str
+    ):
+        """
+        Retrieve category by name.
+        """
+
+        return await db.categories.find_one(
+            {
+                "name": {
+                    "$regex": f"^{name}$",
+                    "$options": "i"
+                }
+            }
+        )
+    
+    @staticmethod
+    async def get_all_categories():
+        """
+        Retrieve all categories.
+        """
+
+        return await db.categories.find().to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def create_category(
+            category_data: dict
+    ):
+        """
+        Save new category.
+        """
+
+        return await db.categories.insert_one(
+            category_data
+        )
+    
+    @staticmethod
+    async def update_category(
+            category_id: ObjectId,
+            category_data: dict
+    ):
+        """
+        Update an existing category.
+        """
+
+        return await db.categories.update_one(
+            {
+                "_id": category_id
+            },
+            {
+                "$set": category_data
+            }
+        )
+    
+    @staticmethod
+    async def delete_category(
+            category_id: ObjectId
+    ):
+        """
+        Delete a category.
+        """
+
+        return await db.categories.delete_one(
+            {
+                "_id": category_id
+            }
+        )
+    
+    @staticmethod
+    async def get_duplicate_category(
+            name: str,
+            category_id: ObjectId
+    ):
+        """
+        Retrieve duplicate category while updating.
+        """
+
+        return await db.categories.find_one(
+            {
+                "name": {
+                    "$regex": f"^{name}$",
+                    "$options": "i"
+                },
+                "_id": {
+                    "$ne": category_id
+                }
+            }
+        )
+
+    @staticmethod
     async def get_quiz_by_title(
             title: str,
             category_id: str

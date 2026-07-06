@@ -8,12 +8,18 @@ from datetime import (
 )
 
 from app.repository import Repository
-
+from app.schemas.common_schema import(
+    MessageResponse
+)
 from app.schemas.question_schema import (
     QuestionCreate,
     QuestionUpdate
 )
 
+from app.utils.constants import(
+    QuestionMessage,
+    QuizMessage
+)
 from app.utils.helpers import (
     validate_object_id,
     normalize_text
@@ -75,7 +81,7 @@ class QuestionService:
             )
 
             raise BadRequestException(
-                "Invalid question type."
+                QuestionMessage.INVALID_QUESTION_TYPE
             )
 
     @staticmethod
@@ -95,7 +101,7 @@ class QuestionService:
             )
 
             raise BadRequestException(
-                "Invalid difficulty level."
+                QuestionMessage.INVALID_DIFFICULTY
             )
 
     @staticmethod
@@ -117,7 +123,7 @@ class QuestionService:
                 )
 
                 raise BadRequestException(
-                    "Correct answer must be one of the options."
+                    QuestionMessage.INVALID_CORRECT_ANSWER
                 )
 
         elif question.question_type.lower() == "true_false":
@@ -132,7 +138,7 @@ class QuestionService:
                 )
 
                 raise BadRequestException(
-                    "Options must be ['True', 'False']."
+                    QuestionMessage.INVALID_TRUE_FALSE_OPTIONS
                 )
             correct_answer = question.correct_answer.strip().lower()
 
@@ -146,14 +152,14 @@ class QuestionService:
                 )
 
                 raise BadRequestException(
-                    "Correct answer must be either True or False."
+                    QuestionMessage.INVALID_TRUE_FALSE_ANSWER
                 )
     @staticmethod
     async def create_question(
             quiz_id: str,
             question: QuestionCreate,
             current_user: dict
-    ):
+    ) -> MessageResponse:
         """
         Create a new question.
         """
@@ -178,7 +184,7 @@ class QuestionService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
         question_text = normalize_text(question.question)
 
@@ -194,7 +200,7 @@ class QuestionService:
             )
 
             raise ConflictException(
-                "Question already exists in this quiz."
+                QuestionMessage.ALREADY_EXISTS
             )
         QuestionService.validate_question_type(
             question.question_type
@@ -222,9 +228,9 @@ class QuestionService:
         logger.info(
             "Question created successfully."
         )
-        return {
-            "message": "Question created successfully." 
-        }
+        return MessageResponse(
+            message=QuestionMessage.CREATED
+        )
             
     @staticmethod
     async def get_questions_by_quiz(
@@ -255,7 +261,7 @@ class QuestionService:
             )
 
             raise ResourceNotFoundException(
-                "Quiz not found."
+                QuizMessage.NOT_FOUND
             )
 
         questions = await Repository.get_questions_by_quiz(
@@ -300,7 +306,7 @@ class QuestionService:
                 question_id
             )
             raise ResourceNotFoundException(
-                "Question not found."
+                QuestionMessage.NOT_FOUND
             )
         question["id"] = str(
             question.pop("_id")
@@ -316,7 +322,7 @@ class QuestionService:
             question_id: str,
             question: QuestionUpdate,
             
-    ):
+    ) -> MessageResponse:
         """
         Update an existing question.
         """
@@ -342,7 +348,7 @@ class QuestionService:
             )
 
             raise ResourceNotFoundException(
-                "Question not found."
+                QuestionMessage.NOT_FOUND
             )
         question_text=normalize_text(question.question)
         duplicate_question = await Repository.get_duplicate_question_for_update(
@@ -358,7 +364,7 @@ class QuestionService:
             )
 
             raise ConflictException(
-                "Question already exists in this quiz."
+                QuestionMessage.ALREADY_EXISTS
             )
         QuestionService.validate_question_type(
             question.question_type  
@@ -386,14 +392,14 @@ class QuestionService:
             "Question '%s' updated successfully.",
             question_id
         )
-        return {
-            "message": "Question updated successfully." 
-        }
-    
+        return MessageResponse(
+            message=QuestionMessage.UPDATED
+        )
+
     @staticmethod
     async def delete_question(
             question_id: str
-    ):
+    ) -> MessageResponse:
         """
         Delete a question by its ID.
         """
@@ -419,7 +425,7 @@ class QuestionService:
             )
 
             raise ResourceNotFoundException(
-                "Question not found."
+                QuestionMessage.NOT_FOUND
             )
 
         await Repository.delete_question(
@@ -429,6 +435,6 @@ class QuestionService:
             "Question '%s' deleted successfully.",
             question_id
         )
-        return {
-            "message": "Question deleted successfully." 
-        }
+        return MessageResponse(
+            message=QuestionMessage.DELETED
+        )
