@@ -1,0 +1,59 @@
+/* ===========================
+   Category Card
+=========================== */
+
+.category-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    background:#ffffff;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.06);
+
+}
+
+.category-icon{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+    font-size:24px;
+
+}
+
+.category-details h3{
+
+    margin:0;
+
+    color:#1e293b;
+
+}
+
+.category-details p{
+
+    margin-top:6px;
+
+    color:#64748b;
+
+}

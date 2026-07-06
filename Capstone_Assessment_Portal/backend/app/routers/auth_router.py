@@ -2,67 +2,190 @@
 Authentication routes
 """
 
-from fastapi import APIRouter, HTTPException, status, Depends
-from app.schemas.user_schema import (UserRegister, UserLogin, LoginResponse)
-from app.services.auth_service import AuthService
-from app.security.auth_guard import get_current_user,admin_only,student_only
+from fastapi import (
+    APIRouter,
+    Depends,
+    status
+)
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["Authentication"]
+from app.schemas.user_schema import (
+    UserRegister,
+    UserLogin,
+    LoginResponse,
+    RefreshTokenRequest
+)
+
+from app.services.auth_service import (
+    AuthService
+)
+
+from app.security.auth_guard import (
+    get_current_user,
+    admin_only,
+    student_only
+)
+
+from app.utils.loggers import (
+    logger
 )
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register_user(user: UserRegister):
-    print("Registering user:")
-    """
-    Create a new user account
-    """
-    try:
-        return await AuthService.register(user)
-    
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+router = APIRouter(
+
+    prefix="/auth",
+
+    tags=["Authentication"]
+
+)
 
 
 @router.post(
-    "/login",
-    response_model=LoginResponse
+
+    "/register",
+
+    status_code=status.HTTP_201_CREATED
+
 )
-async def login_user(user: UserLogin):
+async def register_user(
+        user: UserRegister
+):
     """
-    Login user
+    Register a new user account.
     """
-    try:
-        return await AuthService.login(user)
 
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error))
+    logger.info(
+        "Registration request received for '%s'.",
+        user.email
+    )
 
-@router.get("/current-user")
-async def get_current_user_details(current_user=Depends(get_current_user)):
+    return await AuthService.register(
+        user
+    )
+
+
+@router.post(
+
+    "/login",
+
+    response_model=LoginResponse
+
+)
+async def login_user(
+        user: UserLogin
+):
     """
-    Get current user profile
+    Authenticate an existing user.
     """
+
+    logger.info(
+        "Login request received for '%s'.",
+        user.email_or_username
+    )
+
+    return await AuthService.login(
+        user
+    )
+
+
+@router.post(
+    "/refresh"
+)
+async def refresh_access_token(
+        data: RefreshTokenRequest
+):
+    """
+    Generate a new access token
+    using refresh token.
+    """
+
+    logger.info(
+        "Refresh token request received."
+    )
+
+    return await AuthService.regenerate_access_token(
+
+        data.refresh_token
+
+    )
+
+
+@router.get(
+    "/current-user"
+)
+async def get_current_user_details(
+        current_user=Depends(
+            get_current_user
+        )
+):
+    """
+    Return authenticated user's details.
+    """
+
     return current_user
 
-@router.get("/admin/dashboard")
-async def admin_dashboard(current_user=Depends(admin_only)):
+
+@router.get(
+    "/admin/dashboard"
+)
+async def admin_dashboard(
+        current_user=Depends(
+            admin_only
+        )
+):
     """
-    Admin dashboard endpoint
+    Test endpoint for admin users.
     """
+
+    logger.info(
+        "Admin dashboard accessed by '%s'.",
+        current_user["email"]
+    )
+
     return {
+
         "message": "Welcome Admin",
-         "user":current_user 
-    }
-   
-@router.get("/student/dashboard")
-async def student_dashboard(current_user=Depends(student_only)):
-    """
-     Student dashboard endpoint
-    """
-    return {
-        "message": "Welcome Student",
+
         "user": current_user
+
     }
+
+
+@router.get(
+    "/student/dashboard"
+)
+async def student_dashboard(
+        current_user=Depends(
+            student_only
+        )
+):
+    """
+    Test endpoint for student users.
+    """
+
+    logger.info(
+        "Student dashboard accessed by '%s'.",
+        current_user["email"]
+    )
+
+    return {
+
+        "message": "Welcome Student",
+
+        "user": current_user
+
+    }
+
+
+@router.get(
+    "/public-key"
+)
+async def get_public_key():
+    """
+    Return RSA public key.
+    """
+
+    logger.info(
+        "Public key requested."
+    )
+
+    return await AuthService.get_public_key()

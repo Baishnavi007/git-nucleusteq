@@ -1,3 +1,81 @@
+# Environment Variables
 .env
+
+# Java
 *.class
+
+# VS Code
 tempCodeRunnerFile.java
+.vscode/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python Virtual Environment
+venv/
+.venv/
+env/
+
+# Pytest Cache
+.pytest_cache/
+
+# Mypy Cache
+.mypy_cache/
+
+# Log Files
+*.log
+
+# RSA Keys
+*.pem
+backend/app/keys/private_key.pem
+backend/app/keys/public_key.pem
+
+# Environment variables
+.env
+
+# Java
+*.class
+
+# VS Code temporary file
+tempCodeRunnerFile.java
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python environment files
+.python-version
+
+# RSA Keys
+*.pem
+app/keys/private_key.pem
+app/keys/public_key.pem
+
+# Logs
+*.log
+# Frontend dependencies
+node_modules/
+
+# Vite cache
+.vite/
+
+# Build output
+dist/
+
+# npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.coverage
+.pytest_cache/
+htmlcov/

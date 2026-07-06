@@ -3,9 +3,7 @@ Authentication and authorization helper functions
 """
 
 from fastapi import (
-    Depends,
-    HTTPException,
-    status
+    Depends
 )
 
 from fastapi.security import (
@@ -22,6 +20,17 @@ from app.utils.constants import (
     STUDENT
 )
 
+from app.utils.loggers import (
+    logger
+)
+
+from app.exceptions.unauthorized_exception import (
+    UnauthorizedException
+)
+
+from app.exceptions.forbidden_exception import (
+    ForbiddenException
+)
 
 # Extract JWT token from Authorization header
 bearer_scheme = HTTPBearer()
@@ -33,52 +42,100 @@ def get_current_user(
         )
 ):
     """
-    Validate JWT token and return user payload
+    Validate JWT token and return authenticated user.
     """
 
     try:
+
+        logger.info(
+            "Token verification started."
+        )
+
         token = credentials.credentials
 
-        payload = decode_access_token(token)
+        payload = decode_access_token(
+            token
+        )
+
+        logger.info(
+            "Token verified successfully for '%s'.",
+            payload["email"]
+        )
 
         return payload
 
     except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token"
+
+        logger.warning(
+            "Invalid or expired token received."
+        )
+
+        raise UnauthorizedException(
+            "Invalid or expired token"
         )
 
 
 def admin_only(
-        user: dict = Depends(get_current_user)
+        user: dict = Depends(
+            get_current_user
+        )
 ):
     """
-    Allow access only to admin users
+    Allow access only to admin users.
     """
+
+    logger.info(
+        "Checking admin access for '%s'.",
+        user["email"]
+    )
 
     if user.get("role") != ADMIN:
 
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
+        logger.warning(
+            "Admin access denied for '%s'.",
+            user["email"]
         )
+
+        raise ForbiddenException(
+            "Admin access required"
+        )
+
+    logger.info(
+        "Admin access granted for '%s'.",
+        user["email"]
+    )
 
     return user
 
 
 def student_only(
-        user: dict = Depends(get_current_user)
+        user: dict = Depends(
+            get_current_user
+        )
 ):
     """
-    Allow access only to student users
+    Allow access only to student users.
     """
+
+    logger.info(
+        "Checking student access for '%s'.",
+        user["email"]
+    )
 
     if user.get("role") != STUDENT:
 
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Student access required"
+        logger.warning(
+            "Student access denied for '%s'.",
+            user["email"]
         )
+
+        raise ForbiddenException(
+            "Student access required"
+        )
+
+    logger.info(
+        "Student access granted for '%s'.",
+        user["email"]
+    )
 
     return user
