@@ -30,6 +30,7 @@ class QuizCreate(BaseModel):
         gt=0
     )
 
+
     @field_validator(
         "title",
         "description"
@@ -72,6 +73,8 @@ class QuizUpdate(BaseModel):
     duration: int = Field(
         gt=0
     )
+    is_published: bool
+    
 
     @field_validator(
         "title",
@@ -113,6 +116,10 @@ class QuizResponse(BaseModel):
     category_name: str
 
     duration: int
+
+    is_published: bool
+
+    max_attempts: int
 
     created_by: str
 

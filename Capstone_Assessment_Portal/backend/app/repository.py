@@ -94,7 +94,7 @@ class Repository:
     @staticmethod
     async def get_quiz_by_title(
             title: str,
-            category_id: ObjectId
+            category_id: str
     ):
         """
         Retrieve quiz by title within a category.
@@ -112,7 +112,7 @@ class Repository:
     @staticmethod
     async def get_duplicate_quiz(
             title: str,
-            category_id: ObjectId,
+            category_id: str,
             quiz_id: ObjectId
     ):
         """
@@ -146,7 +146,7 @@ class Repository:
 
     @staticmethod
     async def get_quizzes_by_category(
-            category_id: ObjectId
+            category_id: str
     ):
         """
         Retrieve all quizzes of a category.
@@ -331,4 +331,60 @@ class Repository:
             {
                 "quiz_id": quiz_id
             }
+        )
+
+
+    @staticmethod
+    async def publish_quiz(
+            quiz_id: ObjectId
+    ):
+        """
+        Publish a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": quiz_id
+            },
+            {
+                "$set": {
+                    "is_published": True
+                }
+            }
+        )
+    
+    @staticmethod
+    async def unpublish_quiz(
+            quiz_id: ObjectId
+    ):
+        """
+        Unpublish a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": quiz_id
+            },
+            {
+                "$set": {
+                    "is_published": False
+                }
+            }
+        )
+
+    @staticmethod
+    async def get_published_quizzes_by_category(
+            category_id: str
+    ):
+        """
+        Retrieve all published quizzes of a category.
+        """
+
+        return await db.quizzes.find(
+            {
+                "category_id": category_id,
+                "is_published": True
+            }
+        ).to_list(
+            length=None
         )

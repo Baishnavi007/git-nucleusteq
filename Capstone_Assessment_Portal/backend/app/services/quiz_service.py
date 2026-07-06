@@ -96,6 +96,9 @@ class QuizService:
 
         quiz_data = quiz.model_dump()
 
+        quiz_data["is_published"] = False
+        quiz_data["max_attempts"] = 3
+
         quiz_data["category_id"] = (
             category_id
         )
@@ -317,6 +320,128 @@ class QuizService:
         }
 
     @staticmethod
+    async def publish_quiz(
+            quiz_id: str
+    ):
+        """
+        Publish an existing quiz.
+        """
+
+        logger.info(
+            "Publishing quiz '%s'.",
+            quiz_id
+        )
+
+        quiz_object_id = validate_object_id(
+            quiz_id
+        )
+
+        existing_quiz = (
+            await Repository.get_quiz_by_id(
+                quiz_object_id
+            )
+        )
+
+        if not existing_quiz:
+
+            logger.warning(
+                "Quiz '%s' not found.",
+                quiz_id
+            )
+
+            raise ResourceNotFoundException(
+                "Quiz not found."
+            )
+        if existing_quiz["is_published"]:
+
+            logger.warning(
+                "Quiz '%s' is already published.",
+                existing_quiz["title"]
+            )
+
+            raise ConflictException(
+                "Quiz is already published."
+            )
+        await Repository.update_quiz(
+            quiz_object_id,
+            {
+                "is_published": True,
+                "updated_at": datetime.now(
+                    timezone.utc
+                )
+            }
+        )
+        logger.info(
+            "Quiz '%s' published successfully.",
+            existing_quiz["title"]
+        )
+        return {
+            "message": "Quiz published successfully."
+        }
+    
+    @staticmethod
+    async def unpublish_quiz(
+            quiz_id: str
+    ):
+        """
+        Unpublish an existing quiz.
+        """
+
+        logger.info(
+            "Unpublishing quiz '%s'.",
+            quiz_id
+        )
+
+        quiz_object_id = validate_object_id(
+            quiz_id
+        )
+
+        existing_quiz = (
+            await Repository.get_quiz_by_id(
+                quiz_object_id
+            )
+        )
+
+        if not existing_quiz:
+
+            logger.warning(
+                "Quiz '%s' not found.",
+                quiz_id
+            )
+
+            raise ResourceNotFoundException(
+                "Quiz not found."
+            )
+        if not existing_quiz["is_published"]:
+
+            logger.warning(
+                "Quiz '%s' is already unpublished.",
+                existing_quiz["title"]
+            )
+
+            raise ConflictException(
+                "Quiz is already unpublished."
+            )
+        await Repository.update_quiz(
+            quiz_object_id,
+            {
+                "is_published": False,
+                "updated_at": datetime.now(
+                    timezone.utc
+                )
+            }
+        )
+        logger.info(
+            "Quiz '%s' unpublished successfully.",
+            existing_quiz["title"]
+        )
+        return {
+            "message": "Quiz unpublished successfully."
+        }
+
+        
+
+    @staticmethod
     async def delete_quiz(
             quiz_id: str
     ):
@@ -362,3 +487,58 @@ class QuizService:
         return {
             "message": "Quiz deleted successfully."
         }
+    
+    @staticmethod
+    async def get_published_quizzes_by_category(
+            category_id: str
+    ):
+        """
+        Retrieve all unpublished quizzes of a category.
+        """
+
+        logger.info(
+            "Fetching published quizzes for category '%s'.",
+            category_id
+        )
+
+        category_object_id = validate_object_id(
+            category_id
+        )
+
+        existing_category = (
+            await Repository.get_category_by_id(
+                category_object_id
+            )
+        )
+
+        if not existing_category:
+
+            logger.warning(
+                "Category '%s' not found.",
+                category_id
+            )
+
+            raise ResourceNotFoundException(
+                "Category not found."
+            )
+
+        quizzes = (
+            await Repository.get_published_quizzes_by_category(
+                category_id
+            )
+        )
+
+        for quiz in quizzes:
+
+            quiz["id"] = str(
+                quiz.pop("_id")
+            )
+            quiz["category_name"] = (
+                existing_category["name"]
+            )
+        logger.info(
+            "%d unpublished quizzes fetched successfully.",
+            len(quizzes)
+        )
+
+        return quizzes

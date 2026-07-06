@@ -82,7 +82,7 @@ async def create_quiz(
 async def get_quizzes_by_category(
         category_id: str,
         current_user=Depends(
-            get_current_user
+            admin_only
         )
 ):
     """
@@ -164,6 +164,64 @@ async def update_quiz(
 
     )
 
+@router.patch(
+
+    "/{quiz_id}/publish",
+
+    status_code=status.HTTP_200_OK
+
+)
+async def publish_quiz(
+        quiz_id: str,
+        current_user=Depends(
+            admin_only
+        )
+):
+    """
+    Publish an existing quiz.
+    """
+
+    logger.info(
+        "Publish quiz '%s' requested by '%s'.",
+        quiz_id,
+        current_user["email"]
+    )
+
+    return await QuizService.publish_quiz(
+
+        quiz_id
+
+    )
+
+
+@router.patch(
+
+    "/{quiz_id}/unpublish",
+
+    status_code=status.HTTP_200_OK
+
+)
+async def unpublish_quiz(
+        quiz_id: str,
+        current_user=Depends(
+            admin_only
+        )
+):
+    """
+    Unpublish an existing quiz.
+    """
+
+    logger.info(
+        "Unpublish quiz '%s' requested by '%s'.",
+        quiz_id,
+        current_user["email"]
+    )
+
+    return await QuizService.unpublish_quiz(
+
+        quiz_id
+
+    )
 
 @router.delete(
 
@@ -191,5 +249,34 @@ async def delete_quiz(
     return await QuizService.delete_quiz(
 
         quiz_id
+
+    )
+
+@router.get(
+    
+    "/category/{category_id}/published",
+
+    response_model=list[QuizResponse]
+
+)
+async def get_published_quizzes_by_category(
+        category_id: str,
+        current_user=Depends(
+            get_current_user
+        )
+):
+    """
+    Retrieve all published quizzes for a category.
+    """
+
+    logger.info(
+        "Get published quizzes for category '%s' requested by '%s'.",
+        category_id,
+        current_user["email"]
+    )
+
+    return await QuizService.get_published_quizzes_by_category(
+
+        category_id
 
     )
