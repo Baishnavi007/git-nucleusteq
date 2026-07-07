@@ -56,6 +56,11 @@ class QuizMessage:
     ALREADY_PUBLISHED = "Quiz is already published."
     ALREADY_UNPUBLISHED = "Quiz is already unpublished."
     NOT_PUBLISHED = "Quiz is not published yet."
+    NO_QUESTIONS = "Quiz must contain at least one question."
+
+    INVALID_TOTAL_MARKS = (
+    "Quiz must have total marks greater than zero."
+)
 
 
 class QuestionMessage:

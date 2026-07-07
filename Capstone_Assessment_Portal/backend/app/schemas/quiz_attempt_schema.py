@@ -28,7 +28,7 @@ class AttemptQuestionSnapshot(BaseModel):
     difficulty: str
 
     tags: list[str]
-    
+
     marks: int = Field(
         gt=0
     )
@@ -54,6 +54,21 @@ class QuizSnapshot(BaseModel):
     questions: list[
         AttemptQuestionSnapshot
     ]
+
+    total_questions: int = Field(
+        ge=0
+    )
+
+    total_marks: int = Field(
+        ge=0
+    )
+    passing_percentage: int = Field(
+        ge=1,
+        le=100
+    )
+    passing_marks: int = Field(
+        ge=0
+    )
 
 
 class StudentAnswer(BaseModel):

@@ -1,7 +1,7 @@
 """
 Quiz attempt business logic
 """
-
+import math
 from datetime import (
     datetime,
     timezone
@@ -65,7 +65,15 @@ def create_quiz_snapshot(
         category_name=category["name"],
 
         duration=quiz["duration"],
-
+        total_questions=quiz["total_questions"],
+        total_marks=quiz["total_marks"],
+        passing_percentage=quiz["passing_percentage"],
+        passing_marks=math.ceil(
+            quiz["total_marks"]
+            *
+            quiz["passing_percentage"]
+            /100
+        ),
         questions=[
 
             AttemptQuestionSnapshot(

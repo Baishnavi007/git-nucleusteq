@@ -340,6 +340,51 @@ class Repository:
         )
 
     @staticmethod
+    async def update_quiz_statistics(
+            quiz_id: ObjectId,
+            total_questions: int,
+            total_marks: int
+    ):
+        """
+        Update total questions and total marks of a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": ObjectId(quiz_id)
+            },
+            {
+                "$set": {
+                    "total_questions": total_questions,
+                    "total_marks": total_marks
+                }
+            }
+        )
+    
+    @staticmethod
+    async def calculate_quiz_statistics(
+            quiz_id: str
+    ):
+        """
+        Calculate total questions and total marks of a quiz.
+        """
+
+        questions = await db.questions.find(
+            {
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+
+        total_questions = len(questions)
+        total_marks = sum(
+            question["marks"] for question in questions
+        )
+
+        return total_questions, total_marks
+
+    @staticmethod
     async def get_duplicate_question(
             question: str,
             quiz_id: str
