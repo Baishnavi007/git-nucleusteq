@@ -9,7 +9,7 @@ Responsibilities:
 from bson import ObjectId
 
 from app.config.database import db
-
+from app.utils.constants import QuizAttemptStatus
 
 class Repository:
     """
@@ -479,4 +479,84 @@ class Repository:
             }
         ).to_list(
             length=None
+        )
+
+    
+    @staticmethod
+    async def create_attempt(
+            attempt_data: dict
+    ):
+        """
+        Save new quiz attempt.
+        """
+
+        return await db.attempts.insert_one(
+            attempt_data
+        )
+    
+    @staticmethod
+    async def get_attempt_by_id(
+            attempt_id: ObjectId
+    ):
+        """
+        Retrieve quiz attempt by id.
+        """
+
+        return await db.attempts.find_one(
+            {
+                "_id": attempt_id
+            }
+        )
+    
+    @staticmethod
+    async def get_student_attempts(
+            student_id: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve all attempts of a student for a quiz.
+        """
+
+        return await db.attempts.find(
+            {
+                "student_id": student_id,
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def get_active_attempt(
+            student_id: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve active attempt of a student for a quiz.
+        """
+
+        return await db.attempts.find_one(
+            {
+                "student_id": student_id,
+                "quiz_id": quiz_id,
+                "status": QuizAttemptStatus.IN_PROGRESS
+            }
+        )
+    
+    @staticmethod
+    async def update_attempt(
+            attempt_id: ObjectId,
+            attempt_data: dict
+    ):
+        """
+        Update an existing quiz attempt.
+        """
+
+        return await db.attempts.update_one(
+            {
+                "_id": attempt_id
+            },
+            {
+                "$set": attempt_data
+            }
         )

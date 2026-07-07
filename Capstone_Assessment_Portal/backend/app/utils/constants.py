@@ -4,6 +4,7 @@ Application constants
 
 ADMIN = "admin"
 STUDENT = "student"
+
 """
 Application constants
 """
@@ -54,6 +55,7 @@ class QuizMessage:
 
     ALREADY_PUBLISHED = "Quiz is already published."
     ALREADY_UNPUBLISHED = "Quiz is already unpublished."
+    NOT_PUBLISHED = "Quiz is not published yet."
 
 
 class QuestionMessage:
@@ -81,3 +83,48 @@ class QuestionType(str, Enum):
     """
 
     MCQ = "MCQ"
+
+
+class QuizAttemptStatus(str, Enum):
+
+    IN_PROGRESS = "IN_PROGRESS"
+
+    SUBMITTED = "SUBMITTED"
+
+    TIME_EXPIRED = "TIME_EXPIRED"
+    
+class QuizAttemptMessage:
+
+    STARTED = "Quiz attempt started successfully."
+
+    ANSWER_SAVED = "Answer saved successfully."
+
+    SUBMITTED = "Quiz submitted successfully."
+
+    ATTEMPT_ALREADY_IN_PROGRESS = (
+        "You already have an active quiz attempt."
+    )
+
+    ATTEMPT_ALREADY_SUBMITTED = (
+        "Quiz attempt has already been submitted."
+    )
+
+    MAX_ATTEMPTS_REACHED = (
+        "Maximum number of attempts reached."
+    )
+
+    NOT_FOUND = "Quiz attempt not found."
+
+    INVALID_ID = "Invalid quiz attempt ID."
+    TIME_EXPIRED = (
+    "Quiz time has expired. Attempt submitted automatically."
+)
+
+
+class QuizAttemptStatus(str, Enum):
+
+    IN_PROGRESS = "IN_PROGRESS"
+
+    SUBMITTED = "SUBMITTED"
+
+    TIME_EXPIRED = "TIME_EXPIRED"
