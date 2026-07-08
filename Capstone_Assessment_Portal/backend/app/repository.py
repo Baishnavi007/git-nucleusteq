@@ -605,3 +605,64 @@ class Repository:
                 "$set": attempt_data
             }
         )
+
+    @staticmethod
+    async def get_result_by_attempt_id(
+        attempt_object_id: ObjectId
+    ):
+        """
+        Retreive a submitted quiz attempt by ID.
+        """
+        return await db.attempts.find_one(
+            {
+                "_id": attempt_object_id,
+                "status": {
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+
+            }
+        )
+    
+    @staticmethod
+    async def get_student_results(
+        student_id: str
+    ):
+        """
+        Retreive all submitted attempts of student
+        """
+        return await db.attempts.find(
+            {
+                "student_id": student_id,
+                "status":{
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+            }
+        ).to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def get_all_results():
+        """
+        Retreive all submitted quiz attempts
+        """
+
+        return await db.attempts.find(
+            {
+                "status": {
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+            }
+        ).to_list(
+            length=None
+        )
+    
