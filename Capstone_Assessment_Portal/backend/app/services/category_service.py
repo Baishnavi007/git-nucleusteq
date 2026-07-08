@@ -268,10 +268,25 @@ class CategoryService:
                 "Category '%s' not found.",
                 category_id
             )
+            
 
             raise ResourceNotFoundException(
                 CategoryMessage.NOT_FOUND
             )
+        quizzes = await Repository.get_quizzes_by_category(
+            category_id
+        )
+
+        
+        for quiz in quizzes:
+            await Repository.delete_questions_by_quiz(
+                str(
+                    quiz["_id"]
+                )
+            )
+        await Repository.delete_quizzes_by_category(
+            category_id
+        )
 
         await Repository.delete_category(
             category_object_id

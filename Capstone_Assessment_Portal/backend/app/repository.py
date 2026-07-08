@@ -297,6 +297,23 @@ class Repository:
                 "_id": quiz_id
             }
         )
+    
+    @staticmethod
+    async def delete_quizzes_by_category(
+        category_id: str
+    ):
+        """
+        Delete all quizzes of a category
+        """
+        return await db.quizzes.delete_many(
+            {
+                "category_id": category_id
+            }
+        )
+
+
+
+
     @staticmethod
     async def create_question(
             question_data: dict
@@ -470,6 +487,7 @@ class Repository:
             }
         )
 
+   
 
     @staticmethod
     async def publish_quiz(

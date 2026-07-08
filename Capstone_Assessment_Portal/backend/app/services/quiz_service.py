@@ -499,6 +499,10 @@ class QuizService:
                 QuizMessage.NOT_FOUND
             )
 
+        await Repository.delete_questions_by_quiz(
+            quiz_id
+        )
+
         await Repository.delete_quiz(
             quiz_object_id
         )
@@ -517,7 +521,7 @@ class QuizService:
             category_id: str
     ):
         """
-        Retrieve all unpublished quizzes of a category.
+        Retrieve all published quizzes of a category.
         """
 
         logger.info(
@@ -561,7 +565,7 @@ class QuizService:
                 existing_category["name"]
             )
         logger.info(
-            "%d unpublished quizzes fetched successfully.",
+            "%d published quizzes fetched successfully.",
             len(quizzes)
         )
 
