@@ -18,7 +18,9 @@ from app.schemas.question_schema import (
 
 from app.utils.constants import(
     QuestionMessage,
-    QuizMessage
+    QuizMessage,
+    VALID_QUESTION_TYPES,
+    VALID_DIFFICULTY_LEVELS
 )
 from app.utils.helpers import (
     validate_object_id,
@@ -39,25 +41,6 @@ from app.utils.loggers import (
     logger
 )
 
-
-VALID_QUESTION_TYPES = {
-
-    "mcq",
-
-    "true_false"
-
-}
-
-
-VALID_DIFFICULTY_LEVELS = {
-
-    "easy",
-
-    "medium",
-
-    "hard"
-
-}
 
 
 class QuestionService:

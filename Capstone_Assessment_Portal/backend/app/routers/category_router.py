@@ -50,7 +50,8 @@ async def get_all_categories(
         current_user["email"]
     )
 
-    return await CategoryService.get_all_categories()
+    result= await CategoryService.get_all_categories()
+    return result
 
 
 @router.post(
@@ -76,13 +77,15 @@ async def create_category(
         current_user["email"]
     )
 
-    return await CategoryService.create_category(
+    result= await CategoryService.create_category(
 
         category,
 
         current_user
 
     )
+
+    return result
 
 
 @router.put("/{category_id}")
@@ -103,13 +106,14 @@ async def update_category(
         current_user["email"]
     )
 
-    return await CategoryService.update_category(
+    result= await CategoryService.update_category(
 
         category_id,
 
         category
 
     )
+    return result
 
 
 @router.delete("/{category_id}")
@@ -129,11 +133,13 @@ async def delete_category(
         current_user["email"]
     )
 
-    return await CategoryService.delete_category(
+    result= await CategoryService.delete_category(
 
         category_id
 
     )
+    return result
+
 
 @router.get("/{category_id}")
 async def get_category_by_id(
@@ -152,6 +158,7 @@ async def get_category_by_id(
         current_user["email"]
     )
 
-    return await CategoryService.get_category_by_id(
+    result= await CategoryService.get_category_by_id(
         category_id
     )
+    return result

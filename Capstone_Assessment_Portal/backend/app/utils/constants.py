@@ -5,9 +5,7 @@ Application constants
 ADMIN = "admin"
 STUDENT = "student"
 
-"""
-Application constants
-"""
+
 
 from enum import Enum
 
@@ -133,3 +131,14 @@ class QuizAttemptStatus(str, Enum):
     SUBMITTED = "SUBMITTED"
 
     TIME_EXPIRED = "TIME_EXPIRED"
+
+VALID_QUESTION_TYPES = {
+    "mcq",
+    "true_false"
+}
+
+VALID_DIFFICULTY_LEVELS = {
+    "easy",
+    "medium",
+    "hard"
+}
