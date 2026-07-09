@@ -61,7 +61,7 @@ async def create_quiz(
         current_user["email"]
     )
 
-    return await QuizService.create_quiz(
+    response= await QuizService.create_quiz(
 
         category_id,
 
@@ -70,6 +70,7 @@ async def create_quiz(
         current_user
 
     )
+    return response
 
 
 @router.get(
@@ -95,11 +96,12 @@ async def get_quizzes_by_category(
         current_user["email"]
     )
 
-    return await QuizService.get_quizzes_by_category(
+    response= await QuizService.get_quizzes_by_category(
 
         category_id
 
     )
+    return response
 
 
 @router.get(
@@ -125,11 +127,12 @@ async def get_quiz_by_id(
         current_user["email"]
     )
 
-    return await QuizService.get_quiz_by_id(
+    response= await QuizService.get_quiz_by_id(
 
         quiz_id
 
     )
+    return response
 
 
 @router.put(
@@ -156,13 +159,14 @@ async def update_quiz(
         current_user["email"]
     )
 
-    return await QuizService.update_quiz(
+    response= await QuizService.update_quiz(
 
         quiz_id,
 
         quiz
 
     )
+    return response
 
 @router.patch(
 
@@ -187,11 +191,12 @@ async def publish_quiz(
         current_user["email"]
     )
 
-    return await QuizService.publish_quiz(
+    response= await QuizService.publish_quiz(
 
         quiz_id
 
     )
+    return response
 
 
 @router.patch(
@@ -217,11 +222,12 @@ async def unpublish_quiz(
         current_user["email"]
     )
 
-    return await QuizService.unpublish_quiz(
+    response= await QuizService.unpublish_quiz(
 
         quiz_id
 
     )
+    return response
 
 @router.delete(
 
@@ -246,11 +252,12 @@ async def delete_quiz(
         current_user["email"]
     )
 
-    return await QuizService.delete_quiz(
+    response= await QuizService.delete_quiz(
 
         quiz_id
 
     )
+    return response
 
 @router.get(
     
@@ -275,8 +282,9 @@ async def get_published_quizzes_by_category(
         current_user["email"]
     )
 
-    return await QuizService.get_published_quizzes_by_category(
+    response= await QuizService.get_published_quizzes_by_category(
 
         category_id
 
     )
+    return response

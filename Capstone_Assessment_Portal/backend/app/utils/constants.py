@@ -4,9 +4,7 @@ Application constants
 
 ADMIN = "admin"
 STUDENT = "student"
-"""
-Application constants
-"""
+
 
 from enum import Enum
 
@@ -81,3 +79,14 @@ class QuestionType(str, Enum):
     """
 
     MCQ = "MCQ"
+
+VALID_QUESTION_TYPES = {
+    "mcq",
+    "true_false"
+}
+
+VALID_DIFFICULTY_LEVELS = {
+    "easy",
+    "medium",
+    "hard"
+}

@@ -59,7 +59,7 @@ async def create_question(
         current_user["email"]
     )
 
-    return await QuestionService.create_question(
+    response= await QuestionService.create_question(
 
         quiz_id,
 
@@ -68,6 +68,7 @@ async def create_question(
         current_user
 
     )
+    return response
 
 
 @router.get(
@@ -93,11 +94,12 @@ async def get_questions_by_quiz(
         current_user["email"]
     )
 
-    return await QuestionService.get_questions_by_quiz(
+    response= await QuestionService.get_questions_by_quiz(
 
         quiz_id
 
     )
+    return response
 
 
 @router.get(
@@ -123,11 +125,12 @@ async def get_question_by_id(
         current_user["email"]
     )
 
-    return await QuestionService.get_question_by_id(
+    response= await QuestionService.get_question_by_id(
 
         question_id
 
     )
+    return response
 
 
 @router.put(
@@ -154,13 +157,14 @@ async def update_question(
         current_user["email"]
     )
 
-    return await QuestionService.update_question(
+    response= await QuestionService.update_question(
 
         question_id,
 
         question
 
     )
+    return response
 
 
 @router.delete(
@@ -186,8 +190,9 @@ async def delete_question(
         current_user["email"]
     )
 
-    return await QuestionService.delete_question(
+    response= await QuestionService.delete_question(
 
         question_id
 
     )
+    return response

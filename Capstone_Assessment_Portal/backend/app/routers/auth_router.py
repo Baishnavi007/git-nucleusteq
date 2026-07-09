@@ -58,9 +58,9 @@ async def register_user(
         user.email
     )
 
-    return await AuthService.register(
-        user
-    )
+    response = await AuthService.register(user)
+    return response
+
 
 
 @router.post(
@@ -82,9 +82,8 @@ async def login_user(
         user.email_or_username
     )
 
-    return await AuthService.login(
-        user
-    )
+    response= await AuthService.login(user)
+    return response
 
 
 @router.post(
@@ -102,11 +101,8 @@ async def refresh_access_token(
         "Refresh token request received."
     )
 
-    return await AuthService.regenerate_access_token(
-
-        data.refresh_token
-
-    )
+    response= await AuthService.regenerate_access_token(data.refresh_token)
+    return response
 
 
 @router.get(
@@ -141,13 +137,15 @@ async def admin_dashboard(
         current_user["email"]
     )
 
-    return {
+    response=  {
 
         "message": "Welcome Admin",
 
         "user": current_user
 
     }
+
+    return response
 
 
 @router.get(
@@ -167,13 +165,14 @@ async def student_dashboard(
         current_user["email"]
     )
 
-    return {
+    response= {
 
         "message": "Welcome Student",
 
         "user": current_user
 
     }
+    return response
 
 
 @router.get(
@@ -188,4 +187,5 @@ async def get_public_key():
         "Public key requested."
     )
 
-    return await AuthService.get_public_key()
+    response= await AuthService.get_public_key()
+    return response
