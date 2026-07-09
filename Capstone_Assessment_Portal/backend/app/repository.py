@@ -92,9 +92,101 @@ class Repository:
         )
 
     @staticmethod
+    async def get_category_by_name(
+            name: str
+    ):
+        """
+        Retrieve category by name.
+        """
+
+        return await db.categories.find_one(
+            {
+                "name": {
+                    "$regex": f"^{name}$",
+                    "$options": "i"
+                }
+            }
+        )
+    
+    @staticmethod
+    async def get_all_categories():
+        """
+        Retrieve all categories.
+        """
+
+        return await db.categories.find().to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def create_category(
+            category_data: dict
+    ):
+        """
+        Save new category.
+        """
+
+        return await db.categories.insert_one(
+            category_data
+        )
+    
+    @staticmethod
+    async def update_category(
+            category_id: ObjectId,
+            category_data: dict
+    ):
+        """
+        Update an existing category.
+        """
+
+        return await db.categories.update_one(
+            {
+                "_id": category_id
+            },
+            {
+                "$set": category_data
+            }
+        )
+    
+    @staticmethod
+    async def delete_category(
+            category_id: ObjectId
+    ):
+        """
+        Delete a category.
+        """
+
+        return await db.categories.delete_one(
+            {
+                "_id": category_id
+            }
+        )
+    
+    @staticmethod
+    async def get_duplicate_category(
+            name: str,
+            category_id: ObjectId
+    ):
+        """
+        Retrieve duplicate category while updating.
+        """
+
+        return await db.categories.find_one(
+            {
+                "name": {
+                    "$regex": f"^{name}$",
+                    "$options": "i"
+                },
+                "_id": {
+                    "$ne": category_id
+                }
+            }
+        )
+
+    @staticmethod
     async def get_quiz_by_title(
             title: str,
-            category_id: ObjectId
+            category_id: str
     ):
         """
         Retrieve quiz by title within a category.
@@ -112,7 +204,7 @@ class Repository:
     @staticmethod
     async def get_duplicate_quiz(
             title: str,
-            category_id: ObjectId,
+            category_id: str,
             quiz_id: ObjectId
     ):
         """
@@ -146,7 +238,7 @@ class Repository:
 
     @staticmethod
     async def get_quizzes_by_category(
-            category_id: ObjectId
+            category_id: str
     ):
         """
         Retrieve all quizzes of a category.
@@ -205,4 +297,186 @@ class Repository:
                 "_id": quiz_id
             }
         )
+    @staticmethod
+    async def create_question(
+            question_data: dict
+    ):
+        """
+        Save new question.
+        """
 
+        return await db.questions.insert_one(
+            question_data
+        )
+
+    @staticmethod
+    async def get_question_by_id(
+            question_id: ObjectId
+    ):
+        """
+        Retrieve question by id.
+        """
+
+        return await db.questions.find_one(
+            {
+                "_id": question_id
+            }
+        )
+
+    @staticmethod
+    async def get_questions_by_quiz(
+            quiz_id: str
+    ):
+        """
+        Retrieve all questions of a quiz.
+        """
+
+        return await db.questions.find(
+            {
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+
+    @staticmethod
+    async def get_duplicate_question(
+            question: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve duplicate question.
+        """
+
+        return await db.questions.find_one(
+            {
+                "question": question,
+                "quiz_id": quiz_id
+            }
+        )
+        
+
+    @staticmethod
+    async def get_duplicate_question_for_update(
+            question: str,
+            quiz_id: str,
+            question_id: ObjectId
+    ):
+        """
+        Retrieve duplicate question while updating.
+        """
+
+        return await db.questions.find_one(
+            {
+                "question": {
+                    "$regex": f"^{question}$",
+                    "$options": "i"
+                },
+                "quiz_id": quiz_id,
+                "_id": {
+                    "$ne": question_id
+                }
+            }
+        )
+
+    @staticmethod
+    async def update_question(
+            question_id: ObjectId,
+            question_data: dict
+    ):
+        """
+        Update an existing question.
+        """
+
+        return await db.questions.update_one(
+            {
+                "_id": question_id
+            },
+            {
+                "$set": question_data
+            }
+        )
+
+    @staticmethod
+    async def delete_question(
+            question_id: ObjectId
+    ):
+        """
+        Delete a question.
+        """
+
+        return await db.questions.delete_one(
+            {
+                "_id": question_id
+            }
+        )
+    
+    @staticmethod
+    async def delete_questions_by_quiz(
+            quiz_id: str
+    ):
+        """
+        Delete all questions of a quiz.
+        """
+
+        return await db.questions.delete_many(
+            {
+                "quiz_id": quiz_id
+            }
+        )
+
+
+    @staticmethod
+    async def publish_quiz(
+            quiz_id: ObjectId
+    ):
+        """
+        Publish a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": quiz_id
+            },
+            {
+                "$set": {
+                    "is_published": True
+                }
+            }
+        )
+    
+    @staticmethod
+    async def unpublish_quiz(
+            quiz_id: ObjectId
+    ):
+        """
+        Unpublish a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": quiz_id
+            },
+            {
+                "$set": {
+                    "is_published": False
+                }
+            }
+        )
+
+    @staticmethod
+    async def get_published_quizzes_by_category(
+            category_id: str
+    ):
+        """
+        Retrieve all published quizzes of a category.
+        """
+
+        return await db.quizzes.find(
+            {
+                "category_id": category_id,
+                "is_published": True
+            }
+        ).to_list(
+            length=None
+        )
