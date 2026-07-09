@@ -2,8 +2,8 @@
  * Admin Dashboard
  */
 
-import SideBar from "../components/SideBar/SideBar";
-import TopBar from "../components/Topbar/TopBar";
+import SideBar from "../../components/layout/SideBar/SideBar";
+import TopBar from "../../components/layout/Topbar/TopBar";
 
 import "./AdminDashBoard.css";
 

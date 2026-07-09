@@ -60,11 +60,12 @@ async def get_student_results(
         current_user["email"]
     )
 
-    return await ResultService.get_student_results(
+    response= await ResultService.get_student_results(
 
         current_user
 
     )
+    return response
 
 
 @router.get(
@@ -90,7 +91,8 @@ async def get_all_results(
         current_user["email"]
     )
 
-    return await ResultService.get_all_results()
+    response= await ResultService.get_all_results()
+    return response
 
 
 @router.get(
@@ -117,11 +119,12 @@ async def get_result_admin(
         current_user["email"]
     )
 
-    return await ResultService.get_result_admin(
+    response= await ResultService.get_result_admin(
 
         attempt_id
 
     )
+    return response
 
 @router.get(
 
@@ -147,10 +150,11 @@ async def get_result(
         current_user["email"]
     )
 
-    return await ResultService.get_result(
+    response= await ResultService.get_result(
 
         attempt_id,
 
         current_user
 
     )
+    return response

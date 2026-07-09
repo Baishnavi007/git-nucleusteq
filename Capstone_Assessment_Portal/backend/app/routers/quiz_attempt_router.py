@@ -65,13 +65,14 @@ async def start_attempt(
         current_user["email"]
     )
 
-    return await QuizAttemptService.start_attempt(
+    response= await QuizAttemptService.start_attempt(
 
         attempt.quiz_id,
 
         current_user
 
     )
+    return response
 
 
 @router.get(
@@ -97,13 +98,14 @@ async def get_attempt_questions(
         current_user["email"]
     )
 
-    return await QuizAttemptService.get_attempt_questions(
+    response= await QuizAttemptService.get_attempt_questions(
 
         attempt_id,
 
         current_user
 
     )
+    return response
 
 
 @router.patch(
@@ -130,7 +132,7 @@ async def save_answer(
         current_user["email"]
     )
 
-    return await QuizAttemptService.save_answer(
+    response= await QuizAttemptService.save_answer(
 
         attempt_id,
 
@@ -139,6 +141,7 @@ async def save_answer(
         current_user
 
     )
+    return response
 
 
 @router.post(
@@ -164,13 +167,14 @@ async def submit_attempt(
         current_user["email"]
     )
 
-    return await QuizAttemptService.submit_attempt(
+    response= await QuizAttemptService.submit_attempt(
 
         attempt_id,
 
         current_user
 
     )
+    return response
 
 
 @router.get(
@@ -196,10 +200,11 @@ async def get_student_attempts(
         current_user["email"]
     )
 
-    return await QuizAttemptService.get_student_attempts(
+    response= await QuizAttemptService.get_student_attempts(
 
         quiz_id,
 
         current_user
 
     )
+    return response
