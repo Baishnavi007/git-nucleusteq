@@ -235,6 +235,15 @@ class Repository:
         return await db.quizzes.insert_one(
             quiz_data
         )
+    
+    @staticmethod
+    async def get_all_quizzes():
+        """
+        Retreive all quizzes
+        """
+        return await db.quizzes.find().to_list(
+            length=None
+        )
 
     @staticmethod
     async def get_quizzes_by_category(

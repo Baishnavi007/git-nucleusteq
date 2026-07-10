@@ -138,6 +138,22 @@ class QuizService:
         return MessageResponse(
             message=QuizMessage.CREATED
         )
+    @staticmethod
+    async def get_all_quizzes():
+        """
+        Retreive all quizzes
+        """
+        logger.info("Fetching all quizzes.")
+        quizzes = await Repository.get_all_quizzes()
+        for quiz in quizzes:
+            quiz["id"] = str(quiz.pop("_id"))
+
+            category = await Repository.get_category_by_id(
+                validate_object_id(quiz["category_id"])
+            )
+            quiz["category_name"] = category["name"]
+
+        return quizzes
 
     @staticmethod
     async def get_quizzes_by_category(
@@ -197,6 +213,8 @@ class QuizService:
         )
 
         return quizzes
+
+    
 
     @staticmethod
     async def get_quiz_by_id(

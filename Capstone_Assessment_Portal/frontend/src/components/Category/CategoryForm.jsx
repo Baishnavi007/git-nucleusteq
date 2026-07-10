@@ -8,6 +8,9 @@
  */
 
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { validateCategoryForm} from "../../utils/validation";
+import { getErrorMessage} from "../../utils/errorHandler";
 
 import {
     FaTimes,
@@ -44,6 +47,15 @@ function CategoryForm({
         description: ""
 
     });
+    /**
+    * Stores validation errors.
+   */
+    const [errors, setErrors] = useState({});
+
+    /**
+     * Controls submit button loading.
+    */
+    const [loading, setLoading] = useState(false);  
 
     /**
      * Populate form while editing.
@@ -61,6 +73,16 @@ function CategoryForm({
             });
 
         }
+        else{
+            setCategoryData({
+                name: "",
+                description: ""
+            })
+        }
+        /**
+         * Clear previous validation errors
+         */
+        setErrors({});
 
     }, [selectedCategory]);
 
@@ -86,6 +108,15 @@ function CategoryForm({
 
         }));
 
+        /**
+         * Remove validation errors while user types
+         */
+        setErrors((previousErrors) => ({
+            ...previousErrors,
+            [name]: ""
+        }));
+                
+
     };
 
 
@@ -95,6 +126,12 @@ function CategoryForm({
     const handleSubmit = async (event) => {
 
         event.preventDefault();
+        const validationErrors = validateCategoryForm(categoryData);
+        if (Object.keys(validationErrors).length>0){
+            setErrors(validationErrors);
+            return;
+        }
+        setLoading(true);
 
         try {
 
@@ -124,6 +161,11 @@ function CategoryForm({
              * Refresh category list.
              */
             await fetchCategories();
+            toast.success(
+                selectedCategory
+                ? "Category updated successfully"
+                :"Category created successfully"
+            );
 
             /**
              * Close drawer.
@@ -142,14 +184,15 @@ function CategoryForm({
 
             );
 
-            alert(
+            toast.error(
 
-                error.response?.data?.detail ||
-
-                "Something went wrong."
+                getErrorMessage(error)
 
             );
 
+        }
+        finally{
+            setLoading(false);
         }
 
     };
@@ -229,7 +272,7 @@ function CategoryForm({
 
                         onChange={handleInputChange}
 
-                        required
+                        error={errors.name}
 
                     />
 
@@ -245,7 +288,7 @@ function CategoryForm({
 
                         onChange={handleInputChange}
 
-                        required
+                        error={errors.description}
 
                     />
 
@@ -278,6 +321,7 @@ function CategoryForm({
                             }
 
                             type="submit"
+                            loading={loading}
 
                         />
 

@@ -9,10 +9,13 @@ import Register from "./pages/auth/Register";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import AdminDashBoard from "./pages/admin/AdminDashBoard";
 import CategoryManagement from "./pages/admin/CategoryManagement";
-
+import AssessmentManagement from "./pages/admin/AssessmentManagement";
+import { ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
 
     return (
+        <>
 
         <Routes>
 
@@ -44,8 +47,24 @@ function App() {
                 path="/student/categories"
                 element={<CategoryManagement />}
             />
+            <Route
+                path="/admin/assessments"
+                element={<AssessmentManagement />}
+            />
 
         </Routes>
+
+        <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+            theme="colored"
+            />
+        </>
 
     );
 

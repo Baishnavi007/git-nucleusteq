@@ -21,7 +21,7 @@ import { encryptPassword } from "../../utils/encryption";
 import "./Register.css";
 import { validateRegisterForm } from "../../utils/validation";
 import { getErrorMessage } from "../../utils/errorHandler";
-
+import { toast } from "react-toastify";
 function Register() {
 
     const navigate = useNavigate();
@@ -104,6 +104,7 @@ useEffect(() => {
     const handleRegister = async (event) => {
 
         event.preventDefault();
+        setErrors({});
         const validationErrors =
             validateRegisterForm(registerData);
 
@@ -130,7 +131,7 @@ useEffect(() => {
             setLoading(true);
 
             if(!publicKey) {
-                alert("Secure connection could not be established. Please try again later.");
+                toast.error("Secure connection could not be established. Please try again later.");
                 return;
             }
             /**
@@ -153,7 +154,7 @@ useEffect(() => {
 
             const response = await registerUser(payload);
 
-            alert(response.message);
+            toast.success(response.message);
 
             navigate("/");
 
@@ -161,7 +162,7 @@ useEffect(() => {
 
         catch (error) {
 
-            alert(getErrorMessage(error));
+            toast.error(getErrorMessage(error));
 
         }
 

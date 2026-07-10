@@ -20,8 +20,11 @@ import { useNavigate } from "react-router-dom";
 import {
     deleteCategory
 } from "../../services/categoryService";
-
+import { toast} from "react-toastify";
+import { getErrorMessage } from "../../utils/errorHandler";
 import "./CategoryList.css";
+
+import Swal from "sweetalert2";
 
 function CategoryList({
 
@@ -50,14 +53,22 @@ function CategoryList({
     const handleDeleteCategory = async (
         categoryId
     ) => {
+        const result = await Swal.fire({
+            title: "Delete Category?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel"
 
-        const isConfirmed = window.confirm(
+        });
+        if(!result.isConfirmed){
+            return;
+        }
 
-            "Are you sure you want to delete this category?"
-
-        );
-
-        if (!isConfirmed) {
+        if (!result.isConfirmed) {
 
             return;
 
@@ -68,6 +79,7 @@ function CategoryList({
             await deleteCategory(categoryId);
 
             await fetchCategories();
+            toast.success("Category deleted successfully.");
 
         }
 
@@ -80,6 +92,7 @@ function CategoryList({
                 error
 
             );
+            toast.error(getErrorMessage(error));
 
         }
 

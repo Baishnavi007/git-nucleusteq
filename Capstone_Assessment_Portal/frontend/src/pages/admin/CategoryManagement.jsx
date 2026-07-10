@@ -20,8 +20,8 @@ import {
 import SideBar from "../../components/layout/SideBar/SideBar";
 import TopBar from "../../components/layout/Topbar/TopBar";
 
-import CategoryForm from "../../components/Category/CategoryForm";
-import CategoryList from "../../components/Category/CategoryList";
+import CategoryForm from "../../components/category/CategoryForm";
+import CategoryList from "../../components/category/CategoryList";
 
 import {
     getAllCategories

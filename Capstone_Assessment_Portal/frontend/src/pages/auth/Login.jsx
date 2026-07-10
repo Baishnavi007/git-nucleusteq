@@ -22,8 +22,10 @@ import {
 } from "../../services/authService";
 
 import { encryptPassword } from "../../utils/encryption";
-
+import { validateLoginForm } from "../../utils/validation";
+import { getErrorMessage } from "../../utils/errorHandler";
 import "./Login.css";
+import { toast } from "react-toastify";
 
 function Login() {
 
@@ -41,6 +43,10 @@ function Login() {
     });
 
     const [loading, setLoading] = useState(false);
+    /**
+     * Stores validation errors
+     */
+    const [errors, setErrors] = useState({});
 
     /**
      * Stores RSA public key
@@ -96,12 +102,32 @@ function Login() {
             [name]: value,
 
         }));
+        /***
+         * Remove validation error when user starts typing
+         */
+        setErrors((previousErrors) =>({
+            ...previousErrors,
+            [name]: ""
+        }))
 
     };
 
     const handleLogin = async (event) => {
 
         event.preventDefault();
+        setErrors({});
+
+        /**
+         * Validate login form
+         */
+        const validationErrors =validateLoginForm(
+            loginData
+        );
+
+        if(Object.keys(validationErrors).length>0){
+            setErrors(validationErrors);
+            return;
+        }
 
         setLoading(true);
 
@@ -109,13 +135,17 @@ function Login() {
 
             if (!publicKey) {
 
-                alert(
+                toast.error(
                     "Secure connection could not be established."
                 );
 
                 return;
 
             }
+
+            /**
+             * Encrypt password
+             */
 
             const encryptedPassword = encryptPassword(
 
@@ -136,6 +166,7 @@ function Login() {
             const response = await loginUser(
                 payload
             );
+            toast.success("Login Successful")
 
             /**
              * Store authentication data.
@@ -179,11 +210,9 @@ function Login() {
 
         catch (error) {
 
-            alert(
+            toast.error(
 
-                error.response?.data?.detail ||
-
-                "Login Failed"
+                getErrorMessage(error)
 
             );
 
@@ -342,6 +371,7 @@ function Login() {
 
                     <form
                         onSubmit={handleLogin}
+                        noValidate
                     >
 
                         <Input
@@ -351,7 +381,7 @@ function Login() {
                             value={loginData.email_or_username}
                             placeholder="Enter username or email"
                             onChange={handleInputChange}
-                            required
+                            error={errors.email_or_username}
                         />
 
                         <Input
@@ -361,7 +391,7 @@ function Login() {
                             value={loginData.password}
                             placeholder="Enter password"
                             onChange={handleInputChange}
-                            required
+                            error={errors.password}
                         />
 
                         <Button

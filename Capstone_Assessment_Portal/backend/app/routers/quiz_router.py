@@ -103,6 +103,31 @@ async def get_quizzes_by_category(
     )
     return response
 
+@router.get(
+
+    "",
+
+    response_model=list[QuizResponse]
+
+)
+async def get_all_quizzes(
+        current_user=Depends(
+            admin_only
+        )
+):
+    """
+    Retrieve all quizzes.
+    """
+
+    logger.info(
+        "Fetch all quizzes requested by '%s'.",
+        current_user["email"]
+    )
+
+    response = await QuizService.get_all_quizzes()
+
+    return response
+
 
 @router.get(
 
