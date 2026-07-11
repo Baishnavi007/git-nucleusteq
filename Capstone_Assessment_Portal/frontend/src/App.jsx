@@ -10,6 +10,8 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import AdminDashBoard from "./pages/admin/AdminDashBoard";
 import CategoryManagement from "./pages/admin/CategoryManagement";
 import AssessmentManagement from "./pages/admin/AssessmentManagement";
+import QuestionManagement from "./pages/admin/QuestionManagement";
+
 import { ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
@@ -50,6 +52,10 @@ function App() {
             <Route
                 path="/admin/assessments"
                 element={<AssessmentManagement />}
+            />
+            <Route
+                 path="/admin/questions/:quizId"
+                 element={<QuestionManagement />}
             />
 
         </Routes>

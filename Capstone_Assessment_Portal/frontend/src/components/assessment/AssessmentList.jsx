@@ -12,7 +12,8 @@ import {
     FaCheckCircle,
     FaTimesCircle,
     FaEdit,
-    FaTrash
+    FaTrash,
+    FaListAlt
 } from "react-icons/fa";
 
 import "./AssessmentList.css";
@@ -27,6 +28,7 @@ function AssessmentList({
 
     searchText,
     onEdit,
+    onManageQuestions,
     fetchQuizzes
 
 }) {
@@ -243,7 +245,7 @@ function AssessmentList({
                                             }
                                             </button>
                                             </td>
-                                            
+
                                         <td>
 
                                             <button
@@ -266,6 +268,16 @@ function AssessmentList({
                                                 <FaTrash />
 
                                             </button>
+                                            <button
+                                                className="question-btn"
+                                                onClick={() =>
+                                                  onManageQuestions(quiz)
+                                                }
+                                            >
+                                                <FaListAlt />
+
+                                            </button>
+
 
                                         </td>
 

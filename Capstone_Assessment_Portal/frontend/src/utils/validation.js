@@ -694,3 +694,237 @@ export const validateAssessmentForm = (
     return errors;
 
 };
+/**
+ * Validate question.
+ */
+const validateQuestion = (question) => {
+
+    const requiredError = validateRequiredField(
+
+        question,
+
+        "Question"
+
+    );
+
+    if (requiredError) {
+
+        return requiredError;
+
+    }
+
+    if (question.trim().length < 5) {
+
+        return "Question must contain at least 5 characters.";
+
+    }
+
+    if (question.trim().length > 500) {
+
+        return "Question cannot exceed 500 characters.";
+
+    }
+
+    return "";
+
+};
+
+/**
+ * Validate options.
+ */
+const validateOptions = (
+
+    options,
+
+    questionType,
+    errors
+
+) => {
+
+    const requiredOptions =
+
+        questionType === "mcq"
+
+            ? 4
+
+            : 2;
+
+    for (
+
+        let index = 0;
+
+        index < requiredOptions;
+
+        index++
+
+    ) {
+
+        if (
+
+            !options[index] ||
+
+            !options[index].trim()
+
+        ) {
+            errors[`option${index}`]=`Option ${index+1} is required.`
+
+            
+
+        }
+
+    };
+
+    return "";
+
+};
+
+/**
+ * Validate correct answer.
+ */
+const validateCorrectAnswer = (
+
+    answer
+
+) => {
+
+    if (!answer) {
+
+        return "Correct Answer is required.";
+
+    }
+
+    return "";
+
+};
+
+/**
+ * Validate tags.
+ */
+const validateTags = (tags) => {
+
+    const requiredError = validateRequiredField(
+
+        tags,
+
+        "Tags"
+
+    );
+
+    if (requiredError) {
+
+        return requiredError;
+
+    }
+
+    return "";
+
+};
+
+/**
+ * Validate marks.
+ */
+const validateMarks = (marks) => {
+
+    if (!marks) {
+
+        return "Marks are required.";
+
+    }
+
+    if (Number(marks) <= 0) {
+
+        return "Marks must be greater than 0.";
+
+    }
+
+    return "";
+
+};
+
+/**
+ * Validate question form.
+ */
+export const validateQuestionForm = (
+
+    formData
+
+) => {
+
+    const errors = {};
+
+    addError(
+
+        errors,
+
+        "question",
+
+        validateQuestion(
+
+            formData.question
+
+        )
+
+    );
+
+    addError(
+
+        errors,
+
+        "options",
+
+        validateOptions(
+
+            formData.options,
+
+            formData.question_type,
+            errors
+
+        )
+
+    );
+
+    addError(
+
+        errors,
+
+        "correct_answer",
+
+        validateCorrectAnswer(
+
+            formData.correct_answer
+
+        )
+
+    );
+
+    addError(
+
+        errors,
+
+        "tags",
+
+        validateTags(
+
+            formData.tags
+
+        )
+
+    );
+
+    addError(
+
+        errors,
+
+        "marks",
+
+        validateMarks(
+
+            formData.marks
+
+        )
+
+    );
+
+    return errors;
+
+};

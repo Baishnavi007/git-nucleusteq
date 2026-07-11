@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
     FaClipboardList,
     FaPlus,
@@ -29,6 +29,8 @@ import {
 import "./AssessmentManagement.css";
 
 function AssessmentManagement() {
+
+    const navigate = useNavigate();
 
     /**
      * Stores all quizzes.
@@ -119,6 +121,16 @@ function AssessmentManagement() {
 
     };
 
+    /**
+     * Navigate to Question management
+     */
+    const handleManageQuestions = (quiz) => {
+        navigate(
+            `/admin/questions/${quiz.id}`
+
+        );
+    };
+
     return (
 
         <div className="assessment-page">
@@ -195,6 +207,7 @@ function AssessmentManagement() {
                         quizzes={quizzes}
                         searchText={searchText}
                         onEdit={handleEditQuiz}
+                        onManageQuestions={handleManageQuestions}
                         fetchQuizzes={fetchQuizzes}
                     />
 
