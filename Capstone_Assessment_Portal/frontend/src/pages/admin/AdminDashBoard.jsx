@@ -42,7 +42,7 @@ function AdminDashboard() {
 
             <div className="dashboard-content">
 
-                <TopBar />
+                <TopBar title="Dashboard" />
 
                 <div className="dashboard-body">
 

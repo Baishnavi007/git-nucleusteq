@@ -146,7 +146,7 @@ function QuestionManagement() {
 
             <div className="question-content">
 
-                <TopBar />
+                <TopBar title="Questions" />
 
                 <div className="question-container">
 

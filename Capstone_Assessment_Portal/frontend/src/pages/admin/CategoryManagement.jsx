@@ -132,7 +132,7 @@ function CategoryManagement() {
 
             <div className="category-content">
 
-                <TopBar />
+                <TopBar title="Categories"  />
 
                 <div className="category-container">
 

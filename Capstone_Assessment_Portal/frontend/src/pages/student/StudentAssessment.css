@@ -1,0 +1,297 @@
+/**
+ * Student Assessment Styles
+ */
+
+.student-assessment-page {
+
+    display: flex;
+
+    min-height: 100vh;
+
+    background: #f8fafc;
+
+}
+
+.student-assessment-content {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.student-assessment-container {
+
+    padding: 32px;
+
+}
+
+/* ===========================
+   Header
+=========================== */
+
+.assessment-header {
+
+    margin-bottom: 32px;
+
+}
+
+.assessment-header h1 {
+
+    margin: 0;
+
+    font-size: 34px;
+
+    color: #1e293b;
+
+}
+
+.assessment-header p {
+
+    margin-top: 8px;
+
+    color: #64748b;
+
+    font-size: 16px;
+
+}
+
+/* ===========================
+   Empty State
+=========================== */
+
+.empty-box {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+
+    font-size: 17px;
+
+}
+
+/* ===========================
+   Grid
+=========================== */
+
+.assessment-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill,minmax(360px,1fr));
+
+    gap: 28px;
+
+}
+
+/* ===========================
+   Card
+=========================== */
+
+.assessment-card {
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+
+    transition: .25s;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.assessment-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow: 0 14px 30px rgba(37,99,235,.12);
+
+}
+
+/* ===========================
+   Icon
+=========================== */
+
+.assessment-icon {
+
+    width: 70px;
+
+    height: 70px;
+
+    border-radius: 16px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 28px;
+
+    margin-bottom: 22px;
+
+}
+
+/* ===========================
+   Content
+=========================== */
+
+.assessment-card h2 {
+
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 24px;
+
+}
+
+.assessment-card p {
+
+    margin-top: 12px;
+
+    color: #64748b;
+
+    line-height: 1.7;
+
+}
+
+/* ===========================
+   Quiz Details
+=========================== */
+
+.quiz-details {
+
+    margin-top: 20px;
+
+    display: grid;
+
+    grid-template-columns: repeat(2,1fr);
+
+    gap: 14px;
+
+}
+
+.quiz-details div {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #475569;
+
+    font-size: 14px;
+
+}
+
+.quiz-details svg {
+
+    color: #2563eb;
+
+}
+
+/* ===========================
+   Button
+=========================== */
+
+.start-btn {
+
+    margin-top: 28px;
+
+    border: none;
+
+    outline: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    border-radius: 10px;
+
+    padding: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: .25s;
+
+}
+
+.start-btn:hover {
+
+    background: #1d4ed8;
+
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media(max-width:992px){
+
+    .assessment-grid{
+
+        grid-template-columns: repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .student-assessment-container{
+
+        padding:20px;
+
+    }
+
+    .assessment-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .quiz-details{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

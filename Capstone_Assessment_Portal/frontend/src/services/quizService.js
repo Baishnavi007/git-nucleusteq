@@ -102,3 +102,19 @@ export const unpublishQuiz = async (
     return response.data;
 
 };
+/**
+ * Fetch published quizzes by category
+ */
+export const getPublishedQuizzesByCategory = async (
+    categoryId
+) => {
+
+    const response = await api.get(
+
+        `/quizzes/category/${categoryId}/published`
+
+    );
+
+    return response.data;
+
+};

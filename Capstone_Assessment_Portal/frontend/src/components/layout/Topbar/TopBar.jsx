@@ -1,5 +1,5 @@
 /**
- * Admin Top Bar
+ * Application Top Bar
  */
 
 import {
@@ -9,16 +9,40 @@ import {
 
 import "./TopBar.css";
 
-function TopBar() {
+function TopBar({
+
+    title = "Dashboard"
+
+}) {
 
     const today = new Date().toLocaleDateString(
+
         "en-IN",
+
         {
+
             weekday: "long",
+
             day: "numeric",
+
             month: "long",
+
             year: "numeric"
+
         }
+
+    );
+
+    const role = localStorage.getItem(
+
+        "role"
+
+    );
+
+    const username = localStorage.getItem(
+
+        "username"
+
     );
 
     return (
@@ -29,7 +53,7 @@ function TopBar() {
 
                 <h2>
 
-                    Dashboard
+                    {title}
 
                 </h2>
 
@@ -57,13 +81,21 @@ function TopBar() {
 
                         <h4>
 
-                            Admin
+                            {username || "User"}
 
                         </h4>
 
                         <span>
 
-                            Administrator
+                            {
+
+                                role === "admin"
+
+                                    ? "Administrator"
+
+                                    : "Student"
+
+                            }
 
                         </span>
 

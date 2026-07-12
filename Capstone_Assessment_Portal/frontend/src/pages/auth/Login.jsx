@@ -166,6 +166,7 @@ function Login() {
             const response = await loginUser(
                 payload
             );
+            console.log(response);
             toast.success("Login Successful")
 
             /**
@@ -184,6 +185,11 @@ function Login() {
             localStorage.setItem(
                 "role",
                 response.role
+            );
+
+            localStorage.setItem(
+                "username",
+                response.username
             );
 
             /**

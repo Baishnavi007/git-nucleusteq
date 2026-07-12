@@ -139,7 +139,7 @@ function AssessmentManagement() {
 
             <div className="assessment-content">
 
-                <TopBar />
+                <TopBar title="Assessments" />
 
                 <div className="assessment-container">
 
