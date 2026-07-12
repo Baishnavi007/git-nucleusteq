@@ -20,6 +20,10 @@ import StudentAssessment from "./pages/student/StudentAssessment";
 
 import StudentResult from "./pages/student/StudentResult";
 import StudentResults from "./pages/student/StudentResults";
+
+import AdminResults from "./pages/admin/AdminResults";
+import AdminResult from "./pages/admin/AdminResult";
+
 function App() {
 
     return (
@@ -80,6 +84,16 @@ function App() {
                   path="/student/results/:attemptId"
                   element={<StudentResult />}
             />
+
+            <Route
+                  path="/admin/results"
+                  element={<AdminResults />}
+            />
+
+            <Route
+                  path="/admin/results/:attemptId"
+                  element={<AdminResult />}
+                   />
 
         </Routes>
 

@@ -43,6 +43,18 @@ class Repository:
                 "username": username
             }
         )
+    @staticmethod
+    async def get_user_by_id(
+        user_id: str
+    ):
+        """
+        Rtereive user by id.
+        """
+        return await db.users.find_one(
+            {
+                "_id": ObjectId(user_id)
+            }
+        )
 
     @staticmethod
     async def get_user_by_email_or_username(
@@ -692,4 +704,6 @@ class Repository:
         ).to_list(
             length=None
         )
+
+
     

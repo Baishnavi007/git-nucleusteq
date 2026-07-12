@@ -6,7 +6,8 @@ from datetime import datetime
 
 from pydantic import (
     BaseModel,
-    Field
+    Field,
+    EmailStr
 )
 
 
@@ -44,6 +45,12 @@ class ResultResponse(BaseModel):
     quiz_id: str
 
     quiz_title: str
+
+    student_id: str
+
+    student_name:str
+
+    student_email: EmailStr
 
     attempt_number: int = Field(
         gt=0
@@ -88,6 +95,12 @@ class AttemptHistoryResponse(BaseModel):
     """
 
     attempt_id: str
+
+    student_id: str
+
+    student_name: str
+
+    student_email: EmailStr
 
     quiz_id: str
 

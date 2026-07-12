@@ -1,0 +1,263 @@
+/* ==========================
+   Admin Results Page
+========================== */
+
+.admin-results-container {
+
+    padding: 40px;
+
+}
+
+
+/* ==========================
+   Header
+========================== */
+
+.admin-results-header h1 {
+
+    font-size: 34px;
+
+    color: #1e293b;
+
+    margin-bottom: 10px;
+
+}
+
+.admin-results-header p {
+
+    color: #64748b;
+
+    font-size: 16px;
+
+    margin-bottom: 30px;
+
+}
+
+
+/* ==========================
+   Search
+========================== */
+
+.results-search {
+
+    position: relative;
+
+    max-width: 420px;
+
+    margin-bottom: 35px;
+
+}
+
+.results-search input {
+
+    width: 100%;
+
+    padding: 14px 18px 14px 48px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.3s;
+
+    box-sizing: border-box;
+
+}
+
+.results-search input::placeholder {
+
+    color: #94a3b8;
+
+}
+
+.results-search input:focus {
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+
+}
+
+.search-icon {
+
+    position: absolute;
+
+    left: 18px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #64748b;
+
+}
+
+
+/* ==========================
+   Cards Grid
+========================== */
+
+.results-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+
+    gap: 24px;
+
+}
+
+
+/* ==========================
+   Result Card
+========================== */
+
+.result-history-card {
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 24px;
+
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+
+    transition: .3s;
+
+}
+
+.result-history-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: 0 12px 30px rgba(15,23,42,.14);
+
+}
+
+.result-history-card h3 {
+
+    color: #1e293b;
+
+    margin-bottom: 6px;
+
+    font-size: 22px;
+
+}
+
+.result-history-card h4 {
+
+    color: #2563eb;
+
+    margin: 14px 0;
+
+    font-size: 18px;
+
+}
+
+.result-history-card p {
+
+    color: #64748b;
+
+    margin: 8px 0;
+
+}
+
+
+/* ==========================
+   Score
+========================== */
+
+.history-score {
+
+    margin: 18px 0;
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #1e293b;
+
+}
+
+
+/* ==========================
+   Pass / Fail
+========================== */
+
+.pass-status {
+
+    color: #16a34a;
+
+    font-weight: 600;
+
+}
+
+.fail-status {
+
+    color: #dc2626;
+
+    font-weight: 600;
+
+}
+
+
+/* ==========================
+   Button
+========================== */
+
+.view-result-btn {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+}
+
+.view-result-btn:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+/* ==========================
+   Mobile
+========================== */
+
+@media (max-width:768px) {
+
+    .admin-results-container {
+
+        padding: 20px;
+
+    }
+
+    .results-search {
+
+        max-width: 100%;
+
+    }
+
+}
