@@ -77,7 +77,11 @@ function StudentResult() {
 
                     <div className="result-card">
 
-                        <h1>{result.quiz_title}</h1>
+                        <h1>
+
+                            {result.quiz_title}
+
+                        </h1>
 
                         <h2>
 
@@ -92,266 +96,14 @@ function StudentResult() {
                         </div>
 
                         <div className="result-grid">
-                            <div>
-                                <span> Score </span>
-                                <h3> {result.score} / {result.total_marks}</h3>
-                            </div>
 
                             <div>
-                                <span>Attempt</span>
-                                <h3>#{result.attempt_number}</h3>
-                            </div>
 
-                            <div>
-                                <span>Passing %</span>
-                                <h3>{result.passing_percentage}%</h3>
-                            </div>
-                            <div>
-                                <span>Status</span>
-                                <h3>{result.is_pass ? "Passed" : "Failed"}</h3>
-                            </div>
-                            <div className="result-times">
+                                <span>
 
-    <div>
+                                    Score
 
-        <strong>
-
-            Started
-
-        </strong>
-
-        <p>
-
-            {new Date(result.started_at).toLocaleString()}
-
-        </p>
-
-    </div>
-
-    <div>
-
-        <strong>
-
-            Submitted
-
-        </strong>
-
-        <p>
-
-            {new Date(result.submitted_at).toLocaleString()}
-
-        </p>
-
-    </div>
-
-    <div>
-
-        <strong>
-
-            Passing Marks
-
-        </strong>
-
-        <p>
-
-            {result.passing_marks}
-
-        </p>
-
-    </div>
-
-</div>
-
-<div className="question-palette">
-
-    <h2>
-       Attempt Review
-    </h2>
-
-    {
-
-        result.questions.map(
-
-            (question,index)=>(
-
-                <button
-
-                    key={index}
-
-                    className={
-
-                        currentIndex===index
-
-                        ?
-
-                        "palette-btn active"
-
-                        :
-
-                        question.is_correct
-
-                        ?
-
-                        "palette-btn correct"
-
-                        :
-
-                        "palette-btn wrong"
-
-                    }
-
-                    onClick={()=>
-
-                        setCurrentIndex(index)
-
-                    }
-
-                >
-
-                    {index+1}
-
-                </button>
-
-            )
-
-        )
-
-    }
-
-</div>
-<div className="question-review">
-
-    <h2>
-
-        Question {currentIndex + 1}
-
-    </h2>
-
-    <p className="question-text">
-
-        {currentQuestion.question}
-
-    </p>
-
-
-
-                    
-                            
-
-    <div className="options-review">
-
-        {
-
-            currentQuestion.options.map(
-
-                (option,index)=>(
-
-                    <div
-
-                        key={index}
-
-                        className={
-
-                            option===currentQuestion.correct_answer
-
-                            ?
-
-                            "option-box correct"
-
-                            :
-
-                            option===currentQuestion.selected_answer
-
-                            ?
-
-                            "option-box wrong"
-
-                            :
-
-                            "option-box"
-
-                        }
-
-                    >
-
-                        {option}
-
-                    </div>
-
-                )
-
-            )
-
-        }
-
-    </div>
-
-    <div className="review-info">
-
-        <p>
-
-            <strong>
-
-                Your Answer :
-
-            </strong>
-
-            {
-
-                currentQuestion.selected_answer ||
-
-                "Not Attempted"
-
-            }
-
-        </p>
-
-        <p>
-
-            <strong>
-
-                Correct Answer :
-
-            </strong>
-
-            {
-
-                currentQuestion.correct_answer
-
-            }
-
-        </p>
-
-        <p>
-
-            <strong>
-
-                Marks :
-
-            </strong>
-
-            {
-
-                currentQuestion.obtained_marks
-
-            }
-
-            /
-
-            {
-
-                currentQuestion.marks
-
-            }
-
-        </p>
-
-    </div>
-
-</div>
-                            <div>
-
-                                <span>Score</span>
+                                </span>
 
                                 <h3>
 
@@ -363,7 +115,11 @@ function StudentResult() {
 
                             <div>
 
-                                <span>Attempt</span>
+                                <span>
+
+                                    Attempt
+
+                                </span>
 
                                 <h3>
 
@@ -375,7 +131,11 @@ function StudentResult() {
 
                             <div>
 
-                                <span>Passing %</span>
+                                <span>
+
+                                    Passing %
+
+                                </span>
 
                                 <h3>
 
@@ -387,7 +147,11 @@ function StudentResult() {
 
                             <div>
 
-                                <span>Status</span>
+                                <span>
+
+                                    Status
+
+                                </span>
 
                                 <h3>
 
@@ -398,30 +162,285 @@ function StudentResult() {
                             </div>
 
                         </div>
-                        <div className="result-actions">
-                        <button
+                                                <div className="result-times">
 
-                            className="dashboard-btn"
+                            <div>
 
-                            onClick={() =>
-                                navigate("/student/dashboard")
+                                <strong>
+
+                                    Started
+
+                                </strong>
+
+                                <p>
+
+                                    {new Date(
+                                        result.started_at
+                                    ).toLocaleString()}
+
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+
+                                    Submitted
+
+                                </strong>
+
+                                <p>
+
+                                    {new Date(
+                                        result.submitted_at
+                                    ).toLocaleString()}
+
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+
+                                    Passing Marks
+
+                                </strong>
+
+                                <p>
+
+                                    {result.passing_marks}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div className="question-palette">
+
+                            <h2>
+
+                                Attempt Review
+
+                            </h2>
+
+                            {
+
+                                result.questions.map(
+
+                                    (
+                                        question,
+                                        index
+                                    ) => (
+
+                                        <button
+
+                                            key={index}
+
+                                            className={
+
+                                                currentIndex === index
+
+                                                    ?
+
+                                                    "palette-btn active"
+
+                                                    :
+
+                                                    question.is_correct
+
+                                                        ?
+
+                                                        "palette-btn correct"
+
+                                                        :
+
+                                                        "palette-btn wrong"
+
+                                            }
+
+                                            onClick={() =>
+
+                                                setCurrentIndex(index)
+
+                                            }
+
+                                        >
+
+                                            {index + 1}
+
+                                        </button>
+
+                                    )
+
+                                )
+
                             }
 
-                        >
+                        </div>
 
-                            Dashboard
+                        <div className="question-review">
 
-                        </button>
+                            <h2>
 
-                        <button
-                            className="category-btn"
-                            onClick={()=>
-                                navigate("/student/categories")
-                            }>
-                                Categories
+                                Question {currentIndex + 1}
+
+                            </h2>
+
+                            <p className="question-text">
+
+                                {currentQuestion.question}
+
+                            </p>
+
+                            <div className="options-review">
+                                                            {
+
+                                    currentQuestion.options.map(
+
+                                        (option, index) => (
+
+                                            <div
+
+                                                key={index}
+
+                                                className={
+
+                                                    option === currentQuestion.correct_answer
+
+                                                        ?
+
+                                                        "option-box correct"
+
+                                                        :
+
+                                                        option === currentQuestion.selected_answer
+
+                                                            ?
+
+                                                            "option-box wrong"
+
+                                                            :
+
+                                                            "option-box"
+
+                                                }
+
+                                            >
+
+                                                {option}
+
+                                            </div>
+
+                                        )
+
+                                    )
+
+                                }
+
+                            </div>
+
+                            <div className="review-info">
+
+                                <p>
+
+                                    <strong>
+
+                                        Your Answer :
+
+                                    </strong>
+
+                                    {
+
+                                        currentQuestion.selected_answer ||
+
+                                        "Not Attempted"
+
+                                    }
+
+                                </p>
+
+                                <p>
+
+                                    <strong>
+
+                                        Correct Answer :
+
+                                    </strong>
+
+                                    {
+
+                                        currentQuestion.correct_answer
+
+                                    }
+
+                                </p>
+
+                                <p>
+
+                                    <strong>
+
+                                        Marks :
+
+                                    </strong>
+
+                                    {
+
+                                        currentQuestion.obtained_marks
+
+                                    }
+
+                                    /
+
+                                    {
+
+                                        currentQuestion.marks
+
+                                    }
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div className="result-actions">
+
+                            <button
+
+                                className="dashboard-btn"
+
+                                onClick={() =>
+
+                                    navigate("/student/dashboard")
+
+                                }
+
+                            >
+
+                                Dashboard
+
                             </button>
 
-                         </div>   
+                            <button
+
+                                className="category-btn"
+
+                                onClick={() =>
+
+                                    navigate("/student/categories")
+
+                                }
+
+                            >
+
+                                Categories
+
+                            </button>
+
+                        </div>
 
                     </div>
 
@@ -434,5 +453,6 @@ function StudentResult() {
     );
 
 }
+   
 
 export default StudentResult;
