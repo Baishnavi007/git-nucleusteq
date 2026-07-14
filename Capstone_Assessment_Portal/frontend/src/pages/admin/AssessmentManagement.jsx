@@ -21,6 +21,7 @@ import TopBar from "../../components/layout/Topbar/TopBar";
 
 import AssessmentList from "../../components/assessment/AssessmentList";
 import AssessmentForm from "../../components/assessment/AssessmentForm";
+import Pagination from "../../components/common/Pagination";
 
 import {
     getAllQuizzes
@@ -51,6 +52,12 @@ function AssessmentManagement() {
      * Stores selected quiz while editing.
      */
     const [selectedQuiz, setSelectedQuiz] = useState(null);
+
+    /**
+     * Pagination
+     */
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     /**
      * Fetch all quizzes.
@@ -87,6 +94,10 @@ function AssessmentManagement() {
         fetchQuizzes();
 
     }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    },[searchText]);
 
     /**
      * Open drawer for creating quiz.
@@ -130,6 +141,28 @@ function AssessmentManagement() {
 
         );
     };
+    /**
+     * Filter quizzes according to search
+     */
+    const filteredQuizzes = quizzes.filter(
+        (quiz) =>
+            quiz.title
+                .toLowerCase()
+                .includes(
+                    searchText.toLowerCase()
+                )
+    );
+
+    /**
+     * Pagination
+     */
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentQuizzes = filteredQuizzes.slice(
+        firstIndex,
+        lastIndex
+    );
+
 
     return (
 
@@ -204,12 +237,24 @@ function AssessmentManagement() {
                     {/* Assessment Table */}
 
                     <AssessmentList
-                        quizzes={quizzes}
-                        searchText={searchText}
+                        quizzes={currentQuizzes}
                         onEdit={handleEditQuiz}
                         onManageQuestions={handleManageQuestions}
                         fetchQuizzes={fetchQuizzes}
                     />
+                    <Pagination
+    currentPage={currentPage}
+    totalItems={filteredQuizzes.length}
+    itemsPerPage={itemsPerPage}
+    onPageChange={setCurrentPage}
+    onItemsPerPageChange={(value) => {
+
+        setItemsPerPage(value);
+
+        setCurrentPage(1);
+
+    }}
+/>
 
                 </div>
 

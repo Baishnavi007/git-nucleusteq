@@ -22,6 +22,7 @@ import TopBar from "../../components/layout/Topbar/TopBar";
 
 import CategoryForm from "../../components/category/CategoryForm";
 import CategoryList from "../../components/category/CategoryList";
+import Pagination from "../../components/common/Pagination";
 
 import {
     getAllCategories
@@ -57,7 +58,11 @@ function CategoryManagement() {
      * Stores selected category while editing.
      */
     const [selectedCategory, setSelectedCategory] = useState(null);
-
+    /**
+     * Pagination
+     */
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     /**
      * Fetch all categories from backend.
      */
@@ -91,6 +96,10 @@ function CategoryManagement() {
 
     }, []);
 
+    useEffect(() =>{
+        setCurrentPage(1);
+    }, [searchText]);
+
     /**
      * Open drawer for creating category.
      */
@@ -123,7 +132,30 @@ function CategoryManagement() {
         setIsDrawerOpen(false);
 
     };
+    const filteredCategories = categories.filter(
+        (category) =>
+            category.name
+                .toLowerCase()
+                .includes(
+                    searchText.toLowerCase()
+                )
+    );
 
+    /**
+     * Pagination
+     */
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentCategories = filteredCategories.slice(
+        firstIndex,
+        lastIndex
+    
+    );
+    console.log("Total:", categories.length);
+
+console.log("Filtered:", filteredCategories.length);
+
+console.log("Current:", currentCategories.length);
     return (
 
         <div className="category-page">
@@ -211,11 +243,22 @@ function CategoryManagement() {
                     {/* Category Table */}
 
                     <CategoryList
-                        categories={categories}
-                        searchText={searchText}
+                        categories={currentCategories}
                         onEdit={handleEditCategory}
                         fetchCategories={fetchCategories}
                     />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredCategories.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={(value) => {
+                            setItemsPerPage(value);
+                            setCurrentPage(1);
+                        }}
+                        
+                        />
+
 
                 </div>
 

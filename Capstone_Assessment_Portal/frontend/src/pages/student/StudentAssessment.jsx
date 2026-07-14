@@ -24,7 +24,7 @@ import { startQuizAttempt } from "../../services/quizAttemptService";
 
 import SideBar from "../../components/layout/SideBar/SideBar";
 import TopBar from "../../components/layout/Topbar/TopBar";
-
+import Pagination from "../../components/common/Pagination";
 import {
     getPublishedQuizzesByCategory
 } from "../../services/quizService";
@@ -44,7 +44,8 @@ function StudentAssessment() {
 
     const [quizzes, setQuizzes] = useState([]);
 
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
 
     const fetchQuizzes = async () => {
 
@@ -56,6 +57,7 @@ function StudentAssessment() {
                 );
 
             setQuizzes(response);
+            setCurrentPage(1);
 
         }
 
@@ -71,6 +73,15 @@ function StudentAssessment() {
         fetchQuizzes();
 
     }, [categoryId]);
+
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentQuizzes = quizzes.slice(
+        firstIndex,
+        lastIndex
+    );
+
+
 
     const handleStartQuiz = async (
 
@@ -181,7 +192,7 @@ function StudentAssessment() {
 
                                 {
 
-                                    quizzes.map(
+                                    currentQuizzes.map(
 
                                         (quiz) => (
 
@@ -262,6 +273,17 @@ function StudentAssessment() {
                                                     </div>
 
                                                 </div>
+                                                <Pagination 
+                                                    currentPage={currentPage}
+                                                    totalItems={quizzes.length}
+                                                    itemsPerPage={itemsPerPage}
+                                                    onPageChange={setCurrentPage}
+                                                    onItemsPerPageChange={(value) => {
+                                                        setItemsPerPage(value);
+                                                        setCurrentPage(1);
+                                                    }}
+                                                    
+                                                    />
 
                                                 <button
 

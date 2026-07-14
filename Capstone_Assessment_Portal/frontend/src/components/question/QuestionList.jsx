@@ -27,8 +27,6 @@ function QuestionList({
 
     questions,
 
-    searchText,
-
     onEdit,
 
     fetchQuestions
@@ -109,25 +107,6 @@ const handleDeleteQuestion = async (
 
 };
 
-    /**
-     * Filter questions according to search.
-     */
-    const filteredQuestions = questions.filter(
-
-        (question) =>
-
-            question.question
-
-                .toLowerCase()
-
-                .includes(
-
-                    searchText.toLowerCase()
-
-                )
-
-    );
-
     return (
 
         <div className="question-table-container">
@@ -158,9 +137,9 @@ const handleDeleteQuestion = async (
 
                     {
 
-                        filteredQuestions.length > 0 ?
+                        questions.length > 0 ?
 
-                            filteredQuestions.map(
+                            questions.map(
 
                                 (question) => (
 

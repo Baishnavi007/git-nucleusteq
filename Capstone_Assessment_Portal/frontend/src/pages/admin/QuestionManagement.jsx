@@ -25,6 +25,7 @@ import TopBar from "../../components/layout/Topbar/TopBar";
 
 import QuestionList from "../../components/question/QuestionList";
 import QuestionForm from "../../components/question/QuestionForm";
+import Pagination from "../../components/common/Pagination";
 
 import {
 
@@ -60,6 +61,12 @@ function QuestionManagement() {
      * Selected question.
      */
     const [selectedQuestion, setSelectedQuestion] = useState(null);
+
+    /**
+     * Pagination
+     */
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     /**
      * Fetch questions.
@@ -105,6 +112,10 @@ function QuestionManagement() {
 
     }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchText]);
+
     /**
      * Open add drawer.
      */
@@ -137,6 +148,30 @@ function QuestionManagement() {
         setIsDrawerOpen(false);
 
     };
+    /**
+     * Filter questions according to search.
+     */
+    const filteredQuestions = questions.filter(
+        (question) =>
+            question.question
+                .toLowerCase()
+                .includes(
+                    searchText.toLowerCase()
+                )
+
+    );
+
+    /**
+     * Pagination
+     */
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentQuestions = filteredQuestions.slice(
+        firstIndex,
+        lastIndex
+    );
+
+
 
     return (
 
@@ -222,15 +257,24 @@ function QuestionManagement() {
 
                     <QuestionList
 
-                        questions={questions}
-
-                        searchText={searchText}
+                        questions={currentQuestions}
 
                         onEdit={handleEditQuestion}
 
                         fetchQuestions={fetchQuestions}
 
                     />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredQuestions.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={(value) => {
+                            setItemsPerPage(value);
+                            setCurrentPage(1);
+
+                        }}
+                        />
 
                 </div>
 

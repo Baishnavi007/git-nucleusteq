@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import SideBar from "../../components/layout/SideBar/SideBar";
 import TopBar from "../../components/layout/Topbar/TopBar";
+import Pagination from "../../components/common/Pagination";
 
 import { FaSearch } from "react-icons/fa";
 
@@ -21,6 +22,8 @@ function AdminResults() {
     const [loading, setLoading] = useState(true);
 
     const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
 
     const navigate = useNavigate();
 
@@ -29,6 +32,10 @@ function AdminResults() {
         fetchResults();
 
     }, []);
+
+    useEffect(() =>{
+        setCurrentPage(1);
+    },[search]);
 
     const fetchResults = async () => {
 
@@ -77,6 +84,12 @@ function AdminResults() {
                 .includes(search.toLowerCase())
 
     );
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentResults = filteredResults.slice(
+        firstIndex,
+        lastIndex
+    )
 
     if (loading) {
 
@@ -138,7 +151,7 @@ function AdminResults() {
 
                         {
 
-                            filteredResults.map((result) => (
+                            currentResults.map((result) => (
 
                                 <div
 
@@ -237,6 +250,15 @@ function AdminResults() {
                         }
 
                     </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredResults.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={(value) => {
+                            setItemsPerPage(value);
+                            setCurrentPage(1);
+                        }} />
 
                 </div>
 
