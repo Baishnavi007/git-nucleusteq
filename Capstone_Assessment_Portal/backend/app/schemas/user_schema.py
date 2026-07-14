@@ -43,7 +43,8 @@ class LoginResponse(BaseModel):
     access_token: str
     refresh_token:str
     role: str
-    token_type: str    
+    token_type: str
+    username: str
 
 
 class UserResponse(BaseModel):

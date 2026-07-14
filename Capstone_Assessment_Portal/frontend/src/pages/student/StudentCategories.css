@@ -1,0 +1,263 @@
+/**
+ * Student Categories Styles
+ */
+
+.student-category-page {
+
+    display: flex;
+
+    min-height: 100vh;
+
+    background: #f8fafc;
+
+}
+
+.student-category-content {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.student-category-container {
+
+    padding: 32px;
+
+}
+
+/* ==========================
+   Header
+========================== */
+
+.student-category-header {
+
+    margin-bottom: 30px;
+
+}
+
+.student-category-header h1 {
+
+    margin: 0;
+
+    font-size: 34px;
+
+    color: #1e293b;
+
+}
+
+.student-category-header p {
+
+    margin-top: 8px;
+
+    color: #64748b;
+
+    font-size: 16px;
+
+}
+
+/* ==========================
+   Search
+========================== */
+
+.student-search-box {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    background: white;
+
+    padding: 14px 18px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,.06);
+
+    margin-bottom: 32px;
+
+}
+
+.student-search-box svg {
+
+    color: #64748b;
+
+    font-size: 18px;
+
+}
+
+.student-search-box input {
+
+    border: none;
+
+    outline: none;
+
+    width: 100%;
+
+    font-size: 15px;
+
+    background: transparent;
+
+}
+
+/* ==========================
+   Category Grid
+========================== */
+
+.student-category-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+
+    gap: 28px;
+
+}
+
+/* ==========================
+   Category Card
+========================== */
+
+.student-category-card {
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow: 0 8px 22px rgba(15,23,42,.08);
+
+    transition: .25s;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.student-category-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 18px 32px rgba(37,99,235,.12);
+
+}
+
+.category-icon {
+
+    width: 72px;
+
+    height: 72px;
+
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 30px;
+
+    margin-bottom: 22px;
+
+}
+
+.student-category-card h2 {
+
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 24px;
+
+}
+
+.student-category-card p {
+
+    margin-top: 12px;
+
+    color: #64748b;
+
+    line-height: 1.7;
+
+    flex: 1;
+
+}
+
+/* ==========================
+   Button
+========================== */
+
+.view-btn {
+
+    margin-top: 24px;
+
+    border: none;
+
+    outline: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    border-radius: 10px;
+
+    padding: 13px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+}
+
+.view-btn:hover {
+
+    background: #1d4ed8;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:768px){
+
+    .student-category-container{
+
+        padding:20px;
+
+    }
+
+    .student-category-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

@@ -29,7 +29,8 @@ from app.exceptions.resource_not_found_exception import (
 
 
 def result_helper(
-        attempt: dict
+        attempt: dict,
+        student: dict
 ) -> ResultResponse:
     """
     Convert quiz attempt into
@@ -135,6 +136,16 @@ def result_helper(
             attempt["_id"]
         ),
 
+        student_id=attempt[
+            "student_id"
+        ],
+        student_name=
+        f"{student['first_name']} {student['last_name']}",
+
+        student_email=
+        student["email"],
+
+
         quiz_id=attempt[
             "quiz_id"
         ],
@@ -184,7 +195,8 @@ def result_helper(
     return response
 
 def history_helper(
-        attempt: dict
+        attempt: dict,
+        student: dict
 ) -> AttemptHistoryResponse:
     """
     Convert quiz attempt into
@@ -207,6 +219,10 @@ def history_helper(
         attempt_id=str(
             attempt["_id"]
         ),
+        student_id=attempt["student_id"],
+        student_name=f"{student['first_name']} {student['last_name']}",
+
+        student_email=student["email"],
 
         quiz_id=attempt[
             "quiz_id"
@@ -320,9 +336,13 @@ class ResultService:
         logger.info(
             "Result retrieved successfully."
         )
+        student = await Repository.get_user_by_id(
+    attempt["student_id"]
+)
 
         return result_helper(
-            attempt
+            attempt,
+            student
         )
     
     @staticmethod
@@ -337,6 +357,7 @@ class ResultService:
         logger.info(
             "Fetching student results."
         )
+        
 
         attempts = await Repository.get_student_results(
             current_user["user_id"]
@@ -346,15 +367,23 @@ class ResultService:
             "Student results retrieved successfully."
         )
 
-        return [
+        
+        response = []
 
-            history_helper(
-                attempt
+        for attempt in attempts:
+            student = await Repository.get_user_by_id(
+                attempt["student_id"]
             )
+            response.append(
+                history_helper(
+                    attempt,
+                    student
+                )
+            )
+        return response
+            
 
-            for attempt in attempts
-
-        ]
+        
     
     @staticmethod
     async def get_result_admin(
@@ -377,9 +406,13 @@ class ResultService:
         logger.info(
             "Admin result retrieved successfully."
         )
+        student = await Repository.get_user_by_id(
+            attempt["student_id"]
+        )    
 
         return result_helper(
-            attempt
+            attempt,
+            student
         )
     @staticmethod
     async def get_all_results(
@@ -398,15 +431,19 @@ class ResultService:
         logger.info(
             "All quiz results retrieved successfully."
         )
+        response = []
 
-        return [
-
-            history_helper(
-                attempt
+        for attempt in attempts:
+            student = await Repository.get_user_by_id(
+                attempt["student_id"]
+            )
+            response.append(
+                history_helper(
+                    attempt,
+                    student
+                )
             )
 
-            for attempt in attempts
-
-        ]
+        return response
 
 

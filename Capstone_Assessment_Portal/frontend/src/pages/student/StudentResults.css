@@ -1,0 +1,184 @@
+/* ===========================
+   Student Results
+=========================== */
+
+.student-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7fc;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.results-page {
+    padding: 2rem;
+}
+
+.results-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: .5rem;
+}
+
+.results-subtitle {
+    color: #6b7280;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+/* ===========================
+   Grid
+=========================== */
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.8rem;
+}
+
+/* ===========================
+   Card
+=========================== */
+
+.result-history-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.8rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    transition: .25s;
+    display: flex;
+    flex-direction: column;
+}
+
+.result-history-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,.12);
+}
+
+.result-history-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+/* ===========================
+   Score Circle
+=========================== */
+
+.history-score {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#2563eb,#3b82f6);
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 1.4rem;
+}
+
+/* ===========================
+   Details
+=========================== */
+
+.result-history-card p {
+    margin: .35rem 0;
+    color: #4b5563;
+    font-size: .98rem;
+}
+
+/* ===========================
+   Status
+=========================== */
+
+.pass-status {
+    margin-top: .8rem;
+    color: #16a34a !important;
+    font-weight: 700;
+}
+
+.fail-status {
+    margin-top: .8rem;
+    color: #dc2626 !important;
+    font-weight: 700;
+}
+
+/* ===========================
+   Button
+=========================== */
+
+.view-result-btn {
+    margin-top: auto;
+    padding: .85rem;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.view-result-btn:hover {
+    background: #1d4ed8;
+}
+/* ===========================
+   Search Bar
+=========================== */
+
+.results-search {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 1.5rem 0 2rem;
+}
+
+.results-search input {
+    width: 100%;
+    padding: 0.95rem 1rem 0.95rem 3rem;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    outline: none;
+    font-size: 1rem;
+    background: #ffffff;
+    color: #1f2937;
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.results-search input::placeholder {
+    color: #9ca3af;
+}
+
+.results-search input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+    .results-search {
+        max-width: 100%;
+    }
+}

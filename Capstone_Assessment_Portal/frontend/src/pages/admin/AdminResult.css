@@ -1,0 +1,79 @@
+/* ==========================
+   Admin Result Page
+========================== */
+
+.student-details {
+
+    margin: 30px 0;
+
+    padding: 18px 24px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+}
+
+.student-details h3 {
+
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 22px;
+
+}
+
+.student-details p {
+
+    margin-top: 8px;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+}
+
+
+/* ==========================
+   Result Buttons
+========================== */
+
+.result-actions {
+
+    display: flex;
+
+    gap: 18px;
+
+    margin-top: 40px;
+
+}
+
+.result-actions button {
+
+    flex: 1;
+
+}
+
+
+/* ==========================
+   Responsive
+========================== */
+
+@media (max-width:768px) {
+
+    .student-details {
+
+        text-align: center;
+
+    }
+
+    .result-actions {
+
+        flex-direction: column;
+
+    }
+
+}

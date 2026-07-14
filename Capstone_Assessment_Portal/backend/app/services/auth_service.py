@@ -216,7 +216,8 @@ class AuthService:
             access_token=access_token,
             refresh_token=refresh_token,
             role=existing_user["role"],
-            token_type="bearer"
+            token_type="bearer",
+            username=existing_user["username"]
         )
     
     @staticmethod

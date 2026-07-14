@@ -10,6 +10,7 @@
 
 import api from "./api";
 
+
 /**
  * Fetch all categories
  */
