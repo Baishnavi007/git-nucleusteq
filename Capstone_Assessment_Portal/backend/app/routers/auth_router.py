@@ -101,7 +101,7 @@ async def refresh_access_token(
         "Refresh token request received."
     )
 
-    response= await AuthService.regenerate_access_token(data.refresh_token)
+    response= await AuthService.regenerate_refresh_token(data.refresh_token)
     return response
 
 

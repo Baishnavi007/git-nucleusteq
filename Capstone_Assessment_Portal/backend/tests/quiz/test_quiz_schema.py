@@ -1,110 +1,202 @@
 """
-Test cases for quiz schemas
+Test cases for Quiz Schemas
 """
 
-from datetime import datetime, timezone
-
 import pytest
+
 from pydantic import ValidationError
 
 from app.schemas.quiz_schema import (
     QuizCreate,
     QuizUpdate,
-    QuizResponse,
+    QuizResponse
 )
 
 
-def test_quiz_create_valid():
+def test_quiz_create_schema():
     """
-    Test QuizCreate schema with valid data.
+    Test valid quiz create schema.
     """
 
     quiz = QuizCreate(
         title="Java Basics",
-        description="Quiz covering Java fundamentals.",
+        description="This quiz covers Java fundamentals.",
         duration=30,
+        passing_percentage=40
     )
 
     assert quiz.title == "Java Basics"
-    assert quiz.description == "Quiz covering Java fundamentals."
+    assert quiz.description == "This quiz covers Java fundamentals."
     assert quiz.duration == 30
+    assert quiz.passing_percentage == 40
+
+
+def test_quiz_create_trim_spaces():
+    """
+    Test trimming spaces from title and description.
+    """
+
+    quiz = QuizCreate(
+        title="   Java Basics   ",
+        description="   This quiz covers Java fundamentals.   ",
+        duration=30,
+        passing_percentage=50
+    )
+
+    assert quiz.title == "Java Basics"
+    assert quiz.description == "This quiz covers Java fundamentals."
 
 
 def test_quiz_create_empty_title():
     """
-    Test QuizCreate schema with empty title.
+    Test empty title validation.
     """
 
     with pytest.raises(ValidationError):
 
         QuizCreate(
             title="   ",
-            description="Quiz covering Java fundamentals.",
+            description="Valid description here.",
             duration=30,
+            passing_percentage=40
         )
 
 
-def test_quiz_create_invalid_duration():
+def test_quiz_create_empty_description():
     """
-    Test QuizCreate schema with invalid duration.
+    Test empty description validation.
     """
 
     with pytest.raises(ValidationError):
 
         QuizCreate(
-            title="Java Basics",
-            description="Quiz covering Java fundamentals.",
-            duration=0,
+            title="Java",
+            description="     ",
+            duration=30,
+            passing_percentage=40
         )
 
 
-def test_quiz_update_valid():
+def test_quiz_create_invalid_duration():
     """
-    Test QuizUpdate schema with valid data.
+    Test invalid duration.
+    """
+
+    with pytest.raises(ValidationError):
+
+        QuizCreate(
+            title="Java",
+            description="Valid description here.",
+            duration=0,
+            passing_percentage=40
+        )
+
+
+def test_quiz_create_invalid_passing_percentage():
+    """
+    Test invalid passing percentage.
+    """
+
+    with pytest.raises(ValidationError):
+
+        QuizCreate(
+            title="Java",
+            description="Valid description here.",
+            duration=30,
+            passing_percentage=101
+        )
+
+
+def test_quiz_update_schema():
+    """
+    Test valid quiz update schema.
     """
 
     quiz = QuizUpdate(
         title="Advanced Java",
-        description="Advanced Java quiz.",
+        description="Advanced Java concepts covered.",
         duration=45,
+        passing_percentage=60
     )
 
     assert quiz.title == "Advanced Java"
-    assert quiz.description == "Advanced Java quiz."
+    assert quiz.description == "Advanced Java concepts covered."
     assert quiz.duration == 45
+    assert quiz.passing_percentage == 60
 
 
-def test_quiz_update_empty_description():
+def test_quiz_update_trim_spaces():
     """
-    Test QuizUpdate schema with empty description.
+    Test trimming spaces in update schema.
+    """
+
+    quiz = QuizUpdate(
+        title="   Python   ",
+        description="   Python Quiz Description   ",
+        duration=40,
+        passing_percentage=50
+    )
+
+    assert quiz.title == "Python"
+    assert quiz.description == "Python Quiz Description"
+
+
+def test_quiz_update_invalid_duration():
+    """
+    Test invalid duration in update schema.
     """
 
     with pytest.raises(ValidationError):
 
         QuizUpdate(
-            title="Advanced Java",
-            description="      ",
-            duration=45,
+            title="Java",
+            description="Valid description here.",
+            duration=-10,
+            passing_percentage=40
         )
 
 
-def test_quiz_response_valid():
+def test_quiz_update_invalid_passing_percentage():
     """
-    Test QuizResponse schema with valid data.
+    Test invalid passing percentage in update schema.
     """
 
-    quiz = QuizResponse(
+    with pytest.raises(ValidationError):
+
+        QuizUpdate(
+            title="Java",
+            description="Valid description here.",
+            duration=30,
+            passing_percentage=0
+        )
+
+
+def test_quiz_response_schema():
+    """
+    Test quiz response schema.
+    """
+
+    from datetime import datetime
+
+    response = QuizResponse(
         id="123",
-        title="Java Basics",
-        description="Quiz covering Java fundamentals.",
-        category_id="456",
+        title="Java",
+        description="Java Quiz",
+        category_id="cat123",
         category_name="Programming",
         duration=30,
+        is_published=False,
+        max_attempts=3,
         created_by="admin",
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(),
+        updated_at=datetime.now(),
+        passing_percentage=40,
+        total_questions=10,
+        total_marks=100
     )
 
-    assert quiz.id == "123"
-    assert quiz.title == "Java Basics"
-    assert quiz.category_name == "Programming"
+    assert response.id == "123"
+    assert response.title == "Java"
+    assert response.category_name == "Programming"
+    assert response.total_questions == 10
+    assert response.total_marks == 100
