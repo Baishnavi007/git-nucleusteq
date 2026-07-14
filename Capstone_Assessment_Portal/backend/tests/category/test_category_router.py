@@ -3,9 +3,9 @@ Test cases for Category Router
 """
 
 from unittest.mock import AsyncMock
-from bson import ObjectId
 
-from fastapi.testclient import TestClient
+import pytest
+from bson import ObjectId
 
 from main import app
 
@@ -14,10 +14,20 @@ from app.security.auth_guard import (
     admin_only,
 )
 
-client = TestClient(app)
+
+@pytest.fixture(autouse=True)
+def clear_overrides():
+    """
+    Clear dependency overrides after every test.
+    """
+    yield
+    app.dependency_overrides.clear()
 
 
 def override_current_user():
+    """
+    Mock authenticated admin user.
+    """
     return {
         "email": "admin@gmail.com",
         "username": "admin01",
@@ -26,14 +36,12 @@ def override_current_user():
     }
 
 
-app.dependency_overrides[get_current_user] = override_current_user
-app.dependency_overrides[admin_only] = override_current_user
-
-
-def test_get_all_categories(mocker):
+def test_get_all_categories(client, mocker):
     """
     Test get all categories route.
     """
+
+    app.dependency_overrides[get_current_user] = override_current_user
 
     mocker.patch(
         "app.routers.category_router.CategoryService.get_all_categories",
@@ -47,16 +55,23 @@ def test_get_all_categories(mocker):
         ],
     )
 
-    response = client.get("/categories")
+    response = client.get(
+        "/categories",
+        headers={
+            "Authorization": "Bearer dummy-token"
+        }
+    )
 
     assert response.status_code == 200
     assert len(response.json()) == 1
 
 
-def test_get_category_by_id(mocker):
+def test_get_category_by_id(client, mocker):
     """
     Test get category by id route.
     """
+
+    app.dependency_overrides[get_current_user] = override_current_user
 
     category_id = str(ObjectId())
 
@@ -71,17 +86,22 @@ def test_get_category_by_id(mocker):
     )
 
     response = client.get(
-        f"/categories/{category_id}"
+        f"/categories/{category_id}",
+        headers={
+            "Authorization": "Bearer dummy-token"
+        }
     )
 
     assert response.status_code == 200
     assert response.json()["id"] == category_id
 
 
-def test_create_category(mocker):
+def test_create_category(client, mocker):
     """
     Test create category route.
     """
+
+    app.dependency_overrides[admin_only] = override_current_user
 
     mocker.patch(
         "app.routers.category_router.CategoryService.create_category",
@@ -97,6 +117,9 @@ def test_create_category(mocker):
             "name": "Programming",
             "description": "Programming quizzes",
         },
+        headers={
+            "Authorization": "Bearer dummy-token"
+        }
     )
 
     assert response.status_code == 201
@@ -106,10 +129,12 @@ def test_create_category(mocker):
     }
 
 
-def test_update_category(mocker):
+def test_update_category(client, mocker):
     """
     Test update category route.
     """
+
+    app.dependency_overrides[admin_only] = override_current_user
 
     category_id = str(ObjectId())
 
@@ -127,6 +152,9 @@ def test_update_category(mocker):
             "name": "Java",
             "description": "Java quizzes",
         },
+        headers={
+            "Authorization": "Bearer dummy-token"
+        }
     )
 
     assert response.status_code == 200
@@ -136,10 +164,12 @@ def test_update_category(mocker):
     }
 
 
-def test_delete_category(mocker):
+def test_delete_category(client, mocker):
     """
     Test delete category route.
     """
+
+    app.dependency_overrides[admin_only] = override_current_user
 
     category_id = str(ObjectId())
 
@@ -152,7 +182,10 @@ def test_delete_category(mocker):
     )
 
     response = client.delete(
-        f"/categories/{category_id}"
+        f"/categories/{category_id}",
+        headers={
+            "Authorization": "Bearer dummy-token"
+        }
     )
 
     assert response.status_code == 200
@@ -160,11 +193,3 @@ def test_delete_category(mocker):
     assert response.json() == {
         "message": "Category deleted successfully."
     }
-
-
-def teardown_module():
-    """
-    Clear dependency overrides after tests.
-    """
-
-    app.dependency_overrides.clear()
