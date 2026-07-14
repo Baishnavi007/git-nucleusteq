@@ -13,6 +13,7 @@ import {
 
 import SideBar from "../../components/layout/SideBar/SideBar";
 import TopBar from "../../components/layout/Topbar/TopBar";
+import Pagination from "../../components/common/Pagination";
 
 import {
     getAllCategories
@@ -28,11 +29,21 @@ function StudentCategories() {
 
     const [searchText, setSearchText] = useState("");
 
+    /**
+     * Pagination
+     */
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
+
     useEffect(() => {
 
         fetchCategories();
 
     }, []);
+
+    useEffect (() => {
+        setCurrentPage(1);
+    },[searchText]);
 
     const fetchCategories = async () => {
 
@@ -62,6 +73,16 @@ function StudentCategories() {
                     searchText.toLowerCase()
                 )
 
+    );
+
+    /**
+     * PAagination
+     */
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentCategories = filteredCategories.slice(
+        firstIndex,
+        lastIndex
     );
 
     return (
@@ -125,7 +146,7 @@ function StudentCategories() {
 
                         {
 
-                            filteredCategories.map(
+                            currentCategories.map(
 
                                 (category) => (
 
@@ -197,6 +218,18 @@ function StudentCategories() {
                         }
 
                     </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredCategories.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={(value) => {
+                            setItemsPerPage(value);
+                            setCurrentPage(1);
+
+
+                        }} />
+
 
                 </div>
 

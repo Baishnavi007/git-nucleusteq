@@ -25,8 +25,6 @@ import Swal from "sweetalert2";
 function AssessmentList({
 
     quizzes,
-
-    searchText,
     onEdit,
     onManageQuestions,
     fetchQuizzes
@@ -128,20 +126,6 @@ function AssessmentList({
 
 };
 
-    /**
-     * Filter quizzes according to search.
-     */
-    const filteredQuizzes = quizzes.filter(
-
-        (quiz) =>
-
-            quiz.title
-                .toLowerCase()
-                .includes(
-                    searchText.toLowerCase()
-                )
-
-    );
 
     return (
 
@@ -175,9 +159,9 @@ function AssessmentList({
 
                     {
 
-                        filteredQuizzes.length > 0 ?
+                        quizzes.length > 0 ?
 
-                            filteredQuizzes.map(
+                            quizzes.map(
 
                                 (quiz) => (
 

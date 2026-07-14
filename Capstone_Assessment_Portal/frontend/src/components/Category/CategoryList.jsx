@@ -30,8 +30,6 @@ function CategoryList({
 
     categories,
 
-    searchText,
-
     onEdit,
 
     fetchCategories
@@ -98,20 +96,6 @@ function CategoryList({
 
     };
 
-    /**
-     * Filter categories according to search.
-     */
-    const filteredCategories = categories.filter(
-
-        (category) =>
-
-            category.name
-                .toLowerCase()
-                .includes(
-                    searchText.toLowerCase()
-                )
-
-    );
 
     return (
 
@@ -141,9 +125,9 @@ function CategoryList({
 
                     {
 
-                        filteredCategories.length > 0 ?
+                        categories.length > 0 ?
 
-                            filteredCategories.map(
+                            categories.map(
 
                                 (category) => (
 

@@ -17,6 +17,7 @@ import { ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StudentCategories from "./pages/student/StudentCategories";
 import StudentAssessment from "./pages/student/StudentAssessment";
+import QuestionSelector from "./pages/admin/QuestionSelector";
 
 import StudentResult from "./pages/student/StudentResult";
 import StudentResults from "./pages/student/StudentResults";
@@ -71,6 +72,10 @@ function App() {
                 path="/admin/assessments"
                 element={<AssessmentManagement />}
             />
+            <Route
+                 path="/admin/questions"
+                 element={<QuestionSelector />}
+                  />
             <Route
                  path="/admin/questions/:quizId"
                  element={<QuestionManagement />}

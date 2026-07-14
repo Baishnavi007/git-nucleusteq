@@ -8,6 +8,7 @@ import TopBar from "../../components/layout/Topbar/TopBar";
 import { useEffect, useState } from "react";
 import { getStudentResults } from "../../services/resultService";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../components/common/Pagination";
 
 import { FaSearch } from "react-icons/fa";
 
@@ -18,23 +19,37 @@ function StudentResults() {
 
     const [results, setResults] = useState([]);
     const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const filteredResults = results.filter((result) =>
     result.quiz_title
         .toLowerCase()
         .includes(search.toLowerCase())
-);
+); 
+    const lastIndex = currentPage * itemsPerPage;
+    const firstIndex = lastIndex - itemsPerPage;
+    const currentResults = filteredResults.slice(
+        firstIndex,
+        lastIndex
+    );
+    
     useEffect(() => {
         fetchResults();
         
     }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    },[search]);
 
     const fetchResults = async () => {
         try {
             const response = await getStudentResults();
             console.log("Student Results:",response)
             setResults(response);
+            setCurrentPage(1);
         }
         catch(error){
             console.error(error);
@@ -81,7 +96,7 @@ function StudentResults() {
                         <div className="results-grid">
 
     {
-        filteredResults.map((result) => (
+        currentResults.map((result) => (
 
             <div
                 key={result.attempt_id}
@@ -148,6 +163,25 @@ function StudentResults() {
     }
 
 </div>
+<Pagination
+
+    currentPage={currentPage}
+
+    totalItems={filteredResults.length}
+
+    itemsPerPage={itemsPerPage}
+
+    onPageChange={setCurrentPage}
+
+    onItemsPerPageChange={(value) => {
+
+        setItemsPerPage(value);
+
+        setCurrentPage(1);
+
+    }}
+
+/>
 
                     </div>
 

@@ -3,37 +3,37 @@ Test cases for QuizService
 """
 
 import pytest
-
-from unittest.mock import (
-    AsyncMock,
-)
-
+from unittest.mock import AsyncMock
 from bson import ObjectId
 
 from app.services.quiz_service import QuizService
-
-from app.schemas.quiz_schema import (
-    QuizCreate,
-    QuizUpdate,
-)
-
+from app.schemas.quiz_schema import QuizCreate
 from app.exceptions.conflict_exception import (
-    ConflictException,
+    ConflictException
+)
+from app.exceptions.resource_not_found_exception import (
+    ResourceNotFoundException
+)
+from app.exceptions.bad_request_exception import (
+    BadRequestException
 )
 
-from app.exceptions.resource_not_found_exception import (
-    ResourceNotFoundException,
-)
+from app.schemas.quiz_schema import QuizUpdate
 
 
 @pytest.mark.asyncio
 async def test_create_quiz_success(mocker):
     """
-    Test successful quiz creation.
+    Test create quiz successfully.
     """
 
-    category_id = str(
-        ObjectId()
+    category_id = str(ObjectId())
+
+    quiz = QuizCreate(
+        title="Java Quiz",
+        description="Basic Java Programming Quiz",
+        duration=30,
+        passing_percentage=40
     )
 
     current_user = {
@@ -42,71 +42,70 @@ async def test_create_quiz_success(mocker):
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_category_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": ObjectId(category_id),
-            "name": "Programming",
-        },
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId(),
+                "name": "Programming"
+            }
+        )
     )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_title",
-        new_callable=AsyncMock,
-        return_value=None,
+        new=AsyncMock(return_value=None)
     )
 
-    mock_create = mocker.patch(
+    create_quiz = mocker.patch(
         "app.services.quiz_service.Repository.create_quiz",
-        new_callable=AsyncMock,
-    )
-
-    quiz = QuizCreate(
-        title="Java Basics",
-        description="Quiz covering Java fundamentals.",
-        duration=30,
+        new=AsyncMock()
     )
 
     response = await QuizService.create_quiz(
         category_id,
         quiz,
-        current_user,
+        current_user
     )
 
-    assert response["message"] == "Quiz created successfully."
+    assert response.message == "Quiz created successfully."
 
-    mock_create.assert_awaited_once()
+    create_quiz.assert_awaited_once()
 
 
 @pytest.mark.asyncio
 async def test_create_quiz_duplicate(mocker):
     """
-    Test duplicate quiz creation.
+    Test duplicate quiz.
     """
 
-    category_id = str(
-        ObjectId()
+    category_id = str(ObjectId())
+
+    quiz = QuizCreate(
+        title="Java Quiz",
+        description="Basic Java Programming Quiz",
+        duration=30,
+        passing_percentage=40
     )
+
+    current_user = {
+        "username": "admin"
+    }
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_category_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": ObjectId(category_id),
-        },
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId()
+            }
+        )
     )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_title",
-        new_callable=AsyncMock,
-        return_value={
-            "title": "Java Basics",
-        },
-    )
-
-    quiz = QuizCreate(
-        title="Java Basics",
-        description="Quiz covering Java fundamentals.",
-        duration=30,
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId()
+            }
+        )
     )
 
     with pytest.raises(
@@ -115,166 +114,200 @@ async def test_create_quiz_duplicate(mocker):
         await QuizService.create_quiz(
             category_id,
             quiz,
-            {
-                "username": "admin",
-            },
+            current_user
         )
 
 
 @pytest.mark.asyncio
-async def test_get_quizzes_by_category(mocker):
+async def test_create_quiz_category_not_found(mocker):
     """
-    Test get quizzes by category.
+    Test category not found.
     """
 
-    category_id = str(
-        ObjectId()
+    category_id = str(ObjectId())
+
+    quiz = QuizCreate(
+        title="Java Quiz",
+        description="Basic Java Programming Quiz",
+        duration=30,
+        passing_percentage=40
     )
 
-    object_id = ObjectId(
-        category_id
+    current_user = {
+        "username": "admin"
+    }
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_category_by_id",
+        new=AsyncMock(
+            return_value=None
+        )
+    )
+
+    with pytest.raises(
+        ResourceNotFoundException
+    ):
+        await QuizService.create_quiz(
+            category_id,
+            quiz,
+            current_user
+        )
+
+
+@pytest.mark.asyncio
+async def test_get_all_quizzes(mocker):
+    """
+    Test get all quizzes.
+    """
+
+    quiz_id = ObjectId()
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_all_quizzes",
+        new=AsyncMock(
+            return_value=[
+                {
+                    "_id": quiz_id,
+                    "title": "Java Quiz",
+                    "category_id": str(ObjectId())
+                }
+            ]
+        )
     )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_category_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": object_id,
-            "name": "Programming",
-        },
-    )
-
-    mocker.patch(
-        "app.services.quiz_service.Repository.get_quizzes_by_category",
-        new_callable=AsyncMock,
-        return_value=[
-            {
-                "_id": ObjectId(),
-                "title": "Java Basics",
-                "description": "Quiz",
-                "category_id": object_id,
-                "duration": 30,
-                "created_by": "admin",
+        new=AsyncMock(
+            return_value={
+                "name": "Programming"
             }
-        ],
+        )
     )
 
-    response = await QuizService.get_quizzes_by_category(
-        category_id
-    )
+    response = await QuizService.get_all_quizzes()
 
     assert len(response) == 1
-
+    assert response[0]["title"] == "Java Quiz"
     assert response[0]["category_name"] == "Programming"
 
 
+
 @pytest.mark.asyncio
-async def test_get_quiz_by_id_success(mocker):
+async def test_get_quiz_by_id(mocker):
     """
     Test get quiz by id.
     """
 
-    quiz_id = str(
-        ObjectId()
-    )
-
-    category_id = ObjectId()
+    quiz_id = ObjectId()
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": ObjectId(quiz_id),
-            "title": "Java Basics",
-            "description": "Quiz",
-            "category_id": category_id,
-            "duration": 30,
-            "created_by": "admin",
-        },
+        new=AsyncMock(
+            return_value={
+                "_id": quiz_id,
+                "title": "Java Quiz",
+                "category_id": str(ObjectId())
+            }
+        )
     )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_category_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": category_id,
-            "name": "Programming",
-        },
+        new=AsyncMock(
+            return_value={
+                "name": "Programming"
+            }
+        )
     )
 
     response = await QuizService.get_quiz_by_id(
-        quiz_id
+        str(quiz_id)
     )
 
-    assert response["title"] == "Java Basics"
-
+    assert response["title"] == "Java Quiz"
     assert response["category_name"] == "Programming"
+
+
+@pytest.mark.asyncio
+async def test_get_quiz_by_id_not_found(mocker):
+    """
+    Test quiz not found.
+    """
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(return_value=None)
+    )
+
+    with pytest.raises(
+        ResourceNotFoundException
+    ):
+        await QuizService.get_quiz_by_id(
+            str(ObjectId())
+        )
 
 
 @pytest.mark.asyncio
 async def test_update_quiz_success(mocker):
     """
-    Test successful quiz update.
+    Test update quiz successfully.
     """
 
-    quiz_id = str(
-        ObjectId()
-    )
+    quiz_id = ObjectId()
 
-    category_id = ObjectId()
+    quiz = QuizUpdate(
+        title="Advanced Java",
+        description="Advanced Java Programming Quiz",
+        duration=45,
+        passing_percentage=50
+    )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": ObjectId(quiz_id),
-            "category_id": category_id,
-        },
+        new=AsyncMock(
+            return_value={
+                "_id": quiz_id,
+                "category_id": str(ObjectId())
+            }
+        )
     )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_duplicate_quiz",
-        new_callable=AsyncMock,
-        return_value=None,
+        new=AsyncMock(return_value=None)
     )
 
-    mock_update = mocker.patch(
+    update_quiz = mocker.patch(
         "app.services.quiz_service.Repository.update_quiz",
-        new_callable=AsyncMock,
-    )
-
-    quiz = QuizUpdate(
-        title="Advanced Java",
-        description="Advanced Java quiz.",
-        duration=45,
+        new=AsyncMock()
     )
 
     response = await QuizService.update_quiz(
-        quiz_id,
-        quiz,
+        str(quiz_id),
+        quiz
     )
 
-    assert response["message"] == "Quiz updated successfully."
+    assert response.message == "Quiz updated successfully."
 
-    mock_update.assert_awaited_once()
+    update_quiz.assert_awaited_once()
 
 
 @pytest.mark.asyncio
 async def test_update_quiz_not_found(mocker):
     """
-    Test update quiz when quiz does not exist.
+    Test update quiz not found.
     """
-
-    mocker.patch(
-        "app.services.quiz_service.Repository.get_quiz_by_id",
-        new_callable=AsyncMock,
-        return_value=None,
-    )
 
     quiz = QuizUpdate(
         title="Advanced Java",
-        description="Advanced Java quiz.",
+        description="Advanced Java Programming Quiz",
         duration=45,
+        passing_percentage=50
+    )
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(return_value=None)
     )
 
     with pytest.raises(
@@ -282,54 +315,230 @@ async def test_update_quiz_not_found(mocker):
     ):
         await QuizService.update_quiz(
             str(ObjectId()),
-            quiz,
+            quiz
         )
 
 
 @pytest.mark.asyncio
-async def test_delete_quiz_success(mocker):
+async def test_update_quiz_duplicate(mocker):
     """
-    Test successful quiz deletion.
+    Test duplicate quiz while updating.
     """
+
+    quiz_id = ObjectId()
+
+    quiz = QuizUpdate(
+        title="Advanced Java",
+        description="Advanced Java Programming Quiz",
+        duration=45,
+        passing_percentage=50
+    )
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_id",
-        new_callable=AsyncMock,
-        return_value={
-            "_id": ObjectId(),
-            "title": "Java Basics",
-        },
+        new=AsyncMock(
+            return_value={
+                "_id": quiz_id,
+                "category_id": str(ObjectId())
+            }
+        )
     )
 
-    mock_delete = mocker.patch(
-        "app.services.quiz_service.Repository.delete_quiz",
-        new_callable=AsyncMock,
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_duplicate_quiz",
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId()
+            }
+        )
     )
 
-    response = await QuizService.delete_quiz(
-        str(ObjectId())
-    )
-
-    assert response["message"] == "Quiz deleted successfully."
-
-    mock_delete.assert_awaited_once()
+    with pytest.raises(
+        ConflictException
+    ):
+        await QuizService.update_quiz(
+            str(quiz_id),
+            quiz
+        )
 
 
 @pytest.mark.asyncio
-async def test_delete_quiz_not_found(mocker):
+async def test_publish_quiz_success(mocker):
     """
-    Test delete quiz when quiz does not exist.
+    Test publish quiz successfully.
+    """
+
+    quiz_id = ObjectId()
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(
+            return_value={
+                "_id": quiz_id,
+                "title": "Java Quiz",
+                "total_questions": 5,
+                "is_published": False
+            }
+        )
+    )
+
+    update_quiz = mocker.patch(
+        "app.services.quiz_service.Repository.update_quiz",
+        new=AsyncMock()
+    )
+
+    response = await QuizService.publish_quiz(
+        str(quiz_id)
+    )
+
+    assert response.message == "Quiz published successfully."
+
+    update_quiz.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_publish_quiz_not_found(mocker):
+    """
+    Test publish quiz not found.
     """
 
     mocker.patch(
         "app.services.quiz_service.Repository.get_quiz_by_id",
-        new_callable=AsyncMock,
-        return_value=None,
+        new=AsyncMock(return_value=None)
     )
 
     with pytest.raises(
         ResourceNotFoundException
     ):
-        await QuizService.delete_quiz(
+        await QuizService.publish_quiz(
+            str(ObjectId())
+        )
+
+
+@pytest.mark.asyncio
+async def test_publish_quiz_without_questions(mocker):
+    """
+    Test publish quiz without questions.
+    """
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId(),
+                "title": "Java Quiz",
+                "total_questions": 0,
+                "is_published": False
+            }
+        )
+    )
+
+    with pytest.raises(
+        BadRequestException
+    ):
+        await QuizService.publish_quiz(
+            str(ObjectId())
+        )
+
+
+@pytest.mark.asyncio
+async def test_publish_quiz_already_published(mocker):
+    """
+    Test already published quiz.
+    """
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId(),
+                "title": "Java Quiz",
+                "total_questions": 5,
+                "is_published": True
+            }
+        )
+    )
+
+    with pytest.raises(
+        ConflictException
+    ):
+        await QuizService.publish_quiz(
+            str(ObjectId())
+        )
+
+
+@pytest.mark.asyncio
+async def test_unpublish_quiz_success(mocker):
+    """
+    Test unpublish quiz successfully.
+    """
+
+    quiz_id = ObjectId()
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(
+            return_value={
+                "_id": quiz_id,
+                "title": "Java Quiz",
+                "is_published": True
+            }
+        )
+    )
+
+    update_quiz = mocker.patch(
+        "app.services.quiz_service.Repository.update_quiz",
+        new=AsyncMock()
+    )
+
+    response = await QuizService.unpublish_quiz(
+        str(quiz_id)
+    )
+
+    assert response.message == "Quiz unpublished successfully."
+
+    update_quiz.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_unpublish_quiz_not_found(mocker):
+    """
+    Test unpublish quiz not found.
+    """
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(return_value=None)
+    )
+
+    with pytest.raises(
+        ResourceNotFoundException
+    ):
+        await QuizService.unpublish_quiz(
+            str(ObjectId())
+        )
+
+
+@pytest.mark.asyncio
+async def test_unpublish_quiz_already_unpublished(mocker):
+    """
+    Test already unpublished quiz.
+    """
+
+    mocker.patch(
+        "app.services.quiz_service.Repository.get_quiz_by_id",
+        new=AsyncMock(
+            return_value={
+                "_id": ObjectId(),
+                "title": "Java Quiz",
+                "is_published": False
+            }
+        )
+    )
+
+    with pytest.raises(
+        ConflictException
+    ):
+        await QuizService.unpublish_quiz(
             str(ObjectId())
         )

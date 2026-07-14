@@ -3,7 +3,6 @@
  */
 
 import {
-    FaBell,
     FaUserCircle
 } from "react-icons/fa";
 
@@ -66,12 +65,6 @@ function TopBar({
             </div>
 
             <div className="topbar-right">
-
-                <button className="notification-btn">
-
-                    <FaBell />
-
-                </button>
 
                 <div className="profile">
 
