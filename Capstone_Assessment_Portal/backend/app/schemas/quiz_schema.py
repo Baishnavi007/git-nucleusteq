@@ -25,9 +25,15 @@ class QuizCreate(BaseModel):
         min_length=10,
         max_length=300
     )
+    
 
     duration: int = Field(
         gt=0
+    )
+
+    passing_percentage: int = Field(
+        ge=1,
+        le=100
     )
 
 
@@ -73,8 +79,11 @@ class QuizUpdate(BaseModel):
     duration: int = Field(
         gt=0
     )
-    is_published: bool
-    
+
+    passing_percentage: int = Field(
+        ge=1,   
+        le=100
+    )
 
     @field_validator(
         "title",
@@ -126,3 +135,9 @@ class QuizResponse(BaseModel):
     created_at: datetime
 
     updated_at: datetime
+
+    passing_percentage: int
+
+    total_questions: int
+    
+    total_marks: int

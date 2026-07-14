@@ -137,6 +137,56 @@ class QuestionService:
                 raise BadRequestException(
                     QuestionMessage.INVALID_TRUE_FALSE_ANSWER
                 )
+            
+    @staticmethod
+    async def update_quiz_statistics(
+            quiz_id: str
+    ):
+        """
+        Update total questions and total marks for a quiz.
+        """
+
+        logger.info(
+            "Updating statistics for quiz '%s'.",
+            quiz_id
+        )
+
+        quiz_object_id = validate_object_id(
+            quiz_id
+        )
+
+        existing_quiz = await Repository.get_quiz_by_id(
+            quiz_object_id
+        )
+
+        if not existing_quiz:
+
+            logger.warning(
+                "Quiz '%s' not found.",
+                quiz_id
+            )
+
+            raise ResourceNotFoundException(
+                QuizMessage.NOT_FOUND
+            )
+
+        total_questions, total_marks = await Repository.calculate_quiz_statistics(
+            quiz_id
+        )
+
+        await Repository.update_quiz_statistics(
+            quiz_object_id,
+            total_questions,
+            total_marks
+        )
+
+        logger.info(
+            "Statistics updated for quiz '%s': Total Questions=%d, Total Marks=%d.",
+            quiz_id,
+            total_questions,
+            total_marks
+        )
+
     @staticmethod
     async def create_question(
             quiz_id: str,
@@ -207,6 +257,9 @@ class QuestionService:
         question_data["updated_at"] = current_time
         await Repository.create_question(
             question_data       
+        )
+        await QuestionService.update_quiz_statistics(   
+            quiz_id
         )
         logger.info(
             "Question created successfully."
@@ -371,6 +424,10 @@ class QuestionService:
             question_object_id,
             question_data
         )
+
+        await QuestionService.update_quiz_statistics(
+            existing_question["quiz_id"]
+        )
         logger.info(
             "Question '%s' updated successfully.",
             question_id
@@ -414,6 +471,10 @@ class QuestionService:
         await Repository.delete_question(
             question_object_id
         )
+        await QuestionService.update_quiz_statistics(
+            existing_question["quiz_id"]
+        )
+        
         logger.info(
             "Question '%s' deleted successfully.",
             question_id

@@ -9,7 +9,7 @@ Responsibilities:
 from bson import ObjectId
 
 from app.config.database import db
-
+from app.utils.constants import QuizAttemptStatus
 
 class Repository:
     """
@@ -297,6 +297,23 @@ class Repository:
                 "_id": quiz_id
             }
         )
+    
+    @staticmethod
+    async def delete_quizzes_by_category(
+        category_id: str
+    ):
+        """
+        Delete all quizzes of a category
+        """
+        return await db.quizzes.delete_many(
+            {
+                "category_id": category_id
+            }
+        )
+
+
+
+
     @staticmethod
     async def create_question(
             question_data: dict
@@ -338,6 +355,51 @@ class Repository:
         ).to_list(
             length=None
         )
+
+    @staticmethod
+    async def update_quiz_statistics(
+            quiz_id: ObjectId,
+            total_questions: int,
+            total_marks: int
+    ):
+        """
+        Update total questions and total marks of a quiz.
+        """
+
+        return await db.quizzes.update_one(
+            {
+                "_id": ObjectId(quiz_id)
+            },
+            {
+                "$set": {
+                    "total_questions": total_questions,
+                    "total_marks": total_marks
+                }
+            }
+        )
+    
+    @staticmethod
+    async def calculate_quiz_statistics(
+            quiz_id: str
+    ):
+        """
+        Calculate total questions and total marks of a quiz.
+        """
+
+        questions = await db.questions.find(
+            {
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+
+        total_questions = len(questions)
+        total_marks = sum(
+            question["marks"] for question in questions
+        )
+
+        return total_questions, total_marks
 
     @staticmethod
     async def get_duplicate_question(
@@ -425,6 +487,7 @@ class Repository:
             }
         )
 
+   
 
     @staticmethod
     async def publish_quiz(
@@ -480,3 +543,144 @@ class Repository:
         ).to_list(
             length=None
         )
+
+    
+    @staticmethod
+    async def create_attempt(
+            attempt_data: dict
+    ):
+        """
+        Save new quiz attempt.
+        """
+
+        return await db.attempts.insert_one(
+            attempt_data
+        )
+    
+    @staticmethod
+    async def get_attempt_by_id(
+            attempt_id: ObjectId
+    ):
+        """
+        Retrieve quiz attempt by id.
+        """
+
+        return await db.attempts.find_one(
+            {
+                "_id": attempt_id
+            }
+        )
+    
+    @staticmethod
+    async def get_student_attempts(
+            student_id: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve all attempts of a student for a quiz.
+        """
+
+        return await db.attempts.find(
+            {
+                "student_id": student_id,
+                "quiz_id": quiz_id
+            }
+        ).to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def get_active_attempt(
+            student_id: str,
+            quiz_id: str
+    ):
+        """
+        Retrieve active attempt of a student for a quiz.
+        """
+
+        return await db.attempts.find_one(
+            {
+                "student_id": student_id,
+                "quiz_id": quiz_id,
+                "status": QuizAttemptStatus.IN_PROGRESS
+            }
+        )
+    
+    @staticmethod
+    async def update_attempt(
+            attempt_id: ObjectId,
+            attempt_data: dict
+    ):
+        """
+        Update an existing quiz attempt.
+        """
+
+        return await db.attempts.update_one(
+            {
+                "_id": attempt_id
+            },
+            {
+                "$set": attempt_data
+            }
+        )
+
+    @staticmethod
+    async def get_result_by_attempt_id(
+        attempt_object_id: ObjectId
+    ):
+        """
+        Retreive a submitted quiz attempt by ID.
+        """
+        return await db.attempts.find_one(
+            {
+                "_id": attempt_object_id,
+                "status": {
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+
+            }
+        )
+    
+    @staticmethod
+    async def get_student_results(
+        student_id: str
+    ):
+        """
+        Retreive all submitted attempts of student
+        """
+        return await db.attempts.find(
+            {
+                "student_id": student_id,
+                "status":{
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+            }
+        ).to_list(
+            length=None
+        )
+    
+    @staticmethod
+    async def get_all_results():
+        """
+        Retreive all submitted quiz attempts
+        """
+
+        return await db.attempts.find(
+            {
+                "status": {
+                    "$in": [
+                        QuizAttemptStatus.SUBMITTED,
+                        QuizAttemptStatus.TIME_EXPIRED
+                    ]
+                }
+            }
+        ).to_list(
+            length=None
+        )
+    

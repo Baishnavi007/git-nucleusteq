@@ -13,15 +13,15 @@ import {
     FaClipboardCheck,
 } from "react-icons/fa";
 
-import Input from "../components/Input";
-import Button from "../components/Button";
+import Input from "../../components/common/Input";
+import Button from "../../components/common/Button";
 
 import {
     loginUser,
     getPublicKey,
-} from "../services/authService";
+} from "../../services/authService";
 
-import { encryptPassword } from "../utils/encryption";
+import { encryptPassword } from "../../utils/encryption";
 
 import "./Login.css";
 

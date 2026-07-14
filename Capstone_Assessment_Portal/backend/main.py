@@ -11,6 +11,8 @@ from app.routers.quiz_router import (
     router as quiz_router
 )
 from app.routers.question_router import router as question_router
+from app.routers.quiz_attempt_router import router as quiz_attempt_router
+from app.routers.result_router import router as result_router
 app = FastAPI(
     title="Assessment Portal API",
     version="1.0.0"
@@ -38,7 +40,8 @@ app.include_router(auth_router)
 app.include_router(category_router)
 app.include_router(quiz_router)
 app.include_router(question_router)
-
+app.include_router(quiz_attempt_router)
+app.include_router(result_router)
 
 
 @app.get("/")

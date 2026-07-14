@@ -7,6 +7,7 @@ from datetime import (
     timezone
 )
 
+from app.exceptions.bad_request_exception import BadRequestException
 from app.repository import Repository
 
 from app.schemas.quiz_schema import (
@@ -113,6 +114,9 @@ class QuizService:
         quiz_data["created_by"] = (
             current_user["username"]
         )
+
+        quiz_data["total_questions"] = 0
+        quiz_data["total_marks"] = 0
 
         quiz_data["created_at"] = (
             current_time
@@ -359,6 +363,19 @@ class QuizService:
             raise ResourceNotFoundException(
                 QuizMessage.NOT_FOUND
             )
+        
+        if existing_quiz["total_questions"] == 0:
+
+            logger.warning(
+                "Quiz '%s' has no questions.",
+                existing_quiz["title"]
+            )
+
+            raise BadRequestException(
+                QuizMessage.NO_QUESTIONS
+            )
+    
+    
         if existing_quiz["is_published"]:
 
             logger.warning(
@@ -482,6 +499,10 @@ class QuizService:
                 QuizMessage.NOT_FOUND
             )
 
+        await Repository.delete_questions_by_quiz(
+            quiz_id
+        )
+
         await Repository.delete_quiz(
             quiz_object_id
         )
@@ -500,7 +521,7 @@ class QuizService:
             category_id: str
     ):
         """
-        Retrieve all unpublished quizzes of a category.
+        Retrieve all published quizzes of a category.
         """
 
         logger.info(
@@ -544,7 +565,7 @@ class QuizService:
                 existing_category["name"]
             )
         logger.info(
-            "%d unpublished quizzes fetched successfully.",
+            "%d published quizzes fetched successfully.",
             len(quizzes)
         )
 

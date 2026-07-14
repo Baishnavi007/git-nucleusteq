@@ -13,12 +13,14 @@ import {
     FaClipboardCheck
 } from "react-icons/fa";
 
-import Input from "../components/Input";
-import Button from "../components/Button";
+import Input from "../../components/common/Input";
+import Button from "../../components/common/Button";
 
-import { registerUser, getPublicKey } from "../services/authService";
-import { encryptPassword } from "../utils/encryption";
+import { registerUser, getPublicKey } from "../../services/authService";
+import { encryptPassword } from "../../utils/encryption";
 import "./Register.css";
+import { validateRegisterForm } from "../../utils/validation";
+import { getErrorMessage } from "../../utils/errorHandler";
 
 function Register() {
 
@@ -36,6 +38,13 @@ function Register() {
     });
 
     const [loading, setLoading] = useState(false);
+
+    /**
+     * Stores validation errors.
+     */
+
+    const[errors, setErrors] = useState({});
+
      /**
       * Stores RSA public key received from the backend for encrypting the password before sending it to the server.
       */
@@ -85,19 +94,33 @@ useEffect(() => {
 
         }));
 
+        setErrors((previousErrors) => ({
+            ...previousErrors,
+            [name]: ""
+        }));
+
     };
 
     const handleRegister = async (event) => {
 
         event.preventDefault();
+        const validationErrors =
+            validateRegisterForm(registerData);
+
+            if(Object.keys(validationErrors).length>0){
+                setErrors(validationErrors);
+                return;
+            }
 
         if (
             registerData.password !==
             registerData.confirm_password
         ) {
-
-            alert("Passwords do not match.");
-
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                confirm_password:
+                "Passwords do not match"
+            }));
             return;
 
         }
@@ -138,13 +161,7 @@ useEffect(() => {
 
         catch (error) {
 
-            alert(
-
-                error.response?.data?.detail ||
-
-                "Registration Failed"
-
-            );
+            alert(getErrorMessage(error));
 
         }
 
@@ -299,6 +316,7 @@ useEffect(() => {
 
                     <form
                         onSubmit={handleRegister}
+                        noValidate
                     >
 
                         <div className="row">
@@ -309,7 +327,8 @@ useEffect(() => {
                                 value={registerData.first_name}
                                 placeholder="Enter first name"
                                 onChange={handleInputChange}
-                                required
+                                error={errors.first_name}
+                                
                             />
 
                             <Input
@@ -318,7 +337,8 @@ useEffect(() => {
                                 value={registerData.last_name}
                                 placeholder="Enter last name"
                                 onChange={handleInputChange}
-                                required
+                                error={errors.last_name}
+        
                             />
 
                         </div>
@@ -329,7 +349,7 @@ useEffect(() => {
                             value={registerData.username}
                             placeholder="Enter username"
                             onChange={handleInputChange}
-                            required
+                            error={errors.username}
                         />
 
                         <Input
@@ -339,7 +359,7 @@ useEffect(() => {
                             value={registerData.email}
                             placeholder="Enter email"
                             onChange={handleInputChange}
-                            required
+                            error={errors.email}
                         />
 
                         <Input
@@ -349,7 +369,7 @@ useEffect(() => {
                             value={registerData.password}
                             placeholder="Enter password"
                             onChange={handleInputChange}
-                            required
+                            error={errors.password}
                         />
 
                         <Input
@@ -359,7 +379,7 @@ useEffect(() => {
                             value={registerData.confirm_password}
                             placeholder="Confirm password"
                             onChange={handleInputChange}
-                            required
+                            error={errors.confirm_password}
                         />
 
                         <Button

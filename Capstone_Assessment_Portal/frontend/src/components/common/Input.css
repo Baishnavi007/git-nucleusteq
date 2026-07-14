@@ -67,3 +67,30 @@
     color: #dc2626;
     font-size: 13px;
 }
+.input-error {
+
+    border: 1px solid #e74c3c;
+
+}
+
+.input-error:focus {
+
+    border-color: #e74c3c;
+
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+
+}
+
+.error-text {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #e74c3c;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+}

@@ -17,15 +17,15 @@ import {
     FaSearch
 } from "react-icons/fa";
 
-import SideBar from "../components/Sidebar/SideBar";
-import TopBar from "../components/Topbar/TopBar";
+import SideBar from "../../components/layout/SideBar/SideBar";
+import TopBar from "../../components/layout/Topbar/TopBar";
 
-import CategoryForm from "../components/Category/CategoryForm";
-import CategoryList from "../components/Category/CategoryList";
+import CategoryForm from "../../components/Category/CategoryForm";
+import CategoryList from "../../components/Category/CategoryList";
 
 import {
     getAllCategories
-} from "../services/categoryService";
+} from "../../services/categoryService";
 
 import "./CategoryManagement.css";
 

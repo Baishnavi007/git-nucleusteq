@@ -14,8 +14,8 @@ import {
     FaFolderOpen
 } from "react-icons/fa";
 
-import Input from "../Input";
-import Button from "../Button";
+import Input from "../common/Input";
+import Button from "../common/Button";
 
 import {
     createCategory,
