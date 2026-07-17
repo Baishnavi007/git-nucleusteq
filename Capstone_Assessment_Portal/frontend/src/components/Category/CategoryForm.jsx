@@ -275,22 +275,28 @@ function CategoryForm({
                         error={errors.name}
 
                     />
+                    <div className="input-group">
+                        <label>
+                            Description
+                        </label>
+                        <textarea
+                            name="description"
+                            value={categoryData.description}
+                            placeholder="Enter description"
+                            onChange={handleInputChange}
+                            rows="4"
+                         />
+                         {
+                            errors.description && (
+                                <p className="input-error">
+                                    {errors.description}
+                                </p>
+                            )
+                         }
 
-                    <Input
+                    </div>
 
-                        label="Description"
-
-                        name="description"
-
-                        value={categoryData.description}
-
-                        placeholder="Enter description"
-
-                        onChange={handleInputChange}
-
-                        error={errors.description}
-
-                    />
+                    
 
                     <div className="drawer-buttons">
 

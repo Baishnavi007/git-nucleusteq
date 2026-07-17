@@ -10,6 +10,8 @@ from pydantic import (
     field_validator
 )
 
+from app.utils.helpers import normalize_text
+
 
 class QuizCreate(BaseModel):
     """
@@ -25,7 +27,6 @@ class QuizCreate(BaseModel):
         min_length=10,
         max_length=300
     )
-    
 
     duration: int = Field(
         gt=0
@@ -36,7 +37,6 @@ class QuizCreate(BaseModel):
         le=100
     )
 
-
     @field_validator(
         "title",
         "description"
@@ -46,18 +46,9 @@ class QuizCreate(BaseModel):
             cls,
             value: str
     ):
-        """
-        Trim spaces and validate text fields.
-        """
-
-        value = value.strip()
-
+        value = normalize_text(value)
         if not value:
-
-            raise ValueError(
-                "Field cannot be empty."
-            )
-
+            raise ValueError("Field cannot be empty.")
         return value
 
 
@@ -81,7 +72,7 @@ class QuizUpdate(BaseModel):
     )
 
     passing_percentage: int = Field(
-        ge=1,   
+        ge=1,
         le=100
     )
 
@@ -94,18 +85,9 @@ class QuizUpdate(BaseModel):
             cls,
             value: str
     ):
-        """
-        Trim spaces and validate text fields.
-        """
-
-        value = value.strip()
-
+        value = normalize_text(value)
         if not value:
-
-            raise ValueError(
-                "Field cannot be empty."
-            )
-
+            raise ValueError("Field cannot be empty.")
         return value
 
 

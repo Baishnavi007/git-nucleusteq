@@ -2,7 +2,9 @@
 Category request and response schemas
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+from app.utils.helpers import normalize_text
 
 
 class CategoryCreate(BaseModel):
@@ -21,6 +23,14 @@ class CategoryCreate(BaseModel):
         max_length=200
     )
 
+    @field_validator("name", "description")
+    @classmethod
+    def normalize_text_fields(cls, value: str):
+        value = normalize_text(value)
+        if not value:
+            raise ValueError("Field cannot be empty or whitespace only.")
+        return value
+
 
 class CategoryUpdate(BaseModel):
     """
@@ -37,6 +47,14 @@ class CategoryUpdate(BaseModel):
         min_length=5,
         max_length=200
     )
+
+    @field_validator("name", "description")
+    @classmethod
+    def normalize_text_fields(cls, value: str):
+        value = normalize_text(value)
+        if not value:
+            raise ValueError("Field cannot be empty or whitespace only.")
+        return value
 
 
 class CategoryResponse(BaseModel):

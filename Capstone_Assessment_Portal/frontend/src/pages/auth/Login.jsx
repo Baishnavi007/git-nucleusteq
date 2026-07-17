@@ -6,20 +6,17 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
-    FaBook,
-    FaChartLine,
-    FaClock,
-    FaShieldAlt,
-    FaClipboardCheck,
+  FaBook,
+  FaChartLine,
+  FaClock,
+  FaShieldAlt,
+  FaClipboardCheck,
 } from "react-icons/fa";
 
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 
-import {
-    loginUser,
-    getPublicKey,
-} from "../../services/authService";
+import { loginUser, getPublicKey } from "../../services/authService";
 
 import { encryptPassword } from "../../utils/encryption";
 import { validateLoginForm } from "../../utils/validation";
@@ -28,423 +25,252 @@ import "./Login.css";
 import { toast } from "react-toastify";
 
 function Login() {
+  // ---------------- Navigation ----------------
 
-    // ---------------- Navigation ----------------
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  // ---------------- State ----------------
 
-    // ---------------- State ----------------
+  const [loginData, setLoginData] = useState({
+    email_or_username: "",
+    password: "",
+  });
 
-    const [loginData, setLoginData] = useState({
+  const [loading, setLoading] = useState(false);
+  /**
+   * Stores validation errors
+   */
+  const [errors, setErrors] = useState({});
 
-        email_or_username: "",
-        password: "",
+  /**
+   * Stores RSA public key
+   * received from backend.
+   */
+  const [publicKey, setPublicKey] = useState("");
 
-    });
+  // ---------------- Effects ----------------
 
-    const [loading, setLoading] = useState(false);
+  useEffect(() => {
     /**
-     * Stores validation errors
+     * Fetch public key
+     * when login page loads.
      */
-    const [errors, setErrors] = useState({});
+    const fetchPublicKey = async () => {
+      try {
+        const response = await getPublicKey();
 
-    /**
-     * Stores RSA public key
-     * received from backend.
-     */
-    const [publicKey, setPublicKey] = useState("");
-
-    // ---------------- Effects ----------------
-
-    useEffect(() => {
-
-        /**
-         * Fetch public key
-         * when login page loads.
-         */
-        const fetchPublicKey = async () => {
-
-            try {
-
-                const response = await getPublicKey();
-
-                setPublicKey(
-                    response.publicKey
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "Unable to fetch public key.",
-                    error
-                );
-
-            }
-
-        };
-
-        fetchPublicKey();
-
-    }, []);
-
-    // ---------------- Event Handlers ----------------
-
-    const handleInputChange = (event) => {
-
-        const { name, value } = event.target;
-
-        setLoginData((previousData) => ({
-
-            ...previousData,
-
-            [name]: value,
-
-        }));
-        /***
-         * Remove validation error when user starts typing
-         */
-        setErrors((previousErrors) =>({
-            ...previousErrors,
-            [name]: ""
-        }))
-
+        setPublicKey(response.publicKey);
+      } catch (error) {
+        console.error("Unable to fetch public key.", error);
+      }
     };
 
-    const handleLogin = async (event) => {
+    fetchPublicKey();
+  }, []);
+
+  // ---------------- Event Handlers ----------------
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    setLoginData((previousData) => ({
+      ...previousData,
+
+      [name]: value,
+    }));
+    /***
+     * Remove validation error when user starts typing
+     */
+    setErrors((previousErrors) => ({
+      ...previousErrors,
+      [name]: "",
+    }));
+  };
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setErrors({});
+
+    /**
+     * Validate login form
+     */
+    const validationErrors = validateLoginForm(loginData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (!publicKey) {
+        toast.error("Secure connection could not be established.");
+
+        return;
+      }
 
-        event.preventDefault();
-        setErrors({});
+      /**
+       * Encrypt password
+       */
 
-        /**
-         * Validate login form
-         */
-        const validationErrors =validateLoginForm(
-            loginData
-        );
+      const encryptedPassword = encryptPassword(
+        loginData.password,
 
-        if(Object.keys(validationErrors).length>0){
-            setErrors(validationErrors);
-            return;
-        }
+        publicKey,
+      );
 
-        setLoading(true);
+      const payload = {
+        ...loginData,
 
-        try {
+        password: encryptedPassword,
+      };
 
-            if (!publicKey) {
+      const response = await loginUser(payload);
+      console.log(response);
+      toast.success("Login Successful");
 
-                toast.error(
-                    "Secure connection could not be established."
-                );
+      /**
+       * Store authentication data.
+       */
+      localStorage.setItem("access_token", response.access_token);
 
-                return;
+      localStorage.setItem("refresh_token", response.refresh_token);
 
-            }
+      localStorage.setItem("role", response.role);
 
-            /**
-             * Encrypt password
-             */
+      localStorage.setItem("username", response.username);
 
-            const encryptedPassword = encryptPassword(
+      /**
+       * Redirect user
+       * based on role.
+       */
+      if (response.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/student/dashboard");
+      }
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                loginData.password,
+  // ---------------- UI ----------------
 
-                publicKey
+  return (
+    <div className="login-page">
+      {/* LEFT PANEL */}
 
-            );
+      <section className="login-left">
+        <div className="overlay"></div>
 
-            const payload = {
+        <div className="left-content">
+          <div className="logo-box">
+            <div className="logo-circle">AP</div>
 
-                ...loginData,
+            <div>
+              <h1>Assessment Portal</h1>
 
-                password: encryptedPassword,
+              <p>Smart Online Assessment Platform</p>
+            </div>
+          </div>
 
-            };
+          <h2>
+            Practice Smarter.
+            <br />
+            Analyze Better.
+            <br />
+            Improve Everyday.
+          </h2>
 
-            const response = await loginUser(
-                payload
-            );
-            console.log(response);
-            toast.success("Login Successful")
+          <p className="description">
+            Prepare yourself through topic-wise quizzes, timed assessments and
+            instant analytics.
+          </p>
 
-            /**
-             * Store authentication data.
-             */
-            localStorage.setItem(
-                "access_token",
-                response.access_token
-            );
+          <div className="feature-list">
+            <div className="feature-item">
+              <FaBook />
 
-            localStorage.setItem(
-                "refresh_token",
-                response.refresh_token
-            );
+              <span>Topic-wise Assessments</span>
+            </div>
 
-            localStorage.setItem(
-                "role",
-                response.role
-            );
+            <div className="feature-item">
+              <FaClock />
 
-            localStorage.setItem(
-                "username",
-                response.username
-            );
+              <span>Timed Practice Tests</span>
+            </div>
 
-            /**
-             * Redirect user
-             * based on role.
-             */
-            if (response.role === "admin") {
+            <div className="feature-item">
+              <FaChartLine />
 
-                navigate(
-                    "/admin/dashboard"
-                );
+              <span>Performance Analytics</span>
+            </div>
 
-            }
+            <div className="feature-item">
+              <FaClipboardCheck />
 
-            else {
+              <span>Instant Result Analysis</span>
+            </div>
 
-                navigate(
-                    "/student/dashboard"
-                );
+            <div className="feature-item">
+              <FaShieldAlt />
 
-            }
-
-        }
-
-        catch (error) {
-
-            toast.error(
-
-                getErrorMessage(error)
-
-            );
-
-        }
-
-        finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    // ---------------- UI ----------------
-
-    return (
-
-        <div className="login-page">
-
-            {/* LEFT PANEL */}
-
-            <section className="login-left">
-
-                <div className="overlay"></div>
-
-                <div className="left-content">
-
-                    <div className="logo-box">
-
-                        <div className="logo-circle">
-
-                            AP
-
-                        </div>
-
-                        <div>
-
-                            <h1>
-
-                                Assessment Portal
-
-                            </h1>
-
-                            <p>
-
-                                Smart Online Assessment Platform
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <h2>
-
-                        Practice Smarter.
-                        <br />
-                        Analyze Better.
-                        <br />
-                        Improve Everyday.
-
-                    </h2>
-
-                    <p className="description">
-
-                        Prepare yourself through topic-wise quizzes,
-                        timed assessments and instant analytics.
-
-                    </p>
-
-                    <div className="feature-list">
-
-                        <div className="feature-item">
-
-                            <FaBook />
-
-                            <span>
-
-                                Topic-wise Assessments
-
-                            </span>
-
-                        </div>
-
-                        <div className="feature-item">
-
-                            <FaClock />
-
-                            <span>
-
-                                Timed Practice Tests
-
-                            </span>
-
-                        </div>
-
-                        <div className="feature-item">
-
-                            <FaChartLine />
-
-                            <span>
-
-                                Performance Analytics
-
-                            </span>
-
-                        </div>
-
-                        <div className="feature-item">
-
-                            <FaClipboardCheck />
-
-                            <span>
-
-                                Instant Result Analysis
-
-                            </span>
-
-                        </div>
-
-                        <div className="feature-item">
-
-                            <FaShieldAlt />
-
-                            <span>
-
-                                Secure Authentication
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            {/* RIGHT PANEL */}
-
-            <section className="login-right">
-
-                <div className="login-card">
-
-                    <h2>
-
-                        Welcome Back 👋
-
-                    </h2>
-
-                    <p>
-
-                        Login to continue your assessment journey.
-
-                    </p>
-
-                    <form
-                        onSubmit={handleLogin}
-                        noValidate
-                    >
-
-                        <Input
-                            label="Username / Email"
-                            type="text"
-                            name="email_or_username"
-                            value={loginData.email_or_username}
-                            placeholder="Enter username or email"
-                            onChange={handleInputChange}
-                            error={errors.email_or_username}
-                        />
-
-                        <Input
-                            label="Password"
-                            type="password"
-                            name="password"
-                            value={loginData.password}
-                            placeholder="Enter password"
-                            onChange={handleInputChange}
-                            error={errors.password}
-                        />
-
-                        <Button
-                            text="Login"
-                            type="submit"
-                            loading={loading}
-                        />
-
-                    </form>
-
-                    <div className="divider">
-
-                        <span>
-
-                            OR
-
-                        </span>
-
-                    </div>
-
-                    <div className="register-section">
-
-                        <p>
-
-                            New to Assessment Portal?
-
-                        </p>
-
-                        <Link
-                            to="/register"
-                            className="register-link"
-                        >
-
-                            Create Account
-
-                        </Link>
-
-                    </div>
-
-                </div>
-
-            </section>
-
+              <span>Secure Authentication</span>
+            </div>
+          </div>
         </div>
+      </section>
 
-    );
+      {/* RIGHT PANEL */}
 
+      <section className="login-right">
+        <div className="login-card">
+          <h2>Welcome Back 👋</h2>
+
+          <p>Login to continue your assessment journey.</p>
+
+          <form onSubmit={handleLogin} noValidate>
+            <Input
+              label="Username / Email"
+              type="text"
+              name="email_or_username"
+              value={loginData.email_or_username}
+              placeholder="Enter username or email"
+              onChange={handleInputChange}
+              error={errors.email_or_username}
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              name="password"
+              value={loginData.password}
+              placeholder="Enter password"
+              onChange={handleInputChange}
+              error={errors.password}
+            />
+
+            <Button text="Login" type="submit" loading={loading} />
+          </form>
+
+          <div className="divider">
+            <span>OR</span>
+          </div>
+
+          <div className="register-section">
+            <p>New to Assessment Portal?</p>
+
+            <Link to="/register" className="register-link">
+              Create Account
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default Login;
