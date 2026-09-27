@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Baishnavi Portfolio</title>
+    <!--Adding the css file-->
+    <link rel="stylesheet" href="../css/Baishnavi_styles.css"> 
+    
+</head>
+<body>
+
+<header>
+    <h1>Baishnavi Singh</h1>
+    <p>Aspiring Software Developer</p>
+    <img src="Baishnavi_Image.jpeg" alt="Profile image of Baishnavi Singh" width="150">
+</header>
+
+<nav>
+    <ul>
+        <!-- added id so that clicking on navigation links takes user to this section -->
+        <li><a href="#about">About</a></li>
+
+        <li>
+            <a href="#skills">Skills</a>
+            <ul>
+                <li><a href="#technical">Technical Skills</a></li>
+                <li><a href="#soft">Soft Skills</a></li>
+            </ul>
+        </li>
+
+        <li><a href="#education">Education</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<section id="about">
+    <!-- added id so that clicking on navigation links takes user to this section -->
+    <h2>About Me</h2>
+
+    <p>
+        I am a <strong>motivated and passionate developer</strong> with an interest in 
+        <em>web development</em> and <em>backend development</em>. I enjoy learning new technologies 
+        and building projects that solve real-world problems.
+    </p>
+
+    <!-- Used semantic tags like strong and em to highlight important content and improve readability -->
+    <hr>
+</section>
+
+<section id="skills">
+    <!-- added id for navigation linking -->
+    <h2>Skills</h2>
+
+    <!-- Technical Skills -->
+    <h3 id="technical">Technical Skills</h3>
+    <ul type="square">
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>Java</li>
+        <li>Spring Boot</li>
+    </ul>
+
+    <!-- Soft Skills -->
+    <h3 id="soft">Soft Skills</h3>
+    <ul type="circle">
+        <li>Communication</li>
+        <li>Team Work</li>
+    </ul>
+</section>
+
+<section id="education">
+    <!-- added id for navigation linking -->
+    <h2>Education</h2>
+
+    <table border="1">
+        <tr>
+            <th>Degree</th>
+            <th>Institution</th>
+            <th>Year</th>
+            <th>Grade</th>
+        </tr>
+        <tr>
+            <td>B.Tech</td>
+            <td>LNCT</td>
+            <td>2022 - 2026</td>
+            <td>8.18</td>
+        </tr>
+        <tr>
+            <td>12th Grade</td>
+            <td>DAV</td>
+            <td>2021</td>
+            <td>88</td>
+        </tr>
+
+        <tr>
+            <!--colspan which is used to merge column-->
+            <td colspan="4">Additional Certification: Spring Boot Developer</td>
+        </tr>
+    </table>
+</section>
+
+<section id="projects">
+    <!-- id is used for navigation linking -->
+    <h2>Projects</h2>
+
+    <ol>
+        <li>
+            <strong>Quiz App:</strong><br><br>
+            A web-based quiz application built using Java and Spring Boot.<br><br>
+
+            <!-- target="_blank" opens link in new tab -->
+            <a href="https://github.com/Baishnavi007/Quiz-App.git" target="_blank">View Project</a>
+        </li>
+
+        <br>
+
+        <li>
+            <strong>Excel AI:</strong><br><br>
+            The AI-Powered Excel Engine is a smart backend built with Python (FastAPI + Pandas) 
+            that lets users converse with Excel files using simple natural language queries.<br><br>
+
+            <a href="https://github.com/Baishnavi007/Excel_AI.git" target="_blank">View Project</a>
+        </li>
+    </ol>
+</section>
+
+<section id="contact">
+    <!-- id is used for navigation linking -->
+    <h2>Contact Me</h2>
+
+    <form>
+
+        <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br><br>
+
+        <!-- Gender -->
+         <!--Used radio button here because we can select only 1 option-->
+        <label>Gender:</label><br>
+        <input type="radio" name="gender" id="male">
+        <label for="male">Male</label>
+
+        <input type="radio" name="gender" id="female">
+        <label for="female">Female</label><br><br>
+
+        <!-- Skills -->
+        <label>Skills:</label><br>
+        <input type="checkbox" id="html">
+        <label for="html">HTML</label>
+
+        <input type="checkbox" id="java">
+        <label for="java">Java</label><br><br>
+
+        <!-- City dropdown -->
+        <label for="city">City:</label>
+        <select id="city">
+            <option>Delhi</option>
+            <option>Mumbai</option>
+        </select><br><br>
+
+        <!-- Message -->
+        <label for="message">Message:</label><br>
+        <textarea id="message"></textarea><br><br>
+
+        <!-- Submit -->
+        <input type="submit">
+
+    </form>
+</section>
+
+<hr>
+<footer>
+    <!-- Footer contains author information and useful links -->
+    <p>© 2026 Baishnavi Singh. All rights reserved.</p>
+
+    <p>
+        <a href="https://www.linkedin.com/in/baishnavi-singh/" target="_blank">LinkedIn</a> |
+        <a href="https://github.com/Baishnavi007" target="_blank">GitHub</a>
+    </p>
+</footer>
+</body>
+</html>
