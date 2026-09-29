@@ -5,8 +5,7 @@ Streamlit dashboard for the FMCG Consumer Sentiment & Review Intelligence
 Agent. Calls the FastAPI backend (main.py, run via `uvicorn main:app`)
 over HTTP -- does NOT import agent.py or analytics.py directly.
 
-REQUIRES the FastAPI server running first, in a separate terminal:
-    uvicorn main:app --reload
+REQUIRES the FastAPI server running first
 
 Then, in another terminal:
     streamlit run src/dashboard/app.py
@@ -168,7 +167,7 @@ def render_dashboard():
 
     selected_aspect = st.sidebar.selectbox("Aspect", ["All"] + list(aspects))
 
-    # Pop-up warning for the one invalid case we CAN detect
+    
     if isinstance(start, date) and isinstance(end, date) and start > end:
         st.toast("Start date is after the end date. Please pick a start date on or before the end date.",
                  icon="\u26A0\uFE0F")

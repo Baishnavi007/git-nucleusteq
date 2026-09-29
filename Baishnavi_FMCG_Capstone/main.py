@@ -13,8 +13,6 @@ What it does, in order:
      loads the embedding model once, instead of on every question)
   4. on shutdown, stops the agent and the MCP server cleanly
 
-Do not use `--reload` (or `uvicorn --reload`) with this project: on Windows
-the reloader cannot start the MCP subprocess.
 """
 
 import argparse

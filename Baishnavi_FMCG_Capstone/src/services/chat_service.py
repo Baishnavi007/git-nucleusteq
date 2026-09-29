@@ -13,9 +13,7 @@ from src.agents.agent import ask
 from src.config import constants
 from src.exceptions import InvalidInputError
 
-# Per-session sliding-window rate limit. In-memory and per-process: fine for
-# a single-instance demo deployment; a multi-worker deployment would need a
-# shared store (e.g. Redis) instead.
+
 _recent_calls = defaultdict(deque)
 
 
