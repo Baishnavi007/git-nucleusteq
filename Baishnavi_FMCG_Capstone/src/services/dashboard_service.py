@@ -7,8 +7,13 @@ rule) as the tools, through repositories/data_access.py, so the dashboard
 and the chat agent never disagree about which reviews are "in range".
 """
 
+import asyncio
+from datetime import datetime, timezone
+
 from src.config import constants
+from src.exceptions import DataNotFoundError
 from src.repositories.data_access import filter_by_date, load_reviews
+from src.services.report_scheduler import run_report_once
 from src.utils.llm_logger import summarize_usage
 
 
@@ -110,6 +115,30 @@ def get_flagged_reviews_view(min_severity=constants.DEFAULT_MIN_SEVERITY, start_
     result["datetime"] = result["datetime"].dt.strftime("%Y-%m-%d")
     result.columns = ["product", "severity", "sentiment", "aspect", "date", "summary"]
     return result.to_dict(orient="records")
+
+
+async def generate_report_now():
+    """Manual "generate report" trigger for the dashboard button. Runs the
+    same code the scheduler/CLI script use, off the event loop thread
+    since it does blocking pandas work, and returns the freshly written
+    report so the caller doesn't need a second round trip to read the file.
+
+    Raises DataNotFoundError if there were no reviews in the report window
+    (nothing gets written in that case, same as the scheduler).
+    """
+    result = await asyncio.to_thread(run_report_once)
+    if result["status"] == "empty":
+        raise DataNotFoundError(
+            f"No reviews found between {result['start_date']} and {result['end_date']}; "
+            "nothing was generated."
+        )
+    return {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "start_date": result["start_date"],
+        "end_date": result["end_date"],
+        "total_reviews": result["total_reviews"],
+        "report_markdown": result["markdown"],
+    }
 
 
 def get_usage_summary(days=constants.USAGE_CHART_DAYS):

@@ -15,6 +15,7 @@ from fastapi import APIRouter, Query
 from src.config import constants
 from src.schemas.response_schema import DashboardSummaryResponse
 from src.services.dashboard_service import (
+    generate_report_now as _generate_report_now,
     get_aspect_breakdown as _get_aspect_breakdown,
     get_aspects as _get_aspects,
     get_date_range as _get_date_range,
@@ -84,6 +85,16 @@ def get_flagged_reviews_view(
     search: Optional[str] = Query(None, description="Free-text search over product/summary/text"),
 ):
     return _get_flagged_reviews_view(min_severity, start_date, end_date, aspect, search)
+
+
+@router.post("/generate-report")
+async def generate_report():
+    """Manually triggers one weekly brand-health report run -- the same
+    code path as the scheduler and `python -m scripts.generate_sample_report`
+    -- and returns the generated Markdown. Overwrites docs/sample_weekly_report.md
+    and appends to docs/report_history.jsonl, same as any other run.
+    """
+    return await _generate_report_now()
 
 
 @router.get("/usage")

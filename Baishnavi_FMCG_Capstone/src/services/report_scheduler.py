@@ -79,7 +79,17 @@ def _log_run(status, detail=""):
 def run_report_once():
     """Generates one report and writes it to constants.SAMPLE_REPORT_PATH.
     Runs in a thread (see _scheduler_loop) since it does blocking pandas
-    work; safe to also call directly/synchronously, e.g. from a script."""
+    work; safe to also call directly/synchronously, e.g. from a script.
+
+    Returns a small status dict so callers (e.g. the manual "generate now"
+    API endpoint) can report back what happened without re-reading the
+    file from disk:
+        {"status": "ok", "markdown": ..., "total_reviews": ...,
+         "start_date": ..., "end_date": ...}
+        {"status": "empty", "start_date": ..., "end_date": ...}
+    The old callers (the scheduler loop, the CLI script) ignore the return
+    value, so this is backward compatible.
+    """
     end_date = get_dataset_today()
     start_date = end_date - timedelta(days=constants.REPORT_WINDOW_DAYS - 1)
 
@@ -88,13 +98,20 @@ def run_report_once():
         logger.warning("Scheduled report: no reviews in %s to %s (%s)",
                        start_date, end_date, report["message"])
         _log_run("empty", report["message"])
-        return
+        return {"status": "empty", "start_date": start_date.isoformat(), "end_date": end_date.isoformat()}
 
     markdown = _render_markdown(report, start_date, end_date)
     constants.DOCS_DIR.mkdir(parents=True, exist_ok=True)
     constants.SAMPLE_REPORT_PATH.write_text(markdown, encoding="utf-8")
     logger.info("Scheduled report written -> %s", constants.SAMPLE_REPORT_PATH)
     _log_run("ok", f"{report['total_reviews']} reviews, {start_date} to {end_date}")
+    return {
+        "status": "ok",
+        "markdown": markdown,
+        "total_reviews": report["total_reviews"],
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+    }
 
 
 async def _scheduler_loop():

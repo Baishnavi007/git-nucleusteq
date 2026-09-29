@@ -141,6 +141,50 @@ def get_date_bounds():
     return FALLBACK_MIN_DATE, FALLBACK_MAX_DATE, False
 
 
+def render_generate_report_button():
+    """Sidebar control that lets the user manually trigger one weekly
+    brand-health report run (same code the scheduler/CLI script use) and
+    view/download the result, instead of waiting for the schedule or
+    running the script by hand."""
+    st.sidebar.markdown("### \U0001F4C4 Weekly Report")
+    generating = st.session_state.get("report_generating", False)
+    if st.sidebar.button("Generate report now", width="stretch", disabled=generating):
+        st.session_state["report_generating"] = True
+        st.rerun()
+
+    if generating:
+        with st.sidebar:
+            with st.spinner("Generating report..."):
+                result, err = api_post("/dashboard/generate-report", {})
+        st.session_state["report_generating"] = False
+        if err:
+            st.session_state["report_error"] = err
+            st.session_state.pop("last_report", None)
+        else:
+            st.session_state["last_report"] = result
+            st.session_state.pop("report_error", None)
+        st.rerun()
+
+    if st.session_state.get("report_error"):
+        st.sidebar.error(st.session_state["report_error"])
+
+    last_report = st.session_state.get("last_report")
+    if last_report:
+        st.sidebar.success(
+            f"Report ready: {last_report['total_reviews']} reviews, "
+            f"{last_report['start_date']} \u2192 {last_report['end_date']}"
+        )
+        st.sidebar.download_button(
+            "Download Markdown",
+            data=last_report["report_markdown"],
+            file_name=f"weekly_report_{last_report['end_date']}.md",
+            mime="text/markdown",
+            width="stretch",
+        )
+        with st.sidebar.expander("Preview report"):
+            st.markdown(last_report["report_markdown"])
+
+
 def render_dashboard():
     st.sidebar.markdown("### :date: Dashboard Filters")
 
@@ -335,6 +379,9 @@ with st.sidebar:
         "Hear what your customers are actually saying"
     )
     st.divider()
+
+render_generate_report_button()
+st.sidebar.divider()
 
 st.title(constants.DASHBOARD_PAGE_TITLE)
 
