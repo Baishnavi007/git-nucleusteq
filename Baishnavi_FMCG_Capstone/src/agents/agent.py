@@ -82,7 +82,7 @@ def _is_rate_limit_error(error):
     while current is not None and id(current) not in seen:
         seen.add(id(current))
         status_code = getattr(current, "status_code", None)
-        if status_code in (413, 429):
+        if status_code in constants.PROVIDER_RATE_LIMIT_STATUSES:
             return True
         if "rate_limit_exceeded" in str(current) or "tokens per minute" in str(current):
             return True

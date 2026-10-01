@@ -70,12 +70,13 @@ BACKEND_DOWN_MESSAGE = "Can't reach the API backend. Is `python main.py` running
 
 
 def error_message_from(response_error):
-    """Pulls the friendly message out of the backend's JSON error body
-    ({"error": {"message": ...}}); falls back to the raw error text."""
+    """Pulls the friendly message out of the backend's standard error
+    envelope ({"success": false, "message": ...}); falls back to the raw
+    error text."""
     response = getattr(response_error, "response", None)
     if response is not None:
         try:
-            return response.json()["error"]["message"]
+            return response.json()["message"]
         except (ValueError, KeyError, TypeError):
             pass
     return f"API error: {response_error}"
@@ -90,7 +91,7 @@ def _cached_get(path, params_key):
     response = requests.get(f"{API_BASE}{path}", params=params,
                             timeout=constants.DASHBOARD_API_TIMEOUT_SECONDS)
     response.raise_for_status()
-    return response.json()
+    return response.json()["data"]
 
 
 def api_get(path, params=None):
@@ -113,7 +114,7 @@ def api_post(path, json_body, timeout=constants.CHAT_API_TIMEOUT_SECONDS):
     try:
         response = requests.post(f"{API_BASE}{path}", json=json_body, timeout=timeout)
         response.raise_for_status()
-        return response.json(), None
+        return response.json()["data"], None
     except requests.exceptions.ConnectionError:
         logger.error("Backend not reachable at %s", API_BASE)
         return None, BACKEND_DOWN_MESSAGE
@@ -308,13 +309,21 @@ def render_dashboard():
     elif not flagged:
         st.info("No high-severity reviews in the current filter range.")
     else:
-        st.dataframe(pd.DataFrame(flagged), width="stretch", height=350)
+        metadata, _meta_err = api_get("/dashboard/column-metadata")
+        column_config = {
+            column: st.column_config.Column(help=description)
+            for column, description in (metadata or {}).items()
+        }
+        st.dataframe(pd.DataFrame(flagged), width="stretch", height=350,
+                     column_config=column_config)
+
+
+USAGE_DAYS_KEY = "usage_days"
 
 
 def render_usage():
-    st.sidebar.markdown("### \U0001F9EE Usage Window")
-    days = st.sidebar.slider("Days to include", min_value=1, max_value=90,
-                             value=constants.USAGE_CHART_DAYS)
+    
+    days = st.session_state.get(USAGE_DAYS_KEY, constants.USAGE_CHART_DAYS)
 
     usage, err = api_get("/dashboard/usage", {"days": days})
     if err:
@@ -341,28 +350,39 @@ def render_usage():
         )
 
     st.markdown("---")
-    col_left, col_right = st.columns(2)
+    with st.container(border=True):
+        slider_col, note_col = st.columns([2, 3])
+        with slider_col:
+            st.slider("Show last N days", min_value=1, max_value=90,
+                      value=constants.USAGE_CHART_DAYS, key=USAGE_DAYS_KEY)
+        with note_col:
+            st.caption(
+                "\u2B07\uFE0F This slider changes only the two charts below. "
+                "The totals above and the Recent Calls table always cover all logged calls."
+            )
 
-    with col_left:
-        st.subheader("Tokens per Day")
+        col_left, col_right = st.columns(2)
         daily_df = pd.DataFrame(usage["daily"])
-        if daily_df.empty:
-            st.info(f"No calls in the last {days} day(s).")
-        else:
-            fig = px.bar(daily_df, x="date", y="tokens")
-            fig.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=300,
-                               xaxis_title="", yaxis_title="Tokens")
-            st.plotly_chart(fig, width="stretch")
 
-    with col_right:
-        st.subheader("Questions per Day")
-        if daily_df.empty:
-            st.info(f"No calls in the last {days} day(s).")
-        else:
-            fig = px.bar(daily_df, x="date", y="calls")
-            fig.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=300,
-                               xaxis_title="", yaxis_title="Questions")
-            st.plotly_chart(fig, width="stretch")
+        with col_left:
+            st.subheader("Tokens per Day")
+            if daily_df.empty:
+                st.info(f"No calls in the last {days} day(s).")
+            else:
+                fig = px.bar(daily_df, x="date", y="tokens")
+                fig.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=300,
+                                   xaxis_title="", yaxis_title="Tokens")
+                st.plotly_chart(fig, width="stretch")
+
+        with col_right:
+            st.subheader("Questions per Day")
+            if daily_df.empty:
+                st.info(f"No calls in the last {days} day(s).")
+            else:
+                fig = px.bar(daily_df, x="date", y="calls")
+                fig.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=300,
+                                   xaxis_title="", yaxis_title="Questions")
+                st.plotly_chart(fig, width="stretch")
 
     st.markdown("---")
     st.subheader("Recent Calls")
@@ -507,7 +527,7 @@ else:
 
     
     if pending:
-        scroll_chat("bottom")   # emitted BEFORE the slow call so it runs right away
+        scroll_chat("bottom")   
         with st.chat_message("assistant"):
             with st.spinner("Checking the reviews..."):
                 result, err = api_post("/chat/ask", {"question": pending})

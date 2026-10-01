@@ -6,7 +6,7 @@ fake, so these run with no API key, no MCP server, and no network.
 import pytest
 
 from src.config import constants
-from src.exceptions import InvalidInputError
+from src.exceptions import InvalidInputError, RateLimitExceededError
 from src.services import chat_service
 
 
@@ -56,7 +56,7 @@ class TestRateLimit:
         monkeypatch.setattr(constants, "CHAT_RATE_LIMIT_PER_MINUTE", 2)
         chat_service._check_rate_limit("sessionB")
         chat_service._check_rate_limit("sessionB")
-        with pytest.raises(InvalidInputError):
+        with pytest.raises(RateLimitExceededError):
             chat_service._check_rate_limit("sessionB")
 
     def test_sessions_are_tracked_independently(self, monkeypatch):
@@ -73,5 +73,5 @@ class TestRateLimit:
         monkeypatch.setattr(chat_service.time, "monotonic", lambda: fake_now["t"])
 
         chat_service._check_rate_limit("sessionE")
-        fake_now["t"] += 61  # advance past the window
+        fake_now["t"] += 61  
         chat_service._check_rate_limit("sessionE")  

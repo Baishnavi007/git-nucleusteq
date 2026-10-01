@@ -31,6 +31,23 @@ def get_aspects():
     return sorted(df["aspect"].dropna().unique().tolist())
 
 
+def get_column_metadata():
+    """Tooltip text for each flagged-reviews column. The wording comes from
+    constants.COLUMN_DESCRIPTION_TEMPLATES filled with the configured dataset
+    label and the aspect values found in the loaded data, so a new dataset
+    only needs DATASET_ITEM_LABEL changed -- no code edits."""
+    values = {
+        "label": constants.DATASET_ITEM_LABEL,
+        "aspects": ", ".join(get_aspects()),
+        "low": constants.SEVERITY_MIN,
+        "high": constants.SEVERITY_MAX,
+    }
+    return {
+        column: template.format(**values)
+        for column, template in constants.COLUMN_DESCRIPTION_TEMPLATES.items()
+    }
+
+
 def get_date_range():
     """First and last review date (ISO strings), used to limit the date
     pickers to dates that have data. None for both if there are no dates."""

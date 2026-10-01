@@ -12,13 +12,19 @@ agent.py, keyed by the same session_id) is what actually gives the model
 conversational context.
 """
 
-from typing import List
+from typing import Annotated, List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from src.config import constants
-from src.schemas.chat_schema import ChatMessage, ChatRequest
-from src.schemas.response_schema import ChatResponse
+from src.schemas.request_schema import ChatRequest, SessionQuery
+from src.schemas.response_schema import (
+    ApiResponse,
+    ChatMessage,
+    ChatResponse,
+    ClearHistoryResponse,
+    success_response,
+)
 from src.services.chat_service import get_answer
 from src.utils.logger import get_logger
 
@@ -34,7 +40,7 @@ def _history_for(session_id):
 
 
 
-@router.post("/ask", response_model=ChatResponse)
+@router.post("/ask", response_model=ApiResponse[ChatResponse])
 async def ask_question(request: ChatRequest):
     logger.info("[%s] question received (%s chars)", request.session_id, len(request.question))
     answer = await get_answer(request.question, session_id=request.session_id)
@@ -44,16 +50,20 @@ async def ask_question(request: ChatRequest):
     history.append(ChatMessage(role="assistant", content=answer))
     del history[: -constants.CHAT_HISTORY_MAX_MESSAGES]  
 
-    return ChatResponse(answer=answer)
+    return success_response(ChatResponse(answer=answer), constants.MSG_CHAT_ANSWERED)
 
 
 
-@router.get("/history", response_model=List[ChatMessage])
-def get_history(session_id: str = constants.DEFAULT_SESSION_ID):
-    return _history_for(session_id)
+@router.get("/history", response_model=ApiResponse[List[ChatMessage]])
+def get_history(params: Annotated[SessionQuery, Query()]):
+    return success_response(_history_for(params.session_id), constants.MSG_HISTORY_FETCHED)
 
 
-@router.post("/history/clear")
-def clear_history(session_id: str = constants.DEFAULT_SESSION_ID):
+@router.post("/history/clear", response_model=ApiResponse[ClearHistoryResponse])
+def clear_history(params: Annotated[SessionQuery, Query()]):
+    session_id = params.session_id
     _history_for(session_id).clear()
-    return {"status": "cleared", "session_id": session_id}
+    return success_response(
+        ClearHistoryResponse(status="cleared", session_id=session_id),
+        constants.MSG_HISTORY_CLEARED,
+    )

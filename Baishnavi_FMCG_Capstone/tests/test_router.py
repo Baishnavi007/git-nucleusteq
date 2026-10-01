@@ -8,8 +8,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from src.exceptions import InvalidInputError
-from src.exceptions.handlers import register_exception_handlers
+from src.exceptions import InvalidInputError, register_exception_handlers
 from src.routers import chat_router, dashboard_router, health_router
 
 
@@ -37,7 +36,9 @@ class TestHealthRouter:
     def test_health_check_returns_ok(self):
         response = make_client().get("/health")
         assert response.status_code == 200
-        assert response.json() == {"status": "ok"}
+        body = response.json()
+        assert body["success"] is True
+        assert body["data"] == {"status": "ok"}
 
 
 class TestChatRouterAsk:
@@ -48,7 +49,8 @@ class TestChatRouterAsk:
         monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
         response = make_client().post("/chat/ask", json={"question": "How's packaging?"})
         assert response.status_code == 200
-        assert response.json() == {"answer": "answer to: How's packaging?"}
+        assert response.json()["success"] is True
+        assert response.json()["data"] == {"answer": "answer to: How's packaging?"}
 
     def test_empty_question_is_rejected_by_the_schema(self):
         response = make_client().post("/chat/ask", json={"question": ""})
@@ -65,7 +67,8 @@ class TestChatRouterAsk:
         monkeypatch.setattr(chat_router, "get_answer", failing_get_answer)
         response = make_client().post("/chat/ask", json={"question": "hello"})
         assert response.status_code == 400
-        assert response.json()["error"]["message"] == "too many questions"
+        assert response.json()["message"] == "too many questions"
+        assert response.json()["success"] is False
 
     def test_successful_ask_is_recorded_in_history(self, monkeypatch):
         async def fake_get_answer(question, session_id):
@@ -74,7 +77,7 @@ class TestChatRouterAsk:
         monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
-        history = client.get("/chat/history", params={"session_id": "s1"}).json()
+        history = client.get("/chat/history", params={"session_id": "s1"}).json()["data"]
         assert [m["role"] for m in history] == ["user", "assistant"]
 
     def test_sessions_do_not_share_history(self, monkeypatch):
@@ -84,7 +87,7 @@ class TestChatRouterAsk:
         monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
-        other_history = client.get("/chat/history", params={"session_id": "s2"}).json()
+        other_history = client.get("/chat/history", params={"session_id": "s2"}).json()["data"]
         assert other_history == []
 
 
@@ -97,7 +100,7 @@ class TestChatRouterHistory:
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
         client.post("/chat/history/clear", params={"session_id": "s1"})
-        assert client.get("/chat/history", params={"session_id": "s1"}).json() == []
+        assert client.get("/chat/history", params={"session_id": "s1"}).json()["data"] == []
 
 
 class TestDashboardRouter:
@@ -105,7 +108,7 @@ class TestDashboardRouter:
         monkeypatch.setattr(dashboard_router, "_get_aspects", lambda: ["taste", "packaging"])
         response = make_client().get("/dashboard/aspects")
         assert response.status_code == 200
-        assert response.json() == ["taste", "packaging"]
+        assert response.json()["data"] == ["taste", "packaging"]
 
     def test_summary_passes_query_params_through(self, monkeypatch):
         seen = {}
@@ -120,9 +123,22 @@ class TestDashboardRouter:
             params={"start_date": "2013-01-01", "end_date": "2013-01-05", "aspect": "taste"},
         )
         assert response.status_code == 200
-        assert response.json()["total_reviews"] == 5
+        assert response.json()["data"]["total_reviews"] == 5
         start, end, aspect = seen["args"]
         assert str(start) == "2013-01-01" and aspect == "taste"
+
+    def test_column_metadata_returns_the_service_result(self, monkeypatch):
+        monkeypatch.setattr(dashboard_router, "_get_column_metadata", lambda: {"product": "Name of the item."})
+        response = make_client().get("/dashboard/column-metadata")
+        assert response.status_code == 200
+        assert response.json()["data"] == {"product": "Name of the item."}
+
+    def test_start_date_after_end_date_is_rejected(self):
+        response = make_client().get(
+            "/dashboard/summary", params={"start_date": "2013-02-01", "end_date": "2013-01-01"},
+        )
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
 
     def test_top_products_limit_is_validated(self):
         # MAX_TOP_PRODUCTS_LIMIT caps this; a huge limit should be rejected.
@@ -134,6 +150,10 @@ class TestDashboardRouter:
         assert response.status_code == 422
 
     def test_usage_passes_days_through(self, monkeypatch):
-        monkeypatch.setattr(dashboard_router, "_get_usage_summary", lambda days: {"total_calls": days})
+        monkeypatch.setattr(dashboard_router, "_get_usage_summary", lambda days: {
+            "total_calls": days, "total_prompt_tokens": 0, "total_completion_tokens": 0,
+            "total_tokens": 0, "avg_latency_ms": 0.0, "estimated_cost_usd": 0.0,
+            "cost_configured": False, "daily": [], "recent_calls": [],
+        })
         response = make_client().get("/dashboard/usage", params={"days": 7})
-        assert response.json() == {"total_calls": 7}
+        assert response.json()["data"]["total_calls"] == 7

@@ -133,8 +133,7 @@ async def _run_and_log():
     except AppError as error:
         logger.error("Scheduled report failed: %s", error.message)
         _log_run("error", error.message)
-        # A configuration/data problem probably won't fix itself before the
-        # next full interval; retry sooner instead of waiting a full cycle.
+
         await asyncio.sleep(constants.REPORT_SCHEDULE_RETRY_SECONDS)
     except Exception:
         logger.exception("Scheduled report failed unexpectedly")

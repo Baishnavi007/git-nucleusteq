@@ -8,7 +8,7 @@ aspect (taste/packaging/price/availability/other) and/or one product.
 import pandas as pd
 
 from src.config import constants
-from src.exceptions import InvalidInputError
+from src.schemas.request_schema import SentimentTrendsRequest, validate_request
 from src.repositories.data_access import filter_by_date, load_reviews
 from src.utils.logger import get_logger
 
@@ -56,23 +56,22 @@ def sentiment_trends(aspect=None, start_date=None, end_date=None,
             ProductIds share this name, a warning is included instead
             of silently merging unrelated products.
     """
-    if aspect and aspect not in constants.ASPECTS:
-        raise InvalidInputError(f"aspect must be one of {constants.ASPECTS}, got {aspect!r}")
-    if granularity not in constants.GRANULARITY_FREQ:
-        raise InvalidInputError(
-            f"granularity must be one of {list(constants.GRANULARITY_FREQ)}, got {granularity!r}"
-        )
+    request = validate_request(
+        SentimentTrendsRequest, aspect=aspect, start_date=start_date, end_date=end_date,
+        granularity=granularity, product_id=product_id, product_name=product_name,
+    )
+    granularity = request.granularity
 
     df = load_reviews()
-    df = filter_by_date(df, start_date, end_date)
-    if aspect:
-        df = df[df["aspect"] == aspect]
-    df, warning = _resolve_product(df, product_id, product_name)
+    df = filter_by_date(df, request.start_date, request.end_date)
+    if request.aspect:
+        df = df[df["aspect"] == request.aspect]
+    df, warning = _resolve_product(df, request.product_id, request.product_name)
 
     if df.empty:
         result = {
-            "granularity": granularity, "aspect": aspect,
-            "product_id": product_id, "product_name": product_name,
+            "granularity": granularity, "aspect": request.aspect,
+            "product_id": request.product_id, "product_name": request.product_name,
             "periods": [], "message": "No reviews found matching these filters.",
         }
         if warning:
@@ -115,8 +114,8 @@ def sentiment_trends(aspect=None, start_date=None, end_date=None,
     ]
 
     result = {
-        "granularity": granularity, "aspect": aspect,
-        "product_id": product_id, "product_name": product_name,
+        "granularity": granularity, "aspect": request.aspect,
+        "product_id": request.product_id, "product_name": request.product_name,
         "periods": periods,
     }
     if warning:

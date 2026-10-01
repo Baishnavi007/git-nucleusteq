@@ -1,4 +1,4 @@
-"""Tests for the global exception handler (src/exceptions/handlers.py),
+"""Tests for the global exception handler (src/exceptions/custom_exceptions.py),
 using a tiny throwaway FastAPI app rather than the real one, so these
 tests don't need the agent, the dataset, or a Groq key.
 
@@ -8,8 +8,8 @@ Needs `httpx` installed (FastAPI's TestClient uses it under the hood).
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from src.exceptions import DataNotFoundError, InvalidInputError
-from src.exceptions.handlers import register_exception_handlers
+from src.config import constants
+from src.exceptions import DataNotFoundError, InvalidInputError, register_exception_handlers
 
 
 def make_client():
@@ -48,14 +48,18 @@ class TestAppErrorHandling:
     def test_body_has_the_error_shape(self):
         response = make_client().get("/boom/app-error")
         body = response.json()
-        assert body["error"]["code"] == "DATA_NOT_FOUND"
-        assert body["error"]["message"] == "no data here"
+        assert body["success"] is False
+        assert body["error"]["code"] == constants.ERROR_CODE_DATA_NOT_FOUND
+        assert body["message"] == "no data here"
         assert body["error"]["path"] == "/boom/app-error"
 
     def test_input_error_returns_400(self):
         response = make_client().get("/boom/input-error")
         assert response.status_code == 400
-        assert response.json()["error"]["code"] == "INVALID_INPUT"
+        assert response.json()["error"]["code"] == constants.ERROR_CODE_INVALID_INPUT
+
+    def test_default_message_comes_from_constants(self):
+        assert DataNotFoundError().message == constants.MSG_DATA_NOT_FOUND
 
 
 class TestUnexpectedErrorHandling:
@@ -63,12 +67,13 @@ class TestUnexpectedErrorHandling:
         response = make_client().get("/boom/unexpected")
         assert response.status_code == 500
         body = response.json()
-        assert body["error"]["code"] == "INTERNAL_ERROR"
+        assert body["error"]["code"] == constants.ERROR_CODE_INTERNAL
+        assert body["message"] == constants.MSG_INTERNAL_ERROR
 
     def test_does_not_leak_the_real_exception_text(self):
         response = make_client().get("/boom/unexpected")
         body = response.json()
-        assert "something broke internally" not in body["error"]["message"]
+        assert "something broke internally" not in body["message"]
 
 
 class TestHttpErrorHandling:
@@ -76,8 +81,8 @@ class TestHttpErrorHandling:
         response = make_client().get("/boom/http-error")
         assert response.status_code == 404
         body = response.json()
-        assert body["error"]["code"] == "HTTP_ERROR"
-        assert body["error"]["message"] == "not found here"
+        assert body["error"]["code"] == constants.ERROR_CODE_HTTP
+        assert body["message"] == "not found here"
 
 
 class TestValidationErrorHandling:
@@ -85,5 +90,5 @@ class TestValidationErrorHandling:
         response = make_client().post("/echo", json={})
         assert response.status_code == 422
         body = response.json()
-        assert body["error"]["code"] == "VALIDATION_ERROR"
+        assert body["error"]["code"] == constants.ERROR_CODE_VALIDATION
         assert body["error"]["details"]  

@@ -26,8 +26,7 @@ from fastapi import FastAPI
 from src.agents.agent import init_agent, shutdown_agent
 from src.services.report_scheduler import start_scheduler, stop_scheduler
 from src.config import constants
-from src.exceptions import AppError
-from src.exceptions.handlers import register_exception_handlers
+from src.exceptions import AppError, register_exception_handlers
 from src.repositories.data_access import load_reviews
 from src.routers import chat_router, dashboard_router, health_router
 from src.utils.logger import get_logger

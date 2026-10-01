@@ -26,6 +26,7 @@ from datetime import datetime
 from src.config import constants
 from src.exceptions import InvalidInputError
 from src.repositories.data_access import load_vectorstore
+from src.schemas.request_schema import SearchReviewsRequest, validate_request
 from src.utils.guardrails import flag_suspicious_reviews
 from src.utils.logger import get_logger
 
@@ -100,16 +101,18 @@ def search_reviews(query, aspect=None, sentiment=None, min_severity=None,
         List of review dicts ordered by relevance (best first), or
         [{"message": "..."}] if nothing matches or nothing is close enough.
     """
-    if not query or not query.strip():
-        raise InvalidInputError("query cannot be empty.")
-    if aspect and aspect not in constants.ASPECTS:
-        raise InvalidInputError(f"aspect must be one of {constants.ASPECTS}, got {aspect!r}")
-    if sentiment and sentiment not in constants.SENTIMENT_LABELS:
-        raise InvalidInputError(f"sentiment must be one of {constants.SENTIMENT_LABELS}, got {sentiment!r}")
-    n_results = max(1, min(n_results, constants.MAX_SEARCH_RESULTS))
+    request = validate_request(
+        SearchReviewsRequest, query=query, aspect=aspect, sentiment=sentiment,
+        min_severity=min_severity, product_id=product_id, product_name=product_name,
+        start_date=start_date, end_date=end_date, n_results=n_results,
+    )
+    query, n_results, product_name = request.query, request.n_results, request.product_name
 
     collection = load_vectorstore()
-    where = _build_where(aspect, sentiment, product_id, min_severity, start_date, end_date)
+    where = _build_where(
+        request.aspect, request.sentiment, request.product_id,
+        request.min_severity, request.start_date, request.end_date,
+    )
 
     # Over-fetch when we still need to post-filter by product_name in Python
     # (Chroma metadata has no case-insensitive substring match), so the

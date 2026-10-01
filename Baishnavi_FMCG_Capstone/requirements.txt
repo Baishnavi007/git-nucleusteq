@@ -17,7 +17,7 @@ chromadb>=0.5.0
 sentence-transformers>=3.0.0
 
 # Backend and dashboard
-fastapi
+fastapi>=0.115.0
 uvicorn
 streamlit>=1.35.0
 plotly

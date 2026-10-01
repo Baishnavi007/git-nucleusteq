@@ -96,3 +96,22 @@ class TestGetUsageSummary:
         usage = dashboard_service.get_usage_summary(days=30)
         assert usage["total_calls"] == 1
         assert usage["total_tokens"] == 15
+
+
+class TestGetColumnMetadata:
+    def test_covers_every_flagged_review_column(self, synthetic_reviews_env):
+        metadata = dashboard_service.get_column_metadata()
+        assert set(metadata) == {"product", "severity", "sentiment", "aspect", "date", "summary"}
+
+    def test_wording_follows_the_dataset_label(self, synthetic_reviews_env, monkeypatch):
+        monkeypatch.setattr(constants, "DATASET_ITEM_LABEL", "beauty product")
+        metadata = dashboard_service.get_column_metadata()
+        assert "beauty product" in metadata["product"]
+        assert "beauty product" in metadata["aspect"]
+
+    def test_aspect_tooltip_lists_live_aspects(self, synthetic_reviews_env):
+        assert "packaging" in dashboard_service.get_column_metadata()["aspect"]
+
+    def test_severity_tooltip_uses_the_configured_scale(self, synthetic_reviews_env):
+        text = dashboard_service.get_column_metadata()["severity"]
+        assert str(constants.SEVERITY_MIN) in text and str(constants.SEVERITY_MAX) in text

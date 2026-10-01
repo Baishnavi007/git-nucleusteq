@@ -6,7 +6,7 @@ questions like "show me the high-severity flagged reviews from the last 7 days".
 """
 
 from src.config import constants
-from src.exceptions import InvalidInputError
+from src.schemas.request_schema import FlaggedReviewsRequest, validate_request
 from src.repositories.data_access import filter_by_date, load_reviews
 from src.utils.guardrails import flag_suspicious_reviews
 from src.utils.logger import get_logger
@@ -71,20 +71,20 @@ def flagged_reviews(min_severity=constants.DEFAULT_MIN_SEVERITY, start_date=None
         If no matches: [{"message": "No reviews found matching these filters."}]
         If product_name is ambiguous: a {"warning": "..."} entry is prepended.
     """
-    if not 0 <= min_severity <= 5:
-        raise InvalidInputError("min_severity must be between 0 and 5.")
-    if aspect and aspect not in constants.ASPECTS:
-        raise InvalidInputError(f"aspect must be one of {constants.ASPECTS}, got {aspect!r}")
-    limit = max(1, min(limit, constants.MAX_FLAG_LIMIT))
+    request = validate_request(
+        FlaggedReviewsRequest, min_severity=min_severity, start_date=start_date,
+        end_date=end_date, aspect=aspect, product_id=product_id,
+        product_name=product_name, limit=limit,
+    )
 
     df = load_reviews()
-    df = filter_by_date(df, start_date, end_date)
-    df = df[df["severity"] >= min_severity]
-    if aspect:
-        df = df[df["aspect"] == aspect]
-    df, warning = _resolve_product(df, product_id, product_name)
+    df = filter_by_date(df, request.start_date, request.end_date)
+    df = df[df["severity"] >= request.min_severity]
+    if request.aspect:
+        df = df[df["aspect"] == request.aspect]
+    df, warning = _resolve_product(df, request.product_id, request.product_name)
 
-    df = df.sort_values(["severity", "datetime"], ascending=[False, False]).head(limit)
+    df = df.sort_values(["severity", "datetime"], ascending=[False, False]).head(request.limit)
 
     if df.empty:
         return [{"message": "No reviews found matching these filters."}]
@@ -107,7 +107,7 @@ def flagged_reviews(min_severity=constants.DEFAULT_MIN_SEVERITY, start_date=None
         results.insert(0, {"warning": warning})
     results = flag_suspicious_reviews(
         results, text_fields=("summary", "text"),
-        context_query=f"product_id={product_id}, product_name={product_name}",
+        context_query=f"product_id={request.product_id}, product_name={request.product_name}",
     )
     logger.info("flagged_reviews returned %s item(s)", len(results))
     return results

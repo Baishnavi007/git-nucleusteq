@@ -205,3 +205,93 @@ COST_PER_1K_PROMPT_TOKENS = float(os.getenv("COST_PER_1K_PROMPT_TOKENS", "0"))
 COST_PER_1K_COMPLETION_TOKENS = float(os.getenv("COST_PER_1K_COMPLETION_TOKENS", "0"))
 USAGE_CHART_DAYS = 14
 USAGE_RECENT_CALLS_LIMIT = 20
+
+
+
+# ---------------------------------------------------------------------------
+# HTTP status codes, error codes and messages (used by exceptions + responses)
+# ---------------------------------------------------------------------------
+STATUS_OK = 200
+STATUS_BAD_REQUEST = 400
+STATUS_NOT_FOUND = 404
+STATUS_UNPROCESSABLE_ENTITY = 422
+STATUS_TOO_MANY_REQUESTS = 429
+STATUS_INTERNAL_SERVER_ERROR = 500
+STATUS_BAD_GATEWAY = 502
+STATUS_SERVICE_UNAVAILABLE = 503
+STATUS_GATEWAY_TIMEOUT = 504
+SERVER_ERROR_MIN_STATUS = 500
+PROVIDER_RATE_LIMIT_STATUSES = (413, 429)
+
+ERROR_CODE_APP = "APP_ERROR"
+ERROR_CODE_CONFIG = "CONFIG_ERROR"
+ERROR_CODE_INVALID_INPUT = "INVALID_INPUT"
+ERROR_CODE_DATA_NOT_FOUND = "DATA_NOT_FOUND"
+ERROR_CODE_VECTORSTORE = "VECTORSTORE_UNAVAILABLE"
+ERROR_CODE_AGENT = "AGENT_UNAVAILABLE"
+ERROR_CODE_LLM_SERVICE = "LLM_SERVICE_ERROR"
+ERROR_CODE_LLM_RATE_LIMIT = "LLM_RATE_LIMIT"
+ERROR_CODE_AGENT_TIMEOUT = "AGENT_TIMEOUT"
+ERROR_CODE_AGENT_LOOP = "AGENT_STEP_LIMIT"
+ERROR_CODE_RATE_LIMIT = "RATE_LIMIT_EXCEEDED"
+ERROR_CODE_VALIDATION = "VALIDATION_ERROR"
+ERROR_CODE_HTTP = "HTTP_ERROR"
+ERROR_CODE_INTERNAL = "INTERNAL_ERROR"
+
+MSG_APP_ERROR = "Something went wrong."
+MSG_CONFIG_ERROR = "The application is not configured correctly."
+MSG_INVALID_INPUT = "The request contains an invalid value."
+MSG_DATA_NOT_FOUND = "The requested data could not be found."
+MSG_VECTORSTORE_UNAVAILABLE = "The review search index is not available."
+MSG_AGENT_UNAVAILABLE = "The review agent is not available right now."
+MSG_LLM_SERVICE_ERROR = "The language model service failed to answer."
+MSG_LLM_RATE_LIMIT = (
+    "The question (plus the review data needed to answer it) was too "
+    "large for the model provider's rate limit. Try a narrower "
+    "question -- a shorter date range, one product, or fewer "
+    "reviews -- or wait a minute and try again."
+)
+MSG_AGENT_TIMEOUT = "The agent took too long to answer. Please try again."
+MSG_AGENT_LOOP = (
+    "The agent could not find enough data to answer within the allowed "
+    "number of steps. Try rephrasing or narrowing the question."
+)
+MSG_RATE_LIMIT_EXCEEDED = "Too many requests in a short time. Please wait a moment."
+MSG_VALIDATION_ERROR = "The request data is not valid."
+MSG_INTERNAL_ERROR = "An unexpected error occurred. Please try again."
+
+# Success messages used in the standard response envelope
+MSG_SUCCESS = "Request completed successfully."
+MSG_HEALTH_OK = "Service is healthy."
+MSG_CHAT_ANSWERED = "Question answered."
+MSG_HISTORY_FETCHED = "Chat history fetched."
+MSG_HISTORY_CLEARED = "Chat history cleared."
+MSG_REPORT_GENERATED = "Report generated."
+HEALTH_STATUS_OK = "ok"
+
+# Request-validation messages (formatted with .format(...) in request_schema.py)
+MSG_INVALID_ASPECT = "aspect must be one of {allowed}, got {value!r}"
+MSG_INVALID_SENTIMENT = "sentiment must be one of {allowed}, got {value!r}"
+MSG_INVALID_GRANULARITY = "granularity must be one of {allowed}, got {value!r}"
+MSG_INVALID_SEVERITY = "min_severity must be between {low} and {high}."
+MSG_EMPTY_QUERY = "query cannot be empty."
+MSG_START_AFTER_END = "start_date must be on or before end_date."
+
+
+# ---------------------------------------------------------------------------
+# Dataset metadata (column tooltips on the dashboard)
+# ---------------------------------------------------------------------------
+# The ONLY thing to change when the dataset's domain changes, e.g.
+#   DATASET_ITEM_LABEL=beauty product      (in .env)
+DATASET_ITEM_LABEL = os.getenv("DATASET_ITEM_LABEL", "grocery item")
+
+# Tooltip text per flagged-reviews column. {label} = DATASET_ITEM_LABEL,
+# {aspects} = aspect values read live from the dataset, {low}/{high} = severity scale.
+COLUMN_DESCRIPTION_TEMPLATES = {
+    "product": "Name of the {label} the review is about.",
+    "severity": "How serious the issue in the review is, from {low} (no issue) to {high} (most severe).",
+    "sentiment": "Overall tone of the review: positive, neutral or negative.",
+    "aspect": "Which part of the {label} the review is about ({aspects}).",
+    "date": "Date the review was posted.",
+    "summary": "Short headline the customer gave the review.",
+}

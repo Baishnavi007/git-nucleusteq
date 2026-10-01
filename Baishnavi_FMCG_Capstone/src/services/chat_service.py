@@ -11,7 +11,7 @@ from collections import defaultdict, deque
 
 from src.agents.agent import ask
 from src.config import constants
-from src.exceptions import InvalidInputError
+from src.exceptions import InvalidInputError, RateLimitExceededError
 
 
 _recent_calls = defaultdict(deque)
@@ -24,7 +24,7 @@ def _check_rate_limit(session_id):
     while calls and calls[0] < window_start:
         calls.popleft()
     if len(calls) >= constants.CHAT_RATE_LIMIT_PER_MINUTE:
-        raise InvalidInputError(
+        raise RateLimitExceededError(
             f"Too many questions in a short time (limit: "
             f"{constants.CHAT_RATE_LIMIT_PER_MINUTE} per minute). Please wait a moment."
         )

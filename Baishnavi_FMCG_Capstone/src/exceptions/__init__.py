@@ -8,7 +8,10 @@ from src.exceptions.custom_exceptions import (
     InvalidInputError,
     LLMRateLimitError,
     LLMServiceError,
+    RateLimitExceededError,
     VectorStoreError,
+    handle_exception,
+    register_exception_handlers,
 )
 
 __all__ = [
@@ -21,5 +24,8 @@ __all__ = [
     "InvalidInputError",
     "LLMRateLimitError",
     "LLMServiceError",
+    "RateLimitExceededError",
     "VectorStoreError",
+    "handle_exception",
+    "register_exception_handlers",
 ]

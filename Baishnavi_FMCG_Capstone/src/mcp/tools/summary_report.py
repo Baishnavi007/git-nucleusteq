@@ -9,10 +9,10 @@ scripts/generate_sample_report.py to write one to disk.
 """
 
 from src.config import constants
-from src.exceptions import InvalidInputError
 from src.mcp.tools.flagged_reviews import flagged_reviews
 from src.mcp.tools.sentiment_trends import sentiment_trends
 from src.repositories.data_access import filter_by_date, load_reviews
+from src.schemas.request_schema import SummaryReportRequest, validate_request
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -50,6 +50,13 @@ def summary_report(start_date=None, end_date=None, product_id=None, product_name
             multiple distinct products, a warning is included in the
             result rather than silently combining them.
     """
+    request = validate_request(
+        SummaryReportRequest, start_date=start_date, end_date=end_date,
+        product_id=product_id, product_name=product_name,
+    )
+    start_date, end_date = request.start_date, request.end_date
+    product_id, product_name = request.product_id, request.product_name
+
     df = load_reviews()
     df = filter_by_date(df, start_date, end_date)
     df, warning = _resolve_product(df, product_id, product_name)
