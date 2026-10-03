@@ -1,0 +1,41 @@
+# --- Environments & secrets ---
+venv/
+.venv/
+env/
+.env
+!.env.example
+.coverage
+*.zip
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Data & generated artifacts (regeneratable from raw + the pipeline) ---
+data/processed/
+data/vectorstore/
+data/benchmark/
+data/raw/*
+!data/raw/.gitkeep
+
+# --- Logs & audit trail ---
+logs/
+docs/sample_weekly_report.md
+docs/report_history.jsonl
+docs/pii_policy.md
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Streamlit ---
+.streamlit/secrets.toml
