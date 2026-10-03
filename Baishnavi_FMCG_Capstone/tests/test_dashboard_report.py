@@ -7,16 +7,17 @@ import asyncio
 import pandas as pd
 import pytest
 
-from src.exceptions import DataNotFoundError
+from src.exceptions import NoReviewsInRangeError
 from src.services import dashboard_service
 
 
 class TestGenerateReportNow:
-    def test_empty_window_is_reported_as_not_found(self, monkeypatch):
-        monkeypatch.setattr(dashboard_service, "run_report_once", lambda: {
-            "status": "empty", "start_date": "2013-01-01", "end_date": "2013-01-07",
-        })
-        with pytest.raises(DataNotFoundError, match="2013-01-01"):
+    def test_empty_window_error_is_passed_through_unchanged(self, monkeypatch):
+        def empty_run():
+            raise NoReviewsInRangeError("No reviews found between 2013-01-01 and 2013-01-07")
+
+        monkeypatch.setattr(dashboard_service, "run_report_once", empty_run)
+        with pytest.raises(NoReviewsInRangeError, match="2013-01-01"):
             asyncio.run(dashboard_service.generate_report_now())
 
     def test_successful_run_returns_the_report_payload(self, monkeypatch):
@@ -36,3 +37,4 @@ class TestEmptyDateRange:
         frame = pd.DataFrame({"datetime": pd.to_datetime([None, None])})
         monkeypatch.setattr(dashboard_service, "load_reviews", lambda: frame)
         assert dashboard_service.get_date_range() == {"min_date": None, "max_date": None}
+

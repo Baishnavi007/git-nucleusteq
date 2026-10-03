@@ -39,6 +39,32 @@ _vectorstore_lock = threading.Lock()
 _vectorstore_state = {"collection": None, "failed_at": None, "error": None}
 
 
+def _drop_unverified_labels(df):
+    """Keeps only rows whose labels the model really produced (label_status
+    == "ok"). Rows marked "fallback" (the whole batch failed) or "unverified"
+    (the model skipped that review) carry placeholder labels -- neutral /
+    other / severity 0 -- not real ones. Counting them would skew sentiment
+    trends and could hide a genuine safety issue behind severity 0. They stay
+    in the CSV for audit; they just never reach the analytics.
+    A file with no label_status column (older data) is left untouched."""
+    column = constants.LABEL_STATUS_COLUMN
+    if column not in df.columns:
+        return df
+    keep = df[column] == constants.LABEL_STATUS_OK
+    dropped = int((~keep).sum())
+    if not keep.any():
+        raise DataNotFoundError(
+            f"Every row in {constants.SCRUBBED_REVIEWS_PATH.name} has a fallback/unverified "
+            "label, so there is nothing reliable to analyse. Re-run the labeling step."
+        )
+    if dropped:
+        logger.warning(
+            "Excluded %s of %s review(s) with fallback/unverified labels from the analytics "
+            "(kept in the CSV for audit).", dropped, len(df),
+        )
+    return df[keep].reset_index(drop=True)
+
+
 @lru_cache(maxsize=1)
 def load_reviews():
     if not constants.SCRUBBED_REVIEWS_PATH.exists():
@@ -54,6 +80,7 @@ def load_reviews():
                 f"{constants.SCRUBBED_REVIEWS_PATH.name} is missing required column(s): "
                 f"{', '.join(missing)}. Re-run the labeling/scrubbing pipeline."
             )
+        df = _drop_unverified_labels(df)
         # One fixed rule for every date in the project: parse Time as UTC
         # epoch seconds, then drop the tz so it compares cleanly against
         # the naive dates typed into API requests.
@@ -151,3 +178,4 @@ def reset_caches_for_tests():
     """Test-only helper: clears the module-level caches so each test starts clean."""
     load_reviews.cache_clear()
     _vectorstore_state.update(collection=None, failed_at=None, error=None)
+

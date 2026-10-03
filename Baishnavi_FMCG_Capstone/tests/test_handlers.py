@@ -9,7 +9,12 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from src.config import constants
-from src.exceptions import DataNotFoundError, InvalidInputError, register_exception_handlers
+from src.exceptions import (
+    DataNotFoundError,
+    InvalidInputError,
+    NoReviewsInRangeError,
+    register_exception_handlers,
+)
 
 
 def make_client():
@@ -23,6 +28,10 @@ def make_client():
     @app.get("/boom/input-error")
     def input_error():
         raise InvalidInputError("bad input")
+
+    @app.get("/boom/no-reviews")
+    def no_reviews():
+        raise NoReviewsInRangeError(details={"start_date": "2013-01-01", "end_date": "2013-01-07"})
 
     @app.get("/boom/unexpected")
     def unexpected():
@@ -60,6 +69,14 @@ class TestAppErrorHandling:
 
     def test_default_message_comes_from_constants(self):
         assert DataNotFoundError().message == constants.MSG_DATA_NOT_FOUND
+
+    def test_no_reviews_in_range_has_its_own_code_and_message(self):
+        response = make_client().get("/boom/no-reviews")
+        assert response.status_code == 404
+        body = response.json()
+        assert body["error"]["code"] == constants.ERROR_CODE_NO_REVIEWS_IN_RANGE
+        assert body["message"] == constants.MSG_NO_REVIEWS_IN_RANGE
+        assert body["error"]["details"] == {"start_date": "2013-01-01", "end_date": "2013-01-07"}
 
 
 class TestUnexpectedErrorHandling:

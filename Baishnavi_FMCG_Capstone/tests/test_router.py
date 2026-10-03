@@ -10,13 +10,17 @@ from fastapi.testclient import TestClient
 
 from src.exceptions import InvalidInputError, register_exception_handlers
 from src.routers import chat_router, dashboard_router, health_router
+from src.services import chat_service
 
 
 @pytest.fixture(autouse=True)
-def clean_chat_history():
-    chat_router._chat_history_by_session.clear()
+def clean_chat_state():
+    """History and rate-limit state now live in chat_service (module level)."""
+    chat_service._chat_history_by_session.clear()
+    chat_service._recent_calls.clear()
     yield
-    chat_router._chat_history_by_session.clear()
+    chat_service._chat_history_by_session.clear()
+    chat_service._recent_calls.clear()
 
 
 def make_app():
@@ -71,20 +75,20 @@ class TestChatRouterAsk:
         assert response.json()["success"] is False
 
     def test_successful_ask_is_recorded_in_history(self, monkeypatch):
-        async def fake_get_answer(question, session_id):
+        async def fake_ask(question, session_id):
             return "an answer"
 
-        monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
+        monkeypatch.setattr(chat_service, "ask", fake_ask)
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
         history = client.get("/chat/history", params={"session_id": "s1"}).json()["data"]
         assert [m["role"] for m in history] == ["user", "assistant"]
 
     def test_sessions_do_not_share_history(self, monkeypatch):
-        async def fake_get_answer(question, session_id):
+        async def fake_ask(question, session_id):
             return "an answer"
 
-        monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
+        monkeypatch.setattr(chat_service, "ask", fake_ask)
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
         other_history = client.get("/chat/history", params={"session_id": "s2"}).json()["data"]
@@ -93,10 +97,10 @@ class TestChatRouterAsk:
 
 class TestChatRouterHistory:
     def test_clear_empties_that_sessions_history(self, monkeypatch):
-        async def fake_get_answer(question, session_id):
+        async def fake_ask(question, session_id):
             return "an answer"
 
-        monkeypatch.setattr(chat_router, "get_answer", fake_get_answer)
+        monkeypatch.setattr(chat_service, "ask", fake_ask)
         client = make_client()
         client.post("/chat/ask", json={"question": "q1", "session_id": "s1"})
         client.post("/chat/history/clear", params={"session_id": "s1"})

@@ -54,6 +54,14 @@ class DataNotFoundError(AppError):
     default_message = constants.MSG_DATA_NOT_FOUND
 
 
+class NoReviewsInRangeError(AppError):
+    """A report was requested for a date range that has no reviews."""
+
+    status_code = constants.STATUS_NOT_FOUND
+    error_code = constants.ERROR_CODE_NO_REVIEWS_IN_RANGE
+    default_message = constants.MSG_NO_REVIEWS_IN_RANGE
+
+
 class RateLimitExceededError(AppError):
     status_code = constants.STATUS_TOO_MANY_REQUESTS
     error_code = constants.ERROR_CODE_RATE_LIMIT
@@ -134,3 +142,4 @@ def register_exception_handlers(app):
     for exception_type in (AppError, RequestValidationError,
                            StarletteHTTPException, Exception):
         app.add_exception_handler(exception_type, handle_exception)
+

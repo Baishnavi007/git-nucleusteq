@@ -52,7 +52,7 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-_state = {"agent": None, "stack": None, "system_prompt": None}
+_state = {"agent": None, "stack": None, "system_prompt": None, "checkpointer": None}
 _init_lock = asyncio.Lock()
 _session_order = []  # oldest-first list of session_ids seen, for capping
 
@@ -143,11 +143,12 @@ async def _build_agent():
         
     )
     final_system_prompt = base_system_prompt + formatting_instructions
+    checkpointer = MemorySaver()   # kept so clear_session() can wipe one thread later
     agent = create_react_agent(
-        llm_with_tools, tools, prompt=final_system_prompt, checkpointer=MemorySaver(),
+        llm_with_tools, tools, prompt=final_system_prompt, checkpointer=checkpointer,
         pre_model_hook=_pre_model_hook,
     )
-    return agent, stack, final_system_prompt, len(tools)
+    return agent, stack, final_system_prompt, len(tools), checkpointer
 
 
 async def init_agent():
@@ -159,12 +160,13 @@ async def init_agent():
 
         logger.info("Starting agent (model=%s)", constants.AGENT_MODEL_NAME)
         try:
-            agent, stack, system_prompt, tool_count = await _build_agent()
+            agent, stack, system_prompt, tool_count, checkpointer = await _build_agent()
         except Exception as error:
             logger.exception("Agent start-up failed")
             raise AgentError("The review agent could not be started.") from error
 
-        _state.update(agent=agent, stack=stack, system_prompt=system_prompt)
+        _state.update(agent=agent, stack=stack, system_prompt=system_prompt,
+                      checkpointer=checkpointer)
         logger.info("Agent ready with %s MCP tools. Today anchored to dataset max date.", tool_count)
         return agent
 
@@ -230,6 +232,18 @@ def _track_session(session_id):
                     constants.CHAT_MAX_SESSIONS, dropped)
 
 
+def clear_session(session_id):
+    """Forgets the agent's memory for ONE conversation (used by "Clear this chat").
+    Deletes that session's thread from the checkpointer so the next question
+    starts with no earlier context. Safe to call for an unknown session."""
+    if session_id in _session_order:
+        _session_order.remove(session_id)
+    checkpointer = _state["checkpointer"]
+    if checkpointer is not None:
+        checkpointer.delete_thread(session_id)
+    logger.info("Agent memory cleared for session %r", session_id)
+
+
 async def ask(query, session_id=constants.DEFAULT_SESSION_ID):
     """Runs one query through the agent for the given conversation session,
     logs tokens/latency/tool calls, and returns the final text answer.
@@ -293,8 +307,10 @@ async def ask(query, session_id=constants.DEFAULT_SESSION_ID):
         for call in message.tool_calls
     ]
 
+    # Count tokens for THIS question only. `messages` holds the whole saved
+    # conversation, so summing it would re-count every earlier turn each time.
     prompt_tokens = completion_tokens = 0
-    for message in messages:
+    for message in current_turn_messages:
         usage = getattr(message, "usage_metadata", None)
         if usage:
             prompt_tokens += usage.get("input_tokens", 0)
@@ -332,3 +348,4 @@ async def _run_cli():
 
 if __name__ == "__main__":
     asyncio.run(_run_cli())
+

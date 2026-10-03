@@ -60,9 +60,16 @@ def safe_tool(fn):
 @mcp.tool()
 @safe_tool
 def sentiment_trends(aspect: str | None = None, start_date: str | None = None,
-                     end_date: str | None = None, granularity: str = "week") -> dict:
-    """Get sentiment counts over time, optionally scoped to one review aspect."""
-    return _sentiment_trends(aspect, start_date, end_date, granularity)
+                     end_date: str | None = None, granularity: str = "week",
+                     product_id: str | None = None, product_name: str | None = None) -> dict:
+    """Get sentiment counts over time, optionally scoped to one review aspect
+    and/or one product. Use product_name for a case-insensitive partial name
+    match (e.g. "kitten formula"), or product_id for an exact match on
+    Amazon's product code. If product_name matches multiple different
+    products, the result includes a warning rather than silently combining
+    them."""
+    return _sentiment_trends(aspect, start_date, end_date, granularity,
+                             product_id, product_name)
 
 
 @mcp.tool()
@@ -126,3 +133,4 @@ if __name__ == "__main__":
     warm_up()
     # Let FastMCP initialise the stdio channel only after warm-up is done.
     mcp.run()
+

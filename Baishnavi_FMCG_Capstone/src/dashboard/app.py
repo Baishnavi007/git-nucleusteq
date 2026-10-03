@@ -16,6 +16,7 @@ os.environ.setdefault("LOG_FILE_NAME", "dashboard.log")
 
 import sys
 import time
+import uuid
 from datetime import date
 from pathlib import Path
 
@@ -110,9 +111,11 @@ def api_get(path, params=None):
         return None, error_message_from(error)
 
 
-def api_post(path, json_body, timeout=constants.CHAT_API_TIMEOUT_SECONDS):
+def api_post(path, json_body, timeout=constants.CHAT_API_TIMEOUT_SECONDS, params=None):
     try:
-        response = requests.post(f"{API_BASE}{path}", json=json_body, timeout=timeout)
+        response = requests.post(
+            f"{API_BASE}{path}", json=json_body, params=params, timeout=timeout
+        )
         response.raise_for_status()
         return response.json()["data"], None
     except requests.exceptions.ConnectionError:
@@ -316,6 +319,11 @@ def render_dashboard():
         }
         st.dataframe(pd.DataFrame(flagged), width="stretch", height=350,
                      column_config=column_config)
+        if len(flagged) >= constants.DASHBOARD_FLAGGED_LIMIT:
+            st.caption(
+                f"Showing the {constants.DASHBOARD_FLAGGED_LIMIT} most severe matches. "
+                "Narrow the filters or search to see the rest."
+            )
 
 
 USAGE_DAYS_KEY = "usage_days"
@@ -351,15 +359,14 @@ def render_usage():
 
     st.markdown("---")
     with st.container(border=True):
-        slider_col, note_col = st.columns([2, 3])
-        with slider_col:
-            st.slider("Show last N days", min_value=1, max_value=90,
-                      value=constants.USAGE_CHART_DAYS, key=USAGE_DAYS_KEY)
-        with note_col:
-            st.caption(
-                "\u2B07\uFE0F This slider changes only the two charts below. "
-                "The totals above and the Recent Calls table always cover all logged calls."
-            )
+        st.slider(
+            "Show last N days", min_value=1, max_value=90,
+            value=constants.USAGE_CHART_DAYS, key=USAGE_DAYS_KEY,
+            help=(
+                "This slider changes the two charts below. "
+                
+            ),
+        )
 
         col_left, col_right = st.columns(2)
         daily_df = pd.DataFrame(usage["daily"])
@@ -414,6 +421,8 @@ view = st.radio(
     key="view",
 )
 
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = uuid.uuid4().hex   # one ID per browser session
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 if "pending" not in st.session_state:
@@ -489,7 +498,11 @@ else:
         if st.button("Clear this chat", type="primary", width="stretch"):
             st.session_state["messages"] = []
             st.session_state["pending"] = None
-            api_post("/chat/history/clear", {}, timeout=constants.DASHBOARD_API_TIMEOUT_SECONDS)
+            api_post(
+                "/chat/history/clear", {},
+                timeout=constants.DASHBOARD_API_TIMEOUT_SECONDS,
+                params={"session_id": st.session_state["session_id"]},
+            )
             st.rerun()
 
     example_questions = [
@@ -530,7 +543,10 @@ else:
         scroll_chat("bottom")   
         with st.chat_message("assistant"):
             with st.spinner("Checking the reviews..."):
-                result, err = api_post("/chat/ask", {"question": pending})
+                result, err = api_post(
+                    "/chat/ask",
+                    {"question": pending, "session_id": st.session_state["session_id"]},
+                )
                 answer = f"Sorry, I ran into an error: {err}" if err else result["answer"]
         st.session_state["messages"].append({"role": "assistant", "content": answer})
         st.session_state["pending"] = None
@@ -540,3 +556,4 @@ else:
     
     if st.session_state["messages"]:
         scroll_chat(st.session_state["scroll_mode"])
+

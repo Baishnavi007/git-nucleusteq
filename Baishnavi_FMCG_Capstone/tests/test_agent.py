@@ -164,6 +164,20 @@ class TestExtractText:
         assert agent._extract_text(42) == "42"
 
 
+class TestClearSession:
+    def test_forgets_the_session_and_deletes_its_memory(self):
+        deleted = []
+        agent._state["checkpointer"] = SimpleNamespace(delete_thread=deleted.append)
+        agent._session_order.extend(["a", "b"])
+        agent.clear_session("a")
+        assert agent._session_order == ["b"]
+        assert deleted == ["a"]
+
+    def test_is_safe_when_the_agent_is_not_running_or_session_unknown(self):
+        agent._state["checkpointer"] = None
+        agent.clear_session("never-seen")   # must not raise
+
+
 class TestTrackSession:
     def test_oldest_session_ages_out_past_the_cap(self, monkeypatch):
         monkeypatch.setattr(constants, "CHAT_MAX_SESSIONS", 2)
@@ -184,13 +198,14 @@ class TestInitAndShutdown:
 
         async def fake_build():
             builds.append(1)
-            return "the-agent", "the-stack", "the-prompt", 4
+            return "the-agent", "the-stack", "the-prompt", 4, "the-memory"
 
         monkeypatch.setattr(agent, "_build_agent", fake_build)
         assert run(agent.init_agent()) == "the-agent"
         assert run(agent.init_agent()) == "the-agent"
         assert len(builds) == 1
         assert agent._state["stack"] == "the-stack"
+        assert agent._state["checkpointer"] == "the-memory"
         assert agent._state["system_prompt"] == "the-prompt"
 
     def test_init_failure_becomes_agent_error(self, monkeypatch):
@@ -300,9 +315,10 @@ class TestBuildAgent:
             await result[1].aclose()
             return result
 
-        built_agent, _stack, prompt, tool_count = run(build_and_close())
+        built_agent, _stack, prompt, tool_count, checkpointer = run(build_and_close())
 
         assert built_agent == "compiled-agent"
+        assert checkpointer == "memory"   # kept so clear_session() can wipe a thread
         assert tool_count == 2
         assert prompt.startswith("BASE PROMPT") and "CRITICAL SYSTEM RULES" in prompt
         assert seen["session_name"] == constants.MCP_SERVER_NAME
@@ -355,6 +371,18 @@ class TestAsk:
         agent._state["agent"] = FakeAgent({"messages": messages})
         run(agent.ask("second"))
         assert captured_logs[0]["tool_calls"] == []
+
+    def test_token_usage_counts_only_the_current_turn(self, captured_logs):
+        messages = [
+            HumanMessage(content="first"),
+            ai_message("old answer", usage={"input_tokens": 1000, "output_tokens": 500}),
+            HumanMessage(content="second"),
+            ai_message("final", usage={"input_tokens": 10, "output_tokens": 5}),
+        ]
+        agent._state["agent"] = FakeAgent({"messages": messages})
+        run(agent.ask("second"))
+        assert captured_logs[0]["prompt_tokens"] == 10
+        assert captured_logs[0]["completion_tokens"] == 5
 
     def test_handles_a_history_with_no_human_message(self, captured_logs):
         agent._state["agent"] = FakeAgent({"messages": [ai_message("only ai")]})
@@ -461,3 +489,4 @@ class TestRunCli:
 
         run(agent._run_cli())
         assert shutdowns == [True]
+

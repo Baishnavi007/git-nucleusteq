@@ -69,6 +69,10 @@ class FlaggedReviewsQuery(DashboardFilterQuery):
         constants.DEFAULT_MIN_SEVERITY, ge=constants.SEVERITY_MIN, le=constants.SEVERITY_MAX,
     )
     search: Optional[str] = Field(None, description="Free-text search over product/summary/text")
+    limit: int = Field(
+        constants.DASHBOARD_FLAGGED_LIMIT, ge=1, le=constants.MAX_DASHBOARD_FLAGGED_LIMIT,
+        description="Max rows returned, most severe first",
+    )
 
 
 class UsageQuery(BaseModel):
@@ -173,3 +177,4 @@ def validate_request(model_class, **arguments):
         details = [{"field": ".".join(str(part) for part in item["loc"]), "problem": item["msg"]}
                    for item in error.errors()]
         raise InvalidInputError(message, details) from error
+

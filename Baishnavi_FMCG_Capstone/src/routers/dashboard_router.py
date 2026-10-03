@@ -92,7 +92,7 @@ def get_top_products(filters: Annotated[TopProductsQuery, Query()]):
 def get_flagged_reviews_view(filters: Annotated[FlaggedReviewsQuery, Query()]):
     return success_response(_get_flagged_reviews_view(
         filters.min_severity, filters.start_date, filters.end_date,
-        filters.aspect, filters.search,
+        filters.aspect, filters.search, filters.limit,
     ))
 
 
@@ -111,3 +111,4 @@ def get_usage_summary(params: Annotated[UsageQuery, Query()]):
     """Model usage: total calls, tokens, average latency, estimated cost
     (if COST_PER_1K_* is configured), and a per-day series for the chart."""
     return success_response(_get_usage_summary(params.days))
+

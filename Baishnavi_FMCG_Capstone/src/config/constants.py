@@ -82,7 +82,7 @@ AGENT_MAX_TOKENS = 1500
 AGENT_RECURSION_LIMIT = 12
 AGENT_TIMEOUT_SECONDS = 180
 
-AGENT_HISTORY_TURNS = 1
+AGENT_HISTORY_TURNS = 3
 
 AGENT_STOP_TIMEOUT_SECONDS = 10
 
@@ -118,6 +118,8 @@ DEFAULT_MIN_SEVERITY = 3
 HIGH_SEVERITY_THRESHOLD = 3
 DEFAULT_FLAG_LIMIT = 10
 MAX_FLAG_LIMIT = 25
+DASHBOARD_FLAGGED_LIMIT=200
+MAX_DASHBOARD_FLAGGED_LIMIT=500
 SUMMARY_TOP_FLAGS = 5
 SUMMARY_TREND_GRANULARITY = "month"
 SUMMARY_TREND_MAX_PERIODS = 12
@@ -208,9 +210,7 @@ USAGE_RECENT_CALLS_LIMIT = 20
 
 
 
-# ---------------------------------------------------------------------------
-# HTTP status codes, error codes and messages (used by exceptions + responses)
-# ---------------------------------------------------------------------------
+
 STATUS_OK = 200
 STATUS_BAD_REQUEST = 400
 STATUS_NOT_FOUND = 404
@@ -237,6 +237,7 @@ ERROR_CODE_RATE_LIMIT = "RATE_LIMIT_EXCEEDED"
 ERROR_CODE_VALIDATION = "VALIDATION_ERROR"
 ERROR_CODE_HTTP = "HTTP_ERROR"
 ERROR_CODE_INTERNAL = "INTERNAL_ERROR"
+ERROR_CODE_NO_REVIEWS_IN_RANGE = "NO_REVIEWS_IN_RANGE"
 
 MSG_APP_ERROR = "Something went wrong."
 MSG_CONFIG_ERROR = "The application is not configured correctly."
@@ -259,8 +260,12 @@ MSG_AGENT_LOOP = (
 MSG_RATE_LIMIT_EXCEEDED = "Too many requests in a short time. Please wait a moment."
 MSG_VALIDATION_ERROR = "The request data is not valid."
 MSG_INTERNAL_ERROR = "An unexpected error occurred. Please try again."
+MSG_NO_REVIEWS_IN_RANGE = (                                 
+    "No reviews were found in the selected date range, so no report was generated."
+)
 
-# Success messages used in the standard response envelope
+
+
 MSG_SUCCESS = "Request completed successfully."
 MSG_HEALTH_OK = "Service is healthy."
 MSG_CHAT_ANSWERED = "Question answered."
@@ -269,7 +274,7 @@ MSG_HISTORY_CLEARED = "Chat history cleared."
 MSG_REPORT_GENERATED = "Report generated."
 HEALTH_STATUS_OK = "ok"
 
-# Request-validation messages (formatted with .format(...) in request_schema.py)
+
 MSG_INVALID_ASPECT = "aspect must be one of {allowed}, got {value!r}"
 MSG_INVALID_SENTIMENT = "sentiment must be one of {allowed}, got {value!r}"
 MSG_INVALID_GRANULARITY = "granularity must be one of {allowed}, got {value!r}"
@@ -278,15 +283,10 @@ MSG_EMPTY_QUERY = "query cannot be empty."
 MSG_START_AFTER_END = "start_date must be on or before end_date."
 
 
-# ---------------------------------------------------------------------------
-# Dataset metadata (column tooltips on the dashboard)
-# ---------------------------------------------------------------------------
-# The ONLY thing to change when the dataset's domain changes, e.g.
-#   DATASET_ITEM_LABEL=beauty product      (in .env)
+
 DATASET_ITEM_LABEL = os.getenv("DATASET_ITEM_LABEL", "grocery item")
 
-# Tooltip text per flagged-reviews column. {label} = DATASET_ITEM_LABEL,
-# {aspects} = aspect values read live from the dataset, {low}/{high} = severity scale.
+
 COLUMN_DESCRIPTION_TEMPLATES = {
     "product": "Name of the {label} the review is about.",
     "severity": "How serious the issue in the review is, from {low} (no issue) to {high} (most severe).",

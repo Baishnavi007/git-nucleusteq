@@ -11,7 +11,6 @@ import asyncio
 from datetime import datetime, timezone
 
 from src.config import constants
-from src.exceptions import DataNotFoundError
 from src.repositories.data_access import filter_by_date, load_reviews
 from src.services.report_scheduler import run_report_once
 from src.utils.llm_logger import summarize_usage
@@ -117,17 +116,18 @@ def get_top_products(start_date=None, end_date=None, limit=constants.DASHBOARD_T
 
 
 def get_flagged_reviews_view(min_severity=constants.DEFAULT_MIN_SEVERITY, start_date=None,
-                             end_date=None, aspect=None, search=None):
+                             end_date=None, aspect=None, search=None,
+                             limit=constants.DASHBOARD_FLAGGED_LIMIT):
     df = _filtered(start_date, end_date, aspect)
     df = df[df["severity"] >= min_severity]
     if search:
         mask = (
-            df["ProductName"].str.contains(search, case=False, na=False)
-            | df["Summary"].str.contains(search, case=False, na=False)
-            | df["Text"].str.contains(search, case=False, na=False)
+            df["ProductName"].str.contains(search, case=False, na=False, regex=False)
+            | df["Summary"].str.contains(search, case=False, na=False, regex=False)
+            | df["Text"].str.contains(search, case=False, na=False, regex=False)
         )
         df = df[mask]
-    df = df.sort_values(["severity", "datetime"], ascending=[False, False])
+    df = df.sort_values(["severity", "datetime"], ascending=[False, False]).head(limit)
     result = df[["ProductName", "severity", "sentiment", "aspect", "datetime", "Summary"]].copy()
     result["datetime"] = result["datetime"].dt.strftime("%Y-%m-%d")
     result.columns = ["product", "severity", "sentiment", "aspect", "date", "summary"]
@@ -140,15 +140,10 @@ async def generate_report_now():
     since it does blocking pandas work, and returns the freshly written
     report so the caller doesn't need a second round trip to read the file.
 
-    Raises DataNotFoundError if there were no reviews in the report window
-    (nothing gets written in that case, same as the scheduler).
+    NoReviewsInRangeError (raised by run_report_once) is deliberately not
+    caught here: the global handler turns it into the standard error response.
     """
     result = await asyncio.to_thread(run_report_once)
-    if result["status"] == "empty":
-        raise DataNotFoundError(
-            f"No reviews found between {result['start_date']} and {result['end_date']}; "
-            "nothing was generated."
-        )
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "start_date": result["start_date"],

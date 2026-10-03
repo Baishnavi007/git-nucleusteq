@@ -47,8 +47,10 @@ class TestSafeTool:
 class TestToolForwarding:
     def test_sentiment_trends_forwards_its_arguments(self, monkeypatch):
         monkeypatch.setattr(server, "_sentiment_trends", lambda *args: ("trend", args))
-        result = plain(server.sentiment_trends)("taste", "2013-01-01", "2013-02-01", "month")
-        assert result == ("trend", ("taste", "2013-01-01", "2013-02-01", "month"))
+        result = plain(server.sentiment_trends)(
+            "taste", "2013-01-01", "2013-02-01", "month", "P1", "Beef"
+        )
+        assert result == ("trend", ("taste", "2013-01-01", "2013-02-01", "month", "P1", "Beef"))
 
     def test_flagged_reviews_forwards_its_arguments(self, monkeypatch):
         monkeypatch.setattr(server, "_flagged_reviews", lambda *args: ("flagged", args))
@@ -90,3 +92,4 @@ class TestWarmUp:
 
         monkeypatch.setattr(server, "_search_reviews", broken)
         server.warm_up()  # should only log
+

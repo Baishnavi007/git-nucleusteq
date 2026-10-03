@@ -13,6 +13,8 @@ from datetime import date
 
 import pytest
 
+from src.config import constants
+from src.exceptions import AppError, NoReviewsInRangeError
 from src.services import report_scheduler
 
 
@@ -94,7 +96,7 @@ class TestRunReportOnce:
         entry = json.loads(history_path.read_text(encoding="utf-8").splitlines()[-1])
         assert entry["status"] == "ok"
 
-    def test_empty_range_logs_and_writes_nothing(self, tmp_path, monkeypatch):
+    def test_empty_range_raises_logs_and_writes_nothing(self, tmp_path, monkeypatch):
         monkeypatch.setattr(report_scheduler, "get_dataset_today", lambda: date(2013, 1, 8))
         monkeypatch.setattr(
             report_scheduler, "summary_report",
@@ -106,11 +108,44 @@ class TestRunReportOnce:
         monkeypatch.setattr(report_scheduler.constants, "REPORT_HISTORY_PATH", history_path)
         monkeypatch.setattr(report_scheduler.constants, "DOCS_DIR", tmp_path)
 
-        report_scheduler.run_report_once()
+        with pytest.raises(NoReviewsInRangeError, match="2013-01-02") as raised:
+            report_scheduler.run_report_once()
 
+        assert raised.value.details == {"start_date": "2013-01-02", "end_date": "2013-01-08"}
         assert not report_path.exists()
         entry = json.loads(history_path.read_text(encoding="utf-8").splitlines()[-1])
-        assert entry["status"] == "empty"
+        assert entry["status"] == "empty"   # still recorded for every caller
+
+
+class TestRunAndLog:
+    def _patch(self, monkeypatch, run):
+        slept, logged = [], []
+
+        async def fake_sleep(seconds):
+            slept.append(seconds)
+
+        monkeypatch.setattr(report_scheduler, "run_report_once", run)
+        monkeypatch.setattr(report_scheduler.asyncio, "sleep", fake_sleep)
+        monkeypatch.setattr(report_scheduler, "_log_run", lambda status, detail="": logged.append(status))
+        return slept, logged
+
+    def test_an_empty_range_is_not_treated_as_a_failure(self, monkeypatch):
+        def empty_run():
+            raise NoReviewsInRangeError("no reviews")
+
+        slept, logged = self._patch(monkeypatch, empty_run)
+        asyncio.run(report_scheduler._run_and_log())
+        assert slept == []     # no retry delay
+        assert logged == []    # no extra "error" entry (run_report_once logs "empty" itself)
+
+    def test_other_app_errors_still_log_and_back_off(self, monkeypatch):
+        def broken_run():
+            raise AppError("boom")
+
+        slept, logged = self._patch(monkeypatch, broken_run)
+        asyncio.run(report_scheduler._run_and_log())
+        assert slept == [constants.REPORT_SCHEDULE_RETRY_SECONDS]
+        assert logged == ["error"]
 
 
 class TestStartStopScheduler:

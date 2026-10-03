@@ -22,7 +22,7 @@ import json
 from datetime import datetime, timedelta, timezone
 
 from src.config import constants
-from src.exceptions import AppError
+from src.exceptions import AppError, NoReviewsInRangeError
 from src.mcp.tools.summary_report import summary_report
 from src.repositories.data_access import get_dataset_today
 from src.utils.logger import get_logger
@@ -81,14 +81,16 @@ def run_report_once():
     Runs in a thread (see _scheduler_loop) since it does blocking pandas
     work; safe to also call directly/synchronously, e.g. from a script.
 
-    Returns a small status dict so callers (e.g. the manual "generate now"
-    API endpoint) can report back what happened without re-reading the
-    file from disk:
+    Returns a small dict so callers (e.g. the manual "generate now" API
+    endpoint) can report back what happened without re-reading the file
+    from disk:
         {"status": "ok", "markdown": ..., "total_reviews": ...,
          "start_date": ..., "end_date": ...}
-        {"status": "empty", "start_date": ..., "end_date": ...}
-    The old callers (the scheduler loop, the CLI script) ignore the return
-    value, so this is backward compatible.
+
+    Raises NoReviewsInRangeError if the report window has no reviews. The
+    attempt is still recorded in report_history.jsonl (as "empty") and
+    nothing is written, so every caller -- scheduler, CLI script, API
+    button -- gets the same record and the same error.
     """
     end_date = get_dataset_today()
     start_date = end_date - timedelta(days=constants.REPORT_WINDOW_DAYS - 1)
@@ -98,7 +100,10 @@ def run_report_once():
         logger.warning("Scheduled report: no reviews in %s to %s (%s)",
                        start_date, end_date, report["message"])
         _log_run("empty", report["message"])
-        return {"status": "empty", "start_date": start_date.isoformat(), "end_date": end_date.isoformat()}
+        raise NoReviewsInRangeError(
+            f"No reviews found between {start_date} and {end_date}; nothing was generated.",
+            details={"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
+        )
 
     markdown = _render_markdown(report, start_date, end_date)
     constants.DOCS_DIR.mkdir(parents=True, exist_ok=True)
@@ -130,6 +135,10 @@ async def _scheduler_loop():
 async def _run_and_log():
     try:
         await asyncio.to_thread(run_report_once)
+    except NoReviewsInRangeError:
+        # Not a failure: run_report_once already logged it as "empty", and
+        # retrying sooner would not create reviews. Wait for the next interval.
+        logger.info("Scheduled report skipped: no reviews in the report window")
     except AppError as error:
         logger.error("Scheduled report failed: %s", error.message)
         _log_run("error", error.message)
@@ -166,3 +175,4 @@ async def stop_scheduler():
     except asyncio.CancelledError:
         pass
     _task = None
+

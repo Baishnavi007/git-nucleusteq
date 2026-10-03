@@ -21,7 +21,7 @@ What is in the vector store: one combined string per review
 (Summary + ". " + Text), so results return a single `review_text` field.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from src.config import constants
 from src.exceptions import InvalidInputError
@@ -33,13 +33,21 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def _date_to_epoch(date_str, arg_name):
+def _date_to_epoch(date_str, arg_name, end_of_day=False):
+    """Converts a YYYY-MM-DD string to a Unix epoch using the SAME rule as
+    data_access.py: dates are UTC (never the machine's local time), and an
+    end date covers the whole day (up to 23:59:59), not just midnight."""
     if not date_str:
         return None
     try:
-        return int(datetime.fromisoformat(date_str).timestamp())
+        parsed = datetime.fromisoformat(date_str)
     except ValueError as error:
         raise InvalidInputError(f"Invalid {arg_name}: {date_str!r}. Use YYYY-MM-DD.") from error
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)   # naive -> UTC, not local time
+    if end_of_day:
+        parsed = parsed + timedelta(days=1) - timedelta(seconds=1)
+    return int(parsed.timestamp())
 
 
 def _build_where(aspect, sentiment, product_id, min_severity, start_date, end_date):
@@ -54,7 +62,7 @@ def _build_where(aspect, sentiment, product_id, min_severity, start_date, end_da
         clauses.append({"severity": {"$gte": min_severity}})
 
     start_epoch = _date_to_epoch(start_date, "start_date")
-    end_epoch = _date_to_epoch(end_date, "end_date")
+    end_epoch = _date_to_epoch(end_date, "end_date", end_of_day=True)
     if start_epoch is not None:
         clauses.append({"time": {"$gte": start_epoch}})
     if end_epoch is not None:
@@ -169,7 +177,7 @@ def search_reviews(query, aspect=None, sentiment=None, min_severity=None,
             "severity": int(meta["severity"]),
             "sentiment": str(meta["sentiment"]),
             "aspect": str(meta["aspect"]),
-            "date": datetime.fromtimestamp(int(meta["time"])).strftime("%Y-%m-%d"),
+            "date": datetime.fromtimestamp(int(meta["time"]), timezone.utc).strftime("%Y-%m-%d"),
             "review_text": _truncate(str(document)),
             "relevance_distance": round(float(distance), 4),
         }
@@ -185,3 +193,4 @@ def search_reviews(query, aspect=None, sentiment=None, min_severity=None,
 
     logger.info("search_reviews returned %s item(s)", len(results))
     return results
+

@@ -86,6 +86,16 @@ class TestGetFlaggedReviewsView:
     def test_search_with_no_match_returns_empty(self, synthetic_reviews_env):
         assert dashboard_service.get_flagged_reviews_view(min_severity=0, search="nonexistent-word") == []
 
+    def test_search_treats_regex_characters_as_plain_text(self, synthetic_reviews_env):
+        # "(b" is an invalid regex; it used to crash the endpoint with a 500.
+        for text in ("(b", "[", "*", "c++", "\\"):
+            assert dashboard_service.get_flagged_reviews_view(min_severity=0, search=text) == []
+
+    def test_limit_keeps_the_most_severe_rows(self, synthetic_reviews_env):
+        rows = dashboard_service.get_flagged_reviews_view(min_severity=0, limit=2)
+        assert len(rows) == 2
+        assert [row["severity"] for row in rows] == [5, 3]
+
 
 class TestGetUsageSummary:
     def test_delegates_to_llm_logger(self, tmp_path, monkeypatch, synthetic_reviews_env):
@@ -115,3 +125,4 @@ class TestGetColumnMetadata:
     def test_severity_tooltip_uses_the_configured_scale(self, synthetic_reviews_env):
         text = dashboard_service.get_column_metadata()["severity"]
         assert str(constants.SEVERITY_MIN) in text and str(constants.SEVERITY_MAX) in text
+

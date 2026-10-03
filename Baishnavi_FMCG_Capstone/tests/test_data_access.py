@@ -11,6 +11,37 @@ def test_load_reviews_returns_all_synthetic_rows(synthetic_reviews_env):
     assert len(df) == 5
 
 
+def _write_labelled_csv(tmp_path, monkeypatch, statuses):
+    import pandas as pd
+    from src.repositories import data_access
+    rows = [
+        (i + 1, f"P{i}", f"Product {i}", "U", 3, 1_356_998_400 + i * 86_400, "s", "t",
+         "positive", "taste", 0, status)
+        for i, status in enumerate(statuses)
+    ]
+    columns = ["Id", "ProductId", "ProductName", "UserId", "Score", "Time", "Summary", "Text",
+               "sentiment", "aspect", "severity", "label_status"]
+    csv_path = tmp_path / "scrubbed_reviews.csv"
+    pd.DataFrame(rows, columns=columns).to_csv(csv_path, index=False)
+    monkeypatch.setattr(data_access.constants, "SCRUBBED_REVIEWS_PATH", csv_path)
+    data_access.reset_caches_for_tests()
+
+
+def test_fallback_and_unverified_rows_are_excluded(tmp_path, monkeypatch):
+    from src.repositories import data_access
+    _write_labelled_csv(tmp_path, monkeypatch, ["ok", "fallback", "unverified", "ok"])
+    assert load_reviews()["Id"].tolist() == [1, 4]
+    data_access.reset_caches_for_tests()
+
+
+def test_all_rows_unverified_raises_data_not_found(tmp_path, monkeypatch):
+    from src.repositories import data_access
+    _write_labelled_csv(tmp_path, monkeypatch, ["fallback", "unverified"])
+    with pytest.raises(DataNotFoundError):
+        load_reviews()
+    data_access.reset_caches_for_tests()
+
+
 def test_missing_file_raises_data_not_found(tmp_path, monkeypatch):
     from src.repositories import data_access
     monkeypatch.setattr(data_access.constants, "SCRUBBED_REVIEWS_PATH", tmp_path / "missing.csv")
